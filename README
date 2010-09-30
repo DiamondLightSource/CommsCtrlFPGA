@@ -1,0 +1,64 @@
+Diamond Light Source Ltd., Communication Controller FPGA design for
+Global Fast Orbit Feedback System.
+
+This version of the communication controller design is designed to 
+work with Libera FPGA design, as distributed by Instrumentation Technologies, 
+http://www.i-tech.si.
+
+===============================================================================================
+Parameters
+----------
+HDL used                    :   VHDL
+Top level module            :   rtl/fofb_cc_top/rtl/vhdl/fofb_cc_top.vhd
+MGTs channels				:   4 (default)
+Device used                 :   xc2vp30
+Reference clock 			:   BOTTOM_BREF_CLK
+
+===============================================================================================
+Overview of the FOFB Communication Controller Design directory structure
+
+The files for the FOFB Communication Controller Design are arranged in the following file structure:
+
+FastFeedbackFPGA_v1_00
+|
+|---rtl/
+|   |
+|   |---fofb_cc_top
+| 	 |		|---rtl
+|	 |			|---vhdl
+|	 |				|---fofb_cc_top.vhd
+|   |
+|   |---[remaining CC module VHDL source code]
+|
+|---sim/
+|   |
+|   |---fofb_cc_top
+| 	 |		|---sim
+|	 |			|---vhdl
+|	 |				|---do
+|	 |				|---bench
+|
+|---syn/
+|   |
+|   |---fofb_cc_top
+| 	 |		|--- constr
+| 	 |		|--- xilinx
+| 	 |		|--- run 		[User must create this directory]
+|	 |			
+|
+|---README          [This is the file you are currently reading]
+
+===============================================================================================
+Quick start recommendation
+
+(a) You can integrate the CC module with your own design.
+
+(b) Use simulation scripts in order to see and understand functionality
+of whole design.
+	 For simulation, basically run "fofb_cc_top_tb.fdo" using ModelSim SE.
+===============================================================================================
+How to compile
+
+Run ./xilinxmake. It will compile PMC and Sniffer design and generate two bit
+files under /syn/pmc_top/run directory.
+

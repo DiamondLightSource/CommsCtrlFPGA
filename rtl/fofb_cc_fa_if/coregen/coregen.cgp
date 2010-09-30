@@ -1,0 +1,20 @@
+# Date: Wed Feb  8 10:31:31 2006
+SET flowvendor = Other
+SET vhdlsim = True
+SET verilogsim = False
+SET workingdirectory = /mt/home/iu42/FastFeedbackFPGA_v1_00/rtl/fofb_cc_fa_interface/coregen/tmp
+SET speedgrade = -5
+SET simulationfiles = Behavioral
+SET asysymbol = False
+SET addpads = False
+SET device = xc2vp30
+SET implementationfiletype = Ngc
+SET busformat = BusFormatAngleBracketNotRipped
+SET foundationsym = False
+SET package = ff1152
+SET createndf = False
+SET designentry = VHDL
+SET devicefamily = virtex2p
+SET formalverification = False
+SET removerpms = False
+

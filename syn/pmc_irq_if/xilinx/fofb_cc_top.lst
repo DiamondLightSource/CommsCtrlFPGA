@@ -1,0 +1,18 @@
+vhdl work ../../../rtl/fofb_cc_pkg/rtl/vhdl/fofb_cc_pkg.vhd
+vhdl work ../../../rtl/fofb_cc_user_defs/fofb_cc_user_defs.vhd
+vhdl work ../../../rtl/fofb_cc_top/rtl/vhdl/fofb_cc_top.vhd
+vhdl work ../../../rtl/fofb_cc_top/rtl/vhdl/fofb_cc_ndff.vhd
+vhdl work ../../../rtl/fofb_cc_top/rtl/vhdl/fofb_cc_fifo_rst.vhd
+vhdl work ../../../rtl/fofb_cc_fod/rtl/vhdl/xy_position_array.vhd
+vhdl work ../../../rtl/fofb_cc_fod/rtl/vhdl/already_sent_array.vhd
+vhdl work ../../../rtl/fofb_cc_fod/rtl/vhdl/fofb_cc_fod.vhd
+vhdl work ../../../rtl/fofb_cc_mgt_interface/rtl/vhdl/fofb_cc_mgt_interface.vhd
+vhdl work ../../../rtl/fofb_cc_mgt_interface/rtl/vhdl/phase_align.vhd
+vhdl work ../../../rtl/fofb_cc_arbmux/rtl/vhdl/fofb_cc_arbmux.vhd
+vhdl work ../../../rtl/fofb_cc_fa_interface/rtl/vhdl/fofb_cc_fa_intf.vhd
+vhdl work ../../../rtl/fofb_cc_fa_interface/rtl/vhdl/fofb_cc_fa_intf_bram.vhd
+vhdl work ../../../rtl/fofb_cc_cfg_interface/rtl/vhdl/fofb_cc_cfg_coef_buf.vhd
+vhdl work ../../../rtl/fofb_cc_cfg_interface/rtl/vhdl/fofb_cc_config_intf.vhd
+vhdl work ../../../rtl/fofb_cc_frame_cntrl/rtl/vhdl/fofb_cc_frame_cntrl.vhd
+vhdl work ../../../rtl/fofb_cc_monitor/rtl/vhdl/fofb_cc_monitor.vhd
+

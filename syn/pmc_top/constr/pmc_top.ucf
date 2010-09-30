@@ -1,0 +1,194 @@
+###############################################################
+### CLOCKS 
+###############################################################
+
+# BREFLCK
+NET "brefclk_n_i"           LOC = "G16" | IOSTANDARD = LVDS_25;
+NET "brefclk_p_i"           LOC = "F16" | IOSTANDARD = LVDS_25;
+
+# BREFCLK2
+#NET "brefclk_n_i" LOC = "F15" | IOSTANDARD = LVDS_25;
+#NET "brefclk_p_i" LOC = "G15" | IOSTANDARD = LVDS_25;
+#CONFIG PROHIBIT = "F15";
+#CONFIG PROHIBIT = "G15";
+
+###############################################################
+#### LOCAL BUS 
+###############################################################
+NET "lclk_i"                LOC = "AJ15"| IOSTANDARD = LVCMOS33;
+NET "cs_n_i<0>"             LOC = "U1"  | IOSTANDARD = LVDCI_33;
+NET "ready_n_o"             LOC = "V1"  | IOSTANDARD = LVDCI_33;
+NET "cs_n_i<1>"             LOC = "T3"  | IOSTANDARD = LVDCI_33;
+NET "bterm_n_o"             LOC = "U2"  | IOSTANDARD = LVDCI_33;
+#NET "lbe_n_i<0>"            LOC = "T6" | IOSTANDARD = LVDCI_33;
+#NET "lbe_n_i<1>"            LOC = "V6" | IOSTANDARD = LVDCI_33;
+#NET "lbe_n_i<2>"            LOC = "U7" | IOSTANDARD = LVDCI_33;
+#NET "lbe_n_i<3>"            LOC = "T7" | IOSTANDARD = LVDCI_33;
+NET "lint_o<1>"             LOC = "V7" | IOSTANDARD = LVDCI_33;
+NET "lint_o<2>"             LOC = "T8" | IOSTANDARD = LVDCI_33;
+#NET "lwr_n_i"               LOC = "V2" | IOSTANDARD = LVDCI_33;
+NET "wr_n_i"                LOC = "W2" | IOSTANDARD = LVDCI_33;
+NET "rd_n_i"                LOC = "W1" | IOSTANDARD = LVDCI_33;
+#NET "blast_n_i"             LOC = "Y1" | IOSTANDARD = LVDCI_33;
+NET "ads_n_i"               LOC = "Y2" | IOSTANDARD = LVDCI_33;
+#NET "ale_i"                 LOC = "Y4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<0>"             LOC = "AA1" | IOSTANDARD = LVDCI_33;
+NET "lad_io<1>"             LOC = "AA2" | IOSTANDARD = LVDCI_33;
+NET "lad_io<2>"             LOC = "AB1" | IOSTANDARD = LVDCI_33;
+NET "lad_io<3>"             LOC = "AB2" | IOSTANDARD = LVDCI_33;
+NET "lad_io<4>"             LOC = "AC2" | IOSTANDARD = LVDCI_33;
+NET "lad_io<5>"             LOC = "AD6" | IOSTANDARD = LVDCI_33;
+NET "lad_io<6>"             LOC = "AG5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<7>"             LOC = "AG2" | IOSTANDARD = LVDCI_33;
+NET "lad_io<8>"             LOC = "AG1" | IOSTANDARD = LVDCI_33;
+NET "lad_io<9>"             LOC = "AG3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<10>"            LOC = "AH1" | IOSTANDARD = LVDCI_33;
+NET "lad_io<11>"            LOC = "AH2" | IOSTANDARD = LVDCI_33;
+NET "lad_io<12>"            LOC = "AH5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<13>"            LOC = "AH4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<14>"            LOC = "AC4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<15>"            LOC = "AC3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<16>"            LOC = "AD5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<17>"            LOC = "AB3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<18>"            LOC = "AA6" | IOSTANDARD = LVDCI_33;
+NET "lad_io<19>"            LOC = "AA5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<20>"            LOC = "AA4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<21>"            LOC = "W4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<22>"            LOC = "W3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<23>"            LOC = "V4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<24>"            LOC = "V3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<25>"            LOC = "U4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<26>"            LOC = "U3" | IOSTANDARD = LVDCI_33;
+NET "lad_io<27>"            LOC = "Y5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<28>"            LOC = "T4" | IOSTANDARD = LVDCI_33;
+NET "lad_io<29>"            LOC = "U5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<30>"            LOC = "T5" | IOSTANDARD = LVDCI_33;
+NET "lad_io<31>"            LOC = "V5" | IOSTANDARD = LVDCI_33;
+
+###############################################################
+### PMC Interface
+###############################################################
+
+NET "pmc_connector_io<0>"   LOC = "AH29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<1>"   LOC = "AH26" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<2>"   LOC = "AH30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<3>"   LOC = "AG26" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<4>"   LOC = "AG29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<5>"   LOC = "AG28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<6>"   LOC = "AG30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<7>"   LOC = "AC27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<8>"   LOC = "AD25" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<9>"   LOC = "AC28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<10>"  LOC = "AD26" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<11>"  LOC = "AB27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<12>"  LOC = "AC29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<13>"  LOC = "AB28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<14>"  LOC = "AB29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<15>"  LOC = "AA27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<16>"  LOC = "AB30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<17>"  LOC = "AA28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<18>"  LOC = "AA29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<19>"  LOC = "Y27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<20>"  LOC = "AA30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<21>"  LOC = "W27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<22>"  LOC = "Y29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<23>"  LOC = "W28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<24>"  LOC = "Y30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<25>"  LOC = "V27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<26>"  LOC = "W29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<27>"  LOC = "V28" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<28>"  LOC = "W30" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<29>"  LOC = "U27" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<30>"  LOC = "V29" | IOSTANDARD = LVDCI_33;
+NET "pmc_connector_io<31>"  LOC = "V30" | IOSTANDARD = LVDCI_33;
+#NET "nPIF<0>" LOC = "AJ22" | IOSTANDARD = LVCMOS33;
+#NET "nPIF<0>" PULLUP;
+#NET "nPIF<1>" LOC = "AG23" | IOSTANDARD = LVCMOS33;
+#NET "nPIF<1>" PULLUP;
+#NET "nPIF<2>" LOC = "AF23" | IOSTANDARD = LVCMOS33;
+#NET "nPIF<2>" PULLUP;
+#NET "nPIF<3>" LOC = "AE23" | IOSTANDARD = LVCMOS33;
+#NET "nPIF<3>" PULLUP;
+#NET "nPIFHANDLE" LOC = "AK23" | IOSTANDARD = LVCMOS33;
+#NET "nPIFHANDLE" PULLUP;
+#NET "PMCIFON" LOC = "AJ23" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+
+###############################################################
+### LEDs
+###############################################################
+
+NET "led_n_o<0>" LOC = "G26" | IOSTANDARD = LVCMOS33 | DRIVE = 12 | SLEW = SLOW;
+NET "led_n_o<1>" LOC = "G25" | IOSTANDARD = LVCMOS33 | DRIVE = 12 | SLEW = SLOW;
+NET "led_n_o<2>" LOC = "K25" | IOSTANDARD = LVCMOS33 | DRIVE = 12 | SLEW = SLOW;
+NET "led_n_o<3>" LOC = "K26" | IOSTANDARD = LVCMOS33 | DRIVE = 12 | SLEW = SLOW;
+
+###############################################################
+### Micrel SY87739L
+###############################################################
+
+#NET "cglock_i"  LOC = "D5" | IOSTANDARD = LVCMOS33;
+NET "cgsk_o"    LOC = "C2" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+NET "cgdi_o"    LOC = "C1" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+NET "cgcs_o"    LOC = "D3" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+
+###############################################################
+### SDRAM
+###############################################################
+
+#NET "DQ<0>" LOC = "R29" | IOSTANDARD = LVDCI_33;
+#NET "DQ<1>" LOC = "R24" | IOSTANDARD = LVDCI_33;
+#NET "DQ<2>" LOC = "P24" | IOSTANDARD = LVDCI_33;
+#NET "DQ<3>" LOC = "R25" | IOSTANDARD = LVDCI_33;
+#NET "DQ<4>" LOC = "N25" | IOSTANDARD = LVDCI_33;
+#NET "DQ<5>" LOC = "R26" | IOSTANDARD = LVDCI_33;
+#NET "DQ<6>" LOC = "P26" | IOSTANDARD = LVDCI_33;
+#NET "DQ<7>" LOC = "R28" | IOSTANDARD = LVDCI_33;
+#NET "DQ<8>" LOC = "L29" | IOSTANDARD = LVDCI_33;
+#NET "DQ<9>" LOC = "L30" | IOSTANDARD = LVDCI_33;
+#NET "DQ<10>" LOC = "M29" | IOSTANDARD = LVDCI_33;
+#NET "DQ<11>" LOC = "M30" | IOSTANDARD = LVDCI_33;
+#NET "DQ<12>" LOC = "N29" | IOSTANDARD = LVDCI_33;
+#NET "DQ<13>" LOC = "N30" | IOSTANDARD = LVDCI_33;
+#NET "DQ<14>" LOC = "P29" | IOSTANDARD = LVDCI_33;
+#NET "DQ<15>" LOC = "P30" | IOSTANDARD = LVDCI_33;
+#NET "A<0>" LOC = "L27" | IOSTANDARD = LVDCI_33;
+#NET "A<1>" LOC = "M26" | IOSTANDARD = LVDCI_33;
+#NET "A<2>" LOC = "L26" | IOSTANDARD = LVDCI_33;
+#NET "A<3>" LOC = "M25" | IOSTANDARD = LVDCI_33;
+#NET "A<4>" LOC = "C29" | IOSTANDARD = LVDCI_33;
+#NET "A<5>" LOC = "C30" | IOSTANDARD = LVDCI_33;
+#NET "A<6>" LOC = "C27" | IOSTANDARD = LVDCI_33;
+#NET "A<7>" LOC = "D28" | IOSTANDARD = LVDCI_33;
+#NET "A<8>" LOC = "J27" | IOSTANDARD = LVDCI_33;
+#NET "A<9>" LOC = "J28" | IOSTANDARD = LVDCI_33;
+#NET "A<10>" LOC = "N26" | IOSTANDARD = LVDCI_33;
+#NET "A<11>" LOC = "H29" | IOSTANDARD = LVDCI_33;
+#NET "A<12>" LOC = "J29" | IOSTANDARD = LVDCI_33;
+#NET "DQM<0>" LOC = "R27" | IOSTANDARD = LVDCI_33;
+#NET "nCAS" LOC = "P27" | IOSTANDARD = LVDCI_33;
+#NET "nWE" LOC = "P28" | IOSTANDARD = LVDCI_33;
+#NET "nRAS" LOC = "N28" | IOSTANDARD = LVDCI_33;
+#NET "nSDCS" LOC = "N27" | IOSTANDARD = LVDCI_33;
+#NET "BA<0>" LOC = "M28" | IOSTANDARD = LVDCI_33;
+#NET "BA<1>" LOC = "M27" | IOSTANDARD = LVDCI_33;
+#NET "SDCLK" LOC = "K28" | IOSTANDARD = LVDCI_33;
+#NET "SDCLK2" LOC = "K29" | IOSTANDARD = LVDCI_33;
+#CONFIG PROHIBIT = "K29";
+#NET "DQM<1>" LOC = "K30" | IOSTANDARD = LVDCI_33;
+#NET "CKE" LOC = "J30" | IOSTANDARD = LVDCI_33;
+### MGT ###
+NET "txdis_o<0>" LOC = "E25" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+NET "txdis_o<1>" LOC = "A23" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+NET "txdis_o<2>" LOC = "D21" | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+NET "txdis_o<3>" LOC = "J4"  | IOSTANDARD = LVCMOS33 | DRIVE = 2 | SLEW = SLOW;
+
+#
+#Clock constraints
+#
+
+NET "lclk_i"      TNM_NET = "SystemClk";
+NET "brefclk_p_i" TNM_NET = "MgtClk";
+
+TIMESPEC "TS_SystemClk"  = PERIOD "SystemClk" 15.0ns HIGH 7.5ns;
+TIMESPEC "TS_MgtClk"     = PERIOD "MgtClk" 9.4ns HIGH 4.7ns;
+

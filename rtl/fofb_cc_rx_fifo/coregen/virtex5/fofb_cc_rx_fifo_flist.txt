@@ -1,0 +1,12 @@
+# Output products list for <fofb_cc_rx_fifo>
+_xmsgs/pn_parser.xmsgs
+fifo_generator_ug175.pdf
+fofb_cc_rx_fifo.gise
+fofb_cc_rx_fifo.ngc
+fofb_cc_rx_fifo.vhd
+fofb_cc_rx_fifo.vho
+fofb_cc_rx_fifo.xco
+fofb_cc_rx_fifo.xise
+fofb_cc_rx_fifo_flist.txt
+fofb_cc_rx_fifo_readme.txt
+fofb_cc_rx_fifo_xmdf.tcl

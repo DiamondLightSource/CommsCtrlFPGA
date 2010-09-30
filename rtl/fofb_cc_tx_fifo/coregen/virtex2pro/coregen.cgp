@@ -1,0 +1,20 @@
+# Date: Tue Mar 16 15:58:58 2010
+SET addpads = False
+SET asysymbol = False
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = False
+SET designentry = VHDL
+SET device = xc2vp30
+SET devicefamily = virtex2p
+SET flowvendor = Other
+SET formalverification = False
+SET foundationsym = False
+SET implementationfiletype = Ngc
+SET package = ff1152
+SET removerpms = False
+SET simulationfiles = Behavioral
+SET speedgrade = -5
+SET verilogsim = False
+SET vhdlsim = True
+SET workingdirectory = /home/iu42/MyProjects/FPGADevelopment/Libera/trunk/FPGA_EBPM/FastFeedbackFPGA/rtl/fofb_cc_tx_fifo/coregen/virtex2pro/tmp
+

@@ -1,0 +1,5 @@
+vhdl work ../../../rtl/pmc_irq_if/rtl/vhdl/dcm_lclk.vhd
+vhdl work ../../../rtl/pmc_irq_if/rtl/vhdl/uwire.vhd
+vhdl work ../../../rtl/pmc_irq_if/rtl/vhdl/bus_cntrl_pmc.vhd
+vhdl work ../../../rtl/fofb_cc_cfg_interface/rtl/vhdl/fofb_cc_cfg_bram.vhd
+vhdl work ../../../rtl/pmc_irq_if/rtl/vhdl/pmc_irq_if.vhd

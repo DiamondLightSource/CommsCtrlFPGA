@@ -1,0 +1,17 @@
+# Place MGTs
+INST "i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[0].MGT_TILES/MGT_INST" LOC=GT_X0Y1;
+INST "i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[1].MGT_TILES/MGT_INST" LOC=GT_X1Y1;
+#INST "i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[2].MGT_TILES/MGT_INST" LOC=GT_X2Y1;
+#INST "i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[3].MGT_TILES/MGT_INST" LOC=GT_X3Y1;
+
+INST i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[0].MGT_TILES/i_phase_align/phase_align_flops_* AREA_GROUP="PHASE_ALIGN_0_GRP";
+AREA_GROUP "PHASE_ALIGN_0_GRP" RANGE=SLICE_X14Y152:SLICE_X15Y153;
+INST i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[1].MGT_TILES/i_phase_align/phase_align_flops_* AREA_GROUP="PHASE_ALIGN_1_GRP";
+AREA_GROUP "PHASE_ALIGN_1_GRP" RANGE=SLICE_X38Y152:SLICE_X39Y153;
+#INST i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[2].MGT_TILES/i_phase_align/phase_align_flops_* AREA_GROUP="PHASE_ALIGN_2_GRP";
+#AREA_GROUP "PHASE_ALIGN_2_GRP" RANGE=SLICE_X50Y152:SLICE_X51Y153;
+#INST i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[3].MGT_TILES/i_phase_align/phase_align_flops_* AREA_GROUP="PHASE_ALIGN_3_GRP";
+#AREA_GROUP "PHASE_ALIGN_3_GRP" RANGE=SLICE_X74Y152:SLICE_X75Y153;
+
+#NET "i_fofb_cc_top_wrapper/i_fofb_cc_top/MGT_IF_GEN.MGT_LANE/MGT_IF_GEN[*].MGT_TILES/rxrecclk" TNM_NET = mgt_rec_clks;
+#TIMESPEC "TS_mgt_rec_clks" = PERIOD "mgt_rec_clks" 106.25 MHz HIGH 50 %;

@@ -1,0 +1,10 @@
+run
+-ifn pmc_top.lst
+-ofn pmc_top.ngc
+-ofmt NGC
+-p xc2vp30-6-ff896
+-top pmc_top
+-opt_mode speed
+-opt_level 2
+-ram_style BLOCK
+-uc ../constr/pmc_top.xcf

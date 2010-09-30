@@ -1,0 +1,22 @@
+run
+-ifn pmc_irq_if.lst
+-ofn pmc_irq_if.ngc
+-ofmt NGC
+-p xc2vp30-6-ff896
+-top pmc_irq_if
+-opt_mode speed
+-opt_level 1
+-keep_hierarchy NO
+-iobuf YES
+-iob true
+-ram_style BLOCK
+-optimize_primitives NO
+-write_timing_constraints YES
+-uc ../constr/pmc_irq_if.xcf
+-verilog2001 YES
+-hierarchy_separator /
+-bus_delimiter <>
+-bufg 0
+
+
+

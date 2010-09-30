@@ -1,0 +1,22 @@
+# Date: Wed Jul 28 13:13:33 2010
+
+SET addpads = false
+SET asysymbol = false
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = VHDL
+SET device = xc6vcx240t
+SET devicefamily = virtex6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = ff1156
+SET removerpms = false
+SET simulationfiles = Structural
+SET speedgrade = -1
+SET verilogsim = false
+SET vhdlsim = true
+SET workingdirectory = /home/iu42/MyProjects/FPGADevelopment/Libera/trunk/FPGA_EBPM/FastFeedbackFPGA/rtl/fofb_cc_tx_fifo/coregen/virtex5/tmp/
+
+# CRC: 22cd0dd9

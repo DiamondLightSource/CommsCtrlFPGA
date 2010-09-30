@@ -1,0 +1,2 @@
+script ../xilinx/xst_init.scr
+script ../xilinx/xst_run.scr

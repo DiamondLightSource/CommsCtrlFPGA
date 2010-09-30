@@ -1,0 +1,79 @@
+Welcome to Xilinx CORE Generator.
+Help system initialized.
+Opening project file
+/home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_fifo
+/coregen/virtex5/coregen.cgp.
+INFO:sim:760 - You can use the CORE Generator IP upgrade flow to upgrade the
+   selected IP Fifo_Generator v5.3 to a more recent version.
+Project, 'coregen', initialised from file
+'/home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_fif
+o/coregen/virtex5/coregen.cgp'.
+Recustomize and Generate (Under Original Project Settings)Initialising IP model...
+Finished initialising IP model.
+Customizing IP...
+Release 12.1 - Xilinx CORE Generator IP GUI Launcher M.53d (lin)
+Copyright (c) 1995-2010 Xilinx, Inc.  All rights reserved.
+Initialising IP model...
+Finished initialising IP model.
+Cancelled Customization.
+Upgrade to latest version, and Regenerate (Under Current Project Settings)Applying current project options...
+Finished applying current project options.
+Applying current project options...
+Finished applying current project options.
+Upgrading IP fofb_cc_rx_fifo to Fifo Generator version 6.1
+INFO:sim - Created backup directory
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/tmp/backup_fofb_cc_rx_fifo/
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/_xmsgs/
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/fifo_generator_ug175.pdf
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/fofb_cc_rx_fifo.gise
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/fofb_cc_rx_fifo.ise
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/fofb_cc_rx_fifo.xise
+WARNING:coreutil:557 - Missing file list member
+   /home/iu42/MyProjects/FPGADevelopment/FastFeedbackFPGA/trunk/rtl/fofb_cc_rx_f
+   ifo/coregen/virtex5/fofb_cc_rx_fifo_xdb/tmp/
+Initialising IP model...
+Finished initialising IP model.
+Generating IP...
+WARNING:sim:89 - A core named <fofb_cc_rx_fifo> already exists in the output
+   directory. Output products for this core may be overwritten.
+Initialising IP model...
+Finished initialising IP model.
+Initialising IP model...
+Finished initialising IP model.
+XST: HDL Compilation
+XST: Design Hierarchy Analysis
+XST: HDL Analysis
+XST: HDL Synthesis
+XST: Advanced HDL Synthesis
+XST: Low Level Synthesis
+Generating Implementation files.
+Generating NGC file.
+Generating VHDL structural model.
+Finished Generation Stage.
+Generating IP instantiation template...
+Generating the VHDL instantiation template.
+Finished generating IP instantiation template.
+Generating metadata file...
+Finished generating metadata file.
+Generating ISE file...
+Finished ISE file generation.
+Creating readme './tmp/_cg/fofb_cc_rx_fifo_readme.txt'.
+Generating FLIST file...
+Finished FLIST file generation.
+Preparing output directory...
+Finished preparing output directory.
+Moving files to output directory...
+Finished moving files to output directory
+Saved options for project 'coregen'.
+Closed project file.
