@@ -146,6 +146,15 @@ component ila
      );
 end component;
 
+component ila_t16_d256_s1024
+    port (
+        control     : in  std_logic_vector(35 downto 0);
+        clk         : in  std_logic;
+        data        : in  std_logic_vector(255 downto 0);
+        trig0       : in  std_logic_vector(15 downto 0)
+     );
+end component;
+
 component ila16K
     port (
         control     : in  std_logic_vector(35 downto 0);
@@ -154,10 +163,6 @@ component ila16K
         trig0       : in  std_logic_vector(7 downto 0)
      );
 end component;
-
-signal control0     : std_logic_vector(35 downto 0);
-signal trig0        : std_logic_vector(7 downto 0);
-signal data         : std_logic_vector(255 downto 0);
 
 end fofb_cc_pkg;
 

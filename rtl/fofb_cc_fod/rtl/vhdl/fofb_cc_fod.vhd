@@ -60,7 +60,7 @@ entity fofb_cc_fod is
         bpmid_i                 : in  std_logic_vector(9 downto 0);
         -- X and Y pos out to CEP and PMC Interface
         xy_buf_dout_o           : out std_logic_vector(63 downto 0);
-        xy_buf_addr_i           : in  std_logic_vector(9 downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(8 downto 0);
         -- status info
         fodprocess_time_o       : out std_logic_vector(15 downto 0);
         bpm_count_o             : out std_logic_vector(7 downto 0);
@@ -120,7 +120,7 @@ signal timeframe_end_sys            : std_logic;
 signal timeframe_end_sys_prev       : std_logic;
 signal timeframe_end_sys_rise       : std_logic;
 signal xy_buf_dout                  : std_logic_vector(63 downto 0);
-signal xy_buf_addr_prev             : std_logic_vector(9 downto 0);
+signal xy_buf_addr_prev             : std_logic_vector(8 downto 0);
 signal fofb_nodemask_buffer         : std_logic_vector(NodeNum-1 downto 0);
 signal fofb_nodemask_ctrl           : std_logic;
 signal posmem_wea                   : std_logic;
@@ -464,16 +464,12 @@ GEN_POS_DAQ_SERIAL : if (DEVICE /= SNIFFER_V5) generate
     begin
         xy_buf_read_ptr := to_integer(unsigned(xy_buf_addr_prev(NodeNumIndexWidth-1 downto 0)));
 
-        case xy_buf_addr_i(9 downto 8) is
-            when "00"   =>                                  -- 0-255 for XPos
-                xy_buf_dout <= X"00000000" & xpos_to_read;
 
-            when "01"   =>                                  -- 256-511 for YPos
-                xy_buf_dout <= X"00000000" & ypos_to_read;
-
-            when others =>
-                xy_buf_dout <= (others => '0');
-        end case;
+        if (xy_buf_addr_i(8) = '1') then
+            xy_buf_dout <= X"00000000" & xpos_to_read;
+        else
+            xy_buf_dout <= X"00000000" & ypos_to_read;
+        end if;
 
         if (fofb_nodemask_buffer_synced(xy_buf_read_ptr) = '1' ) then
             xy_buf_dout_o <= xy_buf_dout;

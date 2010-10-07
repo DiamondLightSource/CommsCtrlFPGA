@@ -10,7 +10,10 @@ use work.fofb_cc_pkg.all;
 entity fofb_cc_top_wrapper is
     generic (
         USE_DCM                 : boolean := false;
-        LANE_COUNT              : integer := 4
+        LANE_COUNT              : integer := 4;
+        TX_IDLE_NUM             : integer := 16;
+        RX_IDLE_NUM             : integer := 13;
+        SEND_ID_NUM             : integer := 14
     );
     port (
         -- differential MGT/GTP clock inputs
@@ -31,7 +34,7 @@ entity fofb_cc_top_wrapper is
         fai_rio_tdp_o           : out std_logic_vector(LANE_COUNT-1 downto 0);
         fai_rio_tdn_o           : out std_logic_vector(LANE_COUNT-1 downto 0);
         -- PMC-SFP module interface
-        xy_buf_addr_i           : in  std_logic_vector(9 downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(8 downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
         timeframe_end_rise_o    : out std_logic;
         -- Higher-level integration interface (used for PMC)
@@ -52,7 +55,10 @@ i_fofb_cc_top : entity work.fofb_cc_top
     generic map (
         DEVICE                  => PMC,
         USE_DCM                 => USE_DCM,
-        LANE_COUNT              => LANE_COUNT
+        LANE_COUNT              => LANE_COUNT,
+        TX_IDLE_NUM             => TX_IDLE_NUM,
+        RX_IDLE_NUM             => RX_IDLE_NUM,
+        SEND_ID_NUM             => SEND_ID_NUM
     )
     port map (
         refclk_p_i              => refclk_p_i,

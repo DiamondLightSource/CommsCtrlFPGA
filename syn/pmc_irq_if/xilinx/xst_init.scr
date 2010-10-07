@@ -1,2 +1,0 @@
-set -tmpdir ./xst_tmpdir
-set -xsthdpdir ./xst_dumpdir

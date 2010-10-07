@@ -29,7 +29,7 @@ use work.fofb_cc_pkg.all;-- DLS FOFB package
 entity fofb_cc_top is
     generic (
         -- Default node ID 0-255
-        ID                      : integer := 255;
+        ID                      : integer := 200;
         -- FPGA Device
         DEVICE                  : device_t := BPM;
         USE_DCM                 : boolean := true;
@@ -75,7 +75,7 @@ entity fofb_cc_top is
         coeff_y_addr_i          : in  std_logic_vector(7 downto 0);
         coeff_y_dat_o           : out std_logic_vector(31 downto 0);
         -- Higher-level integration interface (PMC, SNIFFER_V5)
-        xy_buf_addr_i           : in  std_logic_vector(9 downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(8 downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
         timeframe_end_rise_o    : out std_logic;
         timeframe_start_o       : out std_logic;

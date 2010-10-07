@@ -1,4 +1,0 @@
-vhdl work ../../../rtl/pmc_top/rtl/vhdl/dcm_lclk.vhd
-vhdl work ../../../rtl/pmc_top/rtl/vhdl/uwire.vhd
-vhdl work ../../../rtl/pmc_top/rtl/vhdl/pmc_bus_cntrl.vhd
-vhdl work ../../../rtl/pmc_top/rtl/vhdl/pmc_top.vhd
