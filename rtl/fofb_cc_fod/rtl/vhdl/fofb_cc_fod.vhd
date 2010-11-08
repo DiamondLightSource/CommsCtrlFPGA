@@ -236,9 +236,9 @@ begin
             own_xpos_to_store   <= bpm_xpos_val;
             own_ypos_to_store   <= bpm_ypos_val;
         when PMC =>
-            own_packet_to_inject <= payload_header_val & fofb_watchdog_i & fofb_event_i & timeframe_val_i;
-            own_xpos_to_store   <= fofb_watchdog_i;
-            own_ypos_to_store   <= fofb_event_i;
+            own_packet_to_inject <= payload_header_val & fofb_event_i & fofb_watchdog_i & timeframe_val_i;
+            own_xpos_to_store   <= fofb_event_i;
+            own_ypos_to_store   <= fofb_watchdog_i;
         when SNIFFER_V5 =>
             own_packet_to_inject <= payload_header_val & X"00000000" & X"00000000" & timeframe_val_i;
             own_xpos_to_store   <= timestamp_val_i;
