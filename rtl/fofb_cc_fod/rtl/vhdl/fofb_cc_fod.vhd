@@ -128,7 +128,6 @@ signal posmem_addra                 : std_logic_vector(8 downto 0);
 signal posmem_addrb                 : std_logic_vector(8 downto 0);
 signal pbpm_xpos_val                : std_logic_vector(31 downto 0);
 signal pbpm_ypos_val                : std_logic_vector(31 downto 0);
-signal fofb_dma_ok_synced           : std_logic;
 signal fofb_nodemask_buffer_synced  : std_logic_vector(NodeNum-1 downto 0);
 
 signal own_id                       : std_logic_vector(NodeNumIndexWidth-1 downto 0);
@@ -339,41 +338,9 @@ begin
 end process;
 
 -------------------------------------------------------------------
--- Double Buffer Handling happens in two clock domains.
--- 1. MGT Clock Domain:
---      At the end of each time frame, switch for writing is toggled 
+-- SYS Clock Domain:
+--      At the end of each time frame, switch for writing is toggled
 --      in mgtclk_i domain (if previoud dma is completed succesfully).
--------------------------------------------------------------------
-fofb_cc_syncff0 : entity work.fofb_cc_syncff
-port map (
-    clk_i       => mgtclk_i,
-    dat_i       => fofb_dma_ok_i,
-    dat_o       => fofb_dma_ok_synced
-);
-
-fofb_cc_syncdmux0 : entity work.fofb_cc_syncdmux
-generic map (
-    DW          => NodeNum
-)
-port map (
-    clk_i       => sysclk_i,
-    dat_i       => fofb_nodemask_buffer,
-    ctrl_i      => fofb_nodemask_ctrl,
-    dat_o       => fofb_nodemask_buffer_synced
-);
-
-process(mgtclk_i)
-begin
-    if (mgtclk_i'event and mgtclk_i = '1') then
-        -- buffer_write_sw is used to switch double buffers for writing.
-        if (timeframe_end_rise = '1' and fofb_dma_ok_synced = '1') then
-            buffer_write_sw <= not buffer_write_sw;
-        end if;
-    end if;
-end process;
-
--------------------------------------------------------------------
--- 2. SYS Clock Domain:
 --      timeframe_end signal is synced to sysclk, and then used
 --      to switch reading.
 --      timeframe_end_sys_rise is also used to generate IRQ on the
@@ -394,6 +361,7 @@ begin
 
         -- buffer_read_sw is used to switch double buffers for DMA to PMC.
         if (timeframe_end_sys_rise = '1' and fofb_dma_ok_i = '1') then
+            buffer_write_sw <= not buffer_write_sw;
             buffer_read_sw  <= not buffer_read_sw;
         end if;
     end if;
@@ -450,6 +418,17 @@ YPosMem : entity work.fofb_cc_sdpbram
 -- Following Generate statements handle Parallel or Serial
 -- x&y position data read to PMC or PCI-E.
 ---------------------------------------------------------------------
+fofb_cc_syncdmux0 : entity work.fofb_cc_syncdmux
+generic map (
+    DW          => NodeNum
+)
+port map (
+    clk_i       => sysclk_i,
+    dat_i       => fofb_nodemask_buffer,
+    ctrl_i      => fofb_nodemask_ctrl,
+    dat_o       => fofb_nodemask_buffer_synced
+);
+
 process(sysclk_i)
 begin
     if (sysclk_i'event and sysclk_i = '1') then

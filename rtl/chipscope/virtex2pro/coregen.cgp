@@ -1,4 +1,4 @@
-# Date: Tue Mar 16 15:18:01 2010
+# Date: Fri Nov 26 17:48:35 2010
 SET addpads = False
 SET asysymbol = False
 SET busformat = BusFormatAngleBracketNotRipped
@@ -13,8 +13,8 @@ SET implementationfiletype = Ngc
 SET package = ff1152
 SET removerpms = False
 SET simulationfiles = Behavioral
-SET speedgrade = -5
+SET speedgrade = -6
 SET verilogsim = False
 SET vhdlsim = True
-SET workingdirectory = /home/iu42/MyProjects/FPGADevelopment/Libera/trunk/FPGA_EBPM/FastFeedbackFPGA/rtl/chipscope/virtex2pro/tmp
+SET workingdirectory = /home/iu42/hardware/FPGA/CommsCtrlFPGA/rtl/chipscope/virtex2pro/tmp
 

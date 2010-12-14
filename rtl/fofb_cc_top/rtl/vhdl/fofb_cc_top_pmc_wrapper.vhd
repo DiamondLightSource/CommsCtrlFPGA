@@ -51,7 +51,7 @@ end fofb_cc_top_wrapper;
 architecture structure of fofb_cc_top_wrapper is
 begin
 
-i_fofb_cc_top : entity work.fofb_cc_top
+fofb_cc_top : entity work.fofb_cc_top
     generic map (
         DEVICE                  => PMC,
         USE_DCM                 => USE_DCM,

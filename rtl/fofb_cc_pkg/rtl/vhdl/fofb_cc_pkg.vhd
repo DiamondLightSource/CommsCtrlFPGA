@@ -155,11 +155,20 @@ component ila_t16_d256_s1024
      );
 end component;
 
-component ila16K
+component ila_t8_d64_s16384
     port (
         control     : in  std_logic_vector(35 downto 0);
         clk         : in  std_logic;
         data        : in  std_logic_vector(63 downto 0);
+        trig0       : in  std_logic_vector(7 downto 0)
+     );
+end component;
+
+component ila_t8_d128_s8192
+    port (
+        control     : in  std_logic_vector(35 downto 0);
+        clk         : in  std_logic;
+        data        : in  std_logic_vector(127 downto 0);
         trig0       : in  std_logic_vector(7 downto 0)
      );
 end component;
