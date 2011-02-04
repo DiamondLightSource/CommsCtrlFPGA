@@ -26,6 +26,7 @@ entity fofb_cc_top_wrapper is
         fai_cfg_we_o            : out std_logic;
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
+        fai_psel_val_i          : in  std_logic_vector(31 downto 0);
         -- serial I/Os for eight RocketIOs on the Libera
         fai_rio_rdp_i           : in  std_logic_vector(3 downto 0);
         fai_rio_rdn_i           : in  std_logic_vector(3 downto 0);
@@ -53,6 +54,7 @@ i_fofb_cc_top : entity work.fofb_cc_top
         fai_cfg_we_o            => fai_cfg_we_o ,
         fai_cfg_clk_o           => fai_cfg_clk_o,
         fai_cfg_val_i           => fai_cfg_val_i,
+        fai_psel_val_i          => fai_psel_val_i,
         fai_rio_rdp_i           => fai_rio_rdp_i,
         fai_rio_rdn_i           => fai_rio_rdn_i,
         fai_rio_tdp_o           => fai_rio_tdp_o,

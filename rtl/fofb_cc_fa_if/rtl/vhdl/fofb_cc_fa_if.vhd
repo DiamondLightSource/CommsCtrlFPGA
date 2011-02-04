@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 --  Project      : Diamond FOFB Communication Controller
---  Filename     : fofb_cc_fa_intf.vhd
+--  Filename     : fofb_cc_fa_if.vhd
 --  Purpose      : FA rate data interface to Libera core
 --  Author       : Isa S. Uzun
 ----------------------------------------------------------------------------
@@ -21,80 +21,77 @@ use ieee.numeric_std.all;
 -----------------------------------------------
 --  Entity declaration
 -----------------------------------------------
-entity fofb_cc_fa_intf is
-    port ( 
-        mgt_clk             : in  std_logic;
-        adc_clk             : in  std_logic;
-        adc_rst             : in  std_logic;
-        mgt_rst             : in  std_logic;
-        fa_block_start      : in  std_logic;                     -- Block start, 32 ccycles long
-        fa_data_valid       : in  std_logic;                     -- fa_data_valid
-        fa_data             : in  std_logic_vector(15 downto 0); -- Fast acquisition data block
-        time_frame_start    : out std_logic;                     -- frame start pulse
-        bpm_cc_x_pos        : out std_logic_vector(31 downto 0); -- x-pos to be sent
-        bpm_cc_y_pos        : out std_logic_vector(31 downto 0)  -- y-pos to be sent
+entity fofb_cc_fa_if is
+    port (
+        mgtclk_i                : in  std_logic;
+        adcclk_i                : in  std_logic;
+        adcreset_i              : in  std_logic;
+        mgtreset_i              : in  std_logic;
+        fa_block_start_i        : in  std_logic;                     -- fa block start, 32 cc
+        fa_data_valid_i         : in  std_logic;                     -- fa data valid
+        fa_dat_i                : in  std_logic_vector(15 downto 0); -- fa data block
+        fa_x_psel_i             : in  std_logic_vector(3 downto 0);  --
+        fa_y_psel_i             : in  std_logic_vector(3 downto 0);  --
+        timeframe_start_o       : out std_logic;                     -- frame start pulse
+        bpm_cc_xpos_o           : out std_logic_vector(31 downto 0); -- x-pos payload
+        bpm_cc_ypos_o           : out std_logic_vector(31 downto 0)  -- y-pos payload
     );
-end fofb_cc_fa_intf;
+end fofb_cc_fa_if;
 
 -----------------------------------------------
 --  Architecture declaration
 -----------------------------------------------
-architecture rtl of fofb_cc_fa_intf is
+architecture rtl of fofb_cc_fa_if is
 
 -----------------------------------------------
 -- Signal declaration
 -----------------------------------------------
-signal fa_wea               : std_logic;
-signal fa_data_reg          : std_logic_vector(15 downto 0);
-signal addra                : unsigned(4 downto 0);
-signal addrb                : unsigned(3 downto 0);
-signal addrb_prev           : unsigned(3 downto 0);
-signal doutb                : std_logic_vector(31 downto 0);
-signal block_start          : std_logic;
-signal block_start_prev     : std_logic;
-signal block_start_fall     : std_logic;
-signal bpm_cc_xpos_i        : std_logic_vector(31 downto 0);
-signal bpm_cc_ypos_i        : std_logic_vector(31 downto 0);
-signal time_frame_start_i   : std_logic;
+signal fa_wea                   : std_logic;
+signal fa_dat_prev              : std_logic_vector(15 downto 0);
+signal addra                    : unsigned(4 downto 0);
+signal addrb                    : unsigned(3 downto 0);
+signal addrb_prev               : unsigned(3 downto 0);
+signal doutb                    : std_logic_vector(31 downto 0);
+signal block_start              : std_logic;
+signal block_start_prev         : std_logic;
+signal block_start_fall         : std_logic;
+signal bpm_cc_xpos              : std_logic_vector(31 downto 0);
+signal bpm_cc_ypos              : std_logic_vector(31 downto 0);
+signal timeframe_start          : std_logic;
+signal addrb_cnt_en             : std_logic;
 
 begin
 
 -- Register input data
-process(adc_clk)
+process(adcclk_i)
 begin
-    if (adc_clk'event and adc_clk = '1') then
-        fa_wea <= fa_data_valid and fa_block_start; -- Write enable to FIFO
-        fa_data_reg <= fa_data;                     -- Write data to FIFO
+    if (adcclk_i'event and adcclk_i = '1') then
+        fa_wea <= fa_data_valid_i and fa_block_start_i; -- Write enable to FIFO
+        fa_dat_prev <= fa_dat_i;                     -- Write data to FIFO
     end if;
 end process;
 
 -- Register outputs
-process(mgt_clk)
+process(mgtclk_i)
 begin
-    if (mgt_clk 'event and mgt_clk = '1') then
-        if (mgt_rst = '1') then
-            bpm_cc_x_pos <=  (others => '0');
-            bpm_cc_y_pos <=  (others => '0');
-            time_frame_start <= '0';
-        else
-            bpm_cc_x_pos <=  bpm_cc_xpos_i;
-            bpm_cc_y_pos <=  bpm_cc_ypos_i;
-            time_frame_start <= time_frame_start_i;
-        end if;
+    if (mgtclk_i 'event and mgtclk_i = '1') then
+        bpm_cc_xpos_o <=  bpm_cc_xpos;
+        bpm_cc_ypos_o <=  bpm_cc_ypos;
+        timeframe_start_o <= timeframe_start;
     end if;
 end process;
 
--- 2DFF cdc for fa_block_start
+-- 2DFF cdc for fa_block_start_i
 i_block_start_syncff : entity work.fofb_cc_syncff
 port map (
-    clk_i      => mgt_clk,
-    dat_i      => fa_block_start,
+    clk_i      => mgtclk_i,
+    dat_i      => fa_block_start_i,
     dat_o      => block_start
 );
 
-process(mgt_clk)
+process(mgtclk_i)
 begin
-    if (mgt_clk 'event and mgt_clk = '1') then
+    if (mgtclk_i 'event and mgtclk_i = '1') then
         block_start_prev <= block_start;
         block_start_fall <= not block_start and block_start_prev;
     end if;
@@ -104,27 +101,27 @@ end process;
 -- FIFO is used to handle CDC between ADC clock rate
 -- and CC clock rate.
 ---------------------------------------------------
-i_fofb_cc_fa_intf_bram: entity work.fofb_cc_fa_intf_bram
+i_fofb_cc_fa_if_bram: entity work.fofb_cc_fa_if_bram
 port map(
     addra       => std_logic_vector(addra),
     addrb       => std_logic_vector(addrb),
     ena         => '1',
     enb         => '1',
-    clka        => adc_clk,
-    clkb        => mgt_clk,
-    dina        => fa_data_reg, 
+    clka        => adcclk_i,
+    clkb        => mgtclk_i,
+    dina        => fa_dat_prev,
     doutb       => doutb,
     wea         => fa_wea
 );
 
 -- addr generator
-process(adc_clk, adc_rst)
+process(adcclk_i)
 begin
-    if (adc_clk'event and adc_clk='1') then
-        if (adc_rst = '1') then
+    if (adcclk_i'event and adcclk_i='1') then
+        if (adcreset_i = '1') then
             addra <= (others => '0');
         else
-            -- if incoming data, increment addr 
+            -- if incoming data, increment addr
             if (fa_wea = '1') then
                 addra <= addra + 1;
             end if;
@@ -133,44 +130,45 @@ begin
 end process;
 
 -- fa data read in done in mgt clock domain
-process(mgt_clk)
+process(mgtclk_i)
 begin
-    if (mgt_clk'event and mgt_clk='1') then
-        if (mgt_rst = '1') then
+    if (mgtclk_i'event and mgtclk_i='1') then
+        if (mgtreset_i = '1') then
+            timeframe_start <= '0';
+            bpm_cc_xpos <= (others => '0');
+            bpm_cc_ypos <= (others => '0');
             addrb <= "0000";
-            time_frame_start_i <= '0';
-            bpm_cc_xpos_i <= (others => '0');
-            bpm_cc_ypos_i <= (others => '0');
             addrb_prev <= "0000";
+            addrb_cnt_en <= '0';
         else
             -- register addr to read
             addrb_prev <= addrb;
 
-            -- if data write is finished, read address 14 and 15
-            -- for x and y values
             if (block_start_fall = '1') then
-                addrb <= "1110";
-            else
-                if (addrb /= "0000") then
-                    addrb <= addrb + 1;
-                end if;
+                addrb_cnt_en <= '1';
+            elsif (addrb = "1111") then
+                addrb_cnt_en <= '0';
+            end if;
+
+            if (addrb_cnt_en = '1') then
+                addrb <= addrb + 1;
             end if;
 
             -- read x position
-            if (addrb_prev = "1110") then
-                bpm_cc_xpos_i <= doutb;
+            if (addrb_prev = unsigned(fa_x_psel_i)) then
+                bpm_cc_xpos <= doutb;
             end if; 
 
             -- read y position
-            if (addrb_prev = "1111") then
-                bpm_cc_ypos_i <= doutb;
+            if (addrb_prev = unsigned(fa_y_psel_i)) then
+                bpm_cc_ypos <= doutb;
             end if; 
 
             -- own bpm position data is ready and can generate internal time frame pulse
             if (addrb = "1111") then
-                time_frame_start_i <= '1';
+                timeframe_start <= '1';
             else
-                time_frame_start_i <= '0';
+                timeframe_start <= '0';
             end if;
         end if;
     end if;

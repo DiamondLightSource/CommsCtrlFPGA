@@ -63,6 +63,7 @@ entity fofb_cc_top is
         fai_cfg_we_o            : out std_logic;
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
+        fai_psel_val_i          : in  std_logic_vector(31 downto 0);
         -- serial I/Os for eight RocketIOs on the Libera 
         fai_rio_rdp_i           : in  std_logic_vector(LANE_COUNT-1 downto 0);
         fai_rio_rdn_i           : in  std_logic_vector(LANE_COUNT-1 downto 0);
@@ -656,7 +657,7 @@ port map(
     txfifo_reset_o          => tx_fifo_rst(N),
     rxfifo_reset_o          => rx_fifo_rst(N)
 );
-end generate;   
+end generate;
 
 ----------------------------------------------
 -- asymetrical rx fifo generation for each mgt channel 
@@ -804,18 +805,20 @@ port map(
 ----------------------------------------------
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------
-fofb_cc_fa_intf : entity work.fofb_cc_fa_intf
+fofb_cc_fa_if : entity work.fofb_cc_fa_if
 port map( 
-    mgt_clk                 => userclk,
-    adc_clk                 => adcclk_i,
-    adc_rst                 => adcreset,
-    mgt_rst                 => sysreset, 
-    fa_block_start          => fai_fa_block_start_i,
-    fa_data_valid           => fai_fa_data_valid_i,
-    fa_data                 => fai_fa_d_i,
-    time_frame_start        => bpm_timeframe_start,
-    bpm_cc_x_pos            => bpm_own_xpos,
-    bpm_cc_y_pos            => bpm_own_ypos
+    mgtclk_i                => userclk,
+    adcclk_i                => adcclk_i,
+    adcreset_i              => adcreset,
+    mgtreset_i              => sysreset,
+    fa_block_start_i        => fai_fa_block_start_i,
+    fa_data_valid_i         => fai_fa_data_valid_i,
+    fa_dat_i                => fai_fa_d_i,
+    fa_x_psel_i             => fai_psel_val_i(3 downto 0),
+    fa_y_psel_i             => fai_psel_val_i(7 downto 4),
+    timeframe_start_o       => bpm_timeframe_start,
+    bpm_cc_xpos_o           => bpm_own_xpos,
+    bpm_cc_ypos_o           => bpm_own_ypos
 );
 
 ----------------------------------------------

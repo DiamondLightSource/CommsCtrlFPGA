@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 --  Project      : Diamond FOFB Communication Controller
---  Filename     : fofb_cc_fa_intf_bram.vhd
+--  Filename     : fofb_cc_fa_if_bram.vhd
 --  Purpose      : Fast data acquision interface dual-port BRAM
 --  Author       : Isa S. Uzun
 ----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 ----------------------------------------------------------------------------
 --  Limitations & Assumptions:
 ----------------------------------------------------------------------------
---  Known Errors: This design is still under test. Please send any bug    
+--  Known Errors: This design is still under test. Please send any bug
 --  reports to isa.uzun@diamond.ac.uk
 ----------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ use unisim.all;
 -----------------------------------------------
 --  Entity declaration
 -----------------------------------------------
-entity fofb_cc_fa_intf_bram is
+entity fofb_cc_fa_if_bram is
     port (
         addra   : IN std_logic_VECTOR(4 downto 0);
         addrb   : IN std_logic_VECTOR(3 downto 0);
@@ -44,7 +44,7 @@ end entity;
 -----------------------------------------------
 --  Architecture declaration
 -----------------------------------------------
-architecture rtl of fofb_cc_fa_intf_bram is
+architecture rtl of fofb_cc_fa_if_bram is
 
 -----------------------------------------------
 -- Component declaration
