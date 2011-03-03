@@ -97,8 +97,10 @@ fofb_cc_top : entity work.fofb_cc_top
         fofb_rxlink_up_o        => open,
         fofb_rxlink_partner_o   => open,
         fofb_timestamp_val_o    => fofb_timestamp_val_o,
-        pbpm_xpos_val_i         => (others => '0'),
-        pbpm_ypos_val_i         => (others => '0')
+        pbpm_xpos_0_i           => (others => '0'),
+        pbpm_ypos_0_i           => (others => '0'),
+        pbpm_xpos_1_i           => (others => '0'),
+        pbpm_ypos_1_i           => (others => '0')
     );
 end structure;
 

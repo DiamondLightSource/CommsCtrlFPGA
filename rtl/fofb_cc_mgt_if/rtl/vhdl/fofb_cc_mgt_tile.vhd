@@ -262,7 +262,7 @@ MGT_INST : GT_CUSTOM
         TX_CRC_USE                  => TRUE,
         TX_DATA_WIDTH               => 2,
         TX_DIFF_CTRL                => 800,
-        TX_PREEMPHASIS              => 0,
+        TX_PREEMPHASIS              => 3,
         REF_CLK_V_SEL               => 1
 )
 port map (

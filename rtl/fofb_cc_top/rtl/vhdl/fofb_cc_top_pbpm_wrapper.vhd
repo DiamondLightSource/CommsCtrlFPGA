@@ -35,15 +35,17 @@ entity fofb_cc_top_wrapper is
         fofb_rxlink_up_o        : out std_logic;
         fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0);
         -- PBPM position data interface
-        pbpm_xpos_val_i         : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_val_i         : in  std_logic_vector(31 downto 0)
+        pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
+        pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
+        pbpm_xpos_1_i           : in  std_logic_vector(31 downto 0);
+        pbpm_ypos_1_i           : in  std_logic_vector(31 downto 0)
 );
 end fofb_cc_top_wrapper;
 
 architecture structure of fofb_cc_top_wrapper is
 begin
 
-i_fofb_cc_top : entity work.fofb_cc_top
+fofb_cc_top : entity work.fofb_cc_top
     generic map (
         ID                      => ID,
         DEVICE                  => PBPM,
@@ -86,8 +88,10 @@ i_fofb_cc_top : entity work.fofb_cc_top
         fofb_rxlink_up_o        => fofb_rxlink_up_o,
         fofb_rxlink_partner_o   => fofb_rxlink_partner_o,
         fofb_timestamp_val_o    => open,
-        pbpm_xpos_val_i         => pbpm_xpos_val_i,
-        pbpm_ypos_val_i         => pbpm_ypos_val_i
+        pbpm_xpos_0_i           => pbpm_xpos_0_i,
+        pbpm_ypos_0_i           => pbpm_ypos_0_i,
+        pbpm_xpos_1_i           => pbpm_xpos_1_i,
+        pbpm_ypos_1_i           => pbpm_ypos_1_i
     );
 end structure;
 

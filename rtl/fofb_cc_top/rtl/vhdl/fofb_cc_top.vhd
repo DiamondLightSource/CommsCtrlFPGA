@@ -90,8 +90,10 @@ entity fofb_cc_top is
         fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0);
         fofb_timestamp_val_o    : out std_logic_vector(31 downto 0);
         -- PBPM position data interface
-        pbpm_xpos_val_i         : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_val_i         : in  std_logic_vector(31 downto 0)
+        pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
+        pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
+        pbpm_xpos_1_i           : in  std_logic_vector(31 downto 0);
+        pbpm_ypos_1_i           : in  std_logic_vector(31 downto 0)
 );
 end fofb_cc_top;
 
@@ -738,8 +740,10 @@ port map (
     fofb_event_i            => fofb_event_i,
     fofb_dma_ok_i           => fofb_dma_ok_i,
     fofb_node_mask_o        => fofb_node_mask_o,
-    pbpm_xpos_val_i         => pbpm_xpos_val_i,
-    pbpm_ypos_val_i         => pbpm_ypos_val_i
+    pbpm_xpos_0_i           => pbpm_xpos_0_i,
+    pbpm_ypos_0_i           => pbpm_ypos_0_i,
+    pbpm_xpos_1_i           => pbpm_xpos_1_i,
+    pbpm_ypos_1_i           => pbpm_ypos_1_i
 );
 
 -------------------------------------------------
