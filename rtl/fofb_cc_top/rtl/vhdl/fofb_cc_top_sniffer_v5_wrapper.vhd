@@ -68,6 +68,7 @@ fofb_cc_top : entity work.fofb_cc_top
         fai_cfg_we_o            => fai_cfg_we_o,
         fai_cfg_clk_o           => fai_cfg_clk_o,
         fai_cfg_val_i           => fai_cfg_val_i,
+        fai_psel_val_i          => X"000000FE",
         fai_rio_rdp_i           => fai_rio_rdp_i,
         fai_rio_rdn_i           => fai_rio_rdn_i,
         fai_rio_tdp_o           => fai_rio_tdp_o,
@@ -90,10 +91,10 @@ fofb_cc_top : entity work.fofb_cc_top
         fofb_rxlink_up_o        => fofb_rxlink_up_o,
         fofb_rxlink_partner_o   => fofb_rxlink_partner_o,
         fofb_timestamp_val_o    => open,
-        pbpm_xpos_0_i           => pbpm_xpos_0_i,
-        pbpm_ypos_0_i           => pbpm_ypos_0_i,
-        pbpm_xpos_1_i           => pbpm_xpos_1_i,
-        pbpm_ypos_1_i           => pbpm_ypos_1_i
+        pbpm_xpos_0_i           => (others => '0'),
+        pbpm_ypos_0_i           => (others => '0'),
+        pbpm_xpos_1_i           => (others => '0'),
+        pbpm_ypos_1_i           => (others => '0')
     );
 end structure;
 
