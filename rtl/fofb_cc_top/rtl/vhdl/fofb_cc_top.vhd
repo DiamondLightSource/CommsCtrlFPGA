@@ -480,7 +480,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => sysreset,
+    mgtreset_i              => mgtreset,
     userclk_i               => userclk,
 
     rxn_i                   => fai_rio_rdn_i,
@@ -535,7 +535,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => sysreset,
+    mgtreset_i              => mgtreset,
     gtreset_i               => gtreset,
     txoutclk_o              => txoutclk,
     plllkdet_o              => plllkdet,
@@ -595,7 +595,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => sysreset,
+    mgtreset_i              => mgtreset,
     gtreset_i               => gtreset,
     txoutclk_o              => txoutclk,
     plllkdet_o              => plllkdet,
