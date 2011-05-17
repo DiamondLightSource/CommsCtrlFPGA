@@ -39,7 +39,10 @@ entity fofb_cc_top_wrapper is
         fofb_dma_ok_i           : in  std_logic;
         fofb_node_mask_o        : out std_logic_vector(NodeNum-1 downto 0);
         fofb_rxlink_up_o        : out std_logic;
-        fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0)
+        fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0);
+        harderror_cnt_o         : out std_logic_vector(15 downto 0);
+        softerror_cnt_o         : out std_logic_vector(15 downto 0);
+        frameerror_cnt_o        : out std_logic_vector(15 downto 0)
 );
 end fofb_cc_top_wrapper;
 
@@ -91,6 +94,9 @@ fofb_cc_top : entity work.fofb_cc_top
         fofb_rxlink_up_o        => fofb_rxlink_up_o,
         fofb_rxlink_partner_o   => fofb_rxlink_partner_o,
         fofb_timestamp_val_o    => open,
+        harderror_cnt_o         => harderror_cnt_o,
+        softerror_cnt_o         => softerror_cnt_o,
+        frameerror_cnt_o        => frameerror_cnt_o,
         pbpm_xpos_0_i           => (others => '0'),
         pbpm_ypos_0_i           => (others => '0'),
         pbpm_xpos_1_i           => (others => '0'),
