@@ -252,6 +252,10 @@ begin
             own_packet_to_inject <= pload_header & fofb_watchdog_i & fofb_event_i & timeframe_val_i;
             own_xpos_to_store   <= fofb_watchdog_i;
             own_ypos_to_store   <= fofb_event_i;
+        when PMCEVR =>
+            own_packet_to_inject <= pload_header & fofb_watchdog_i & fofb_event_i & timeframe_val_i;
+            own_xpos_to_store   <= fofb_watchdog_i;
+            own_ypos_to_store   <= fofb_event_i;
         when SNIFFER_V5 =>
             own_packet_to_inject <= pload_header & X"00000000" & X"00000000" & timeframe_val_i;
             own_xpos_to_store   <= timestamp_val_i;

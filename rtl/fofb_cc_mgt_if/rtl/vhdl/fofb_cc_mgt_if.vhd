@@ -99,10 +99,12 @@ signal txreset              : std_logic_vector(LaneCount-1 downto 0);
 signal rxcheckingcrc        : std_logic_vector(LaneCount-1 downto 0);
 signal rxcrcerr             : std_logic_vector(LaneCount-1 downto 0);
 signal refclksel            : std_logic;
+signal txpolarity           : std_logic;
 
 begin
 
 refclksel <= '0'; -- for BREFCLK
+txpolarity <= '1' when (DEVICE = PMCEVR) else '0';
 
 MGT_IF_GEN: for N in 0 to (LaneCount-1) generate
 
@@ -177,6 +179,7 @@ MGT_TILES : entity work.fofb_cc_mgt_tile
         txcharisk_i             => txcharisk(N),
         txdata_i                => txdata(N),
         txreset_i               => txreset(N),
+        txpolarity_i            => txpolarity,
         rxbufstatus_o           => rxbuferr(N),
         rxcharisk_o             => rxcharisk(N),
         rxcheckingcrc_o         => rxcheckingcrc(N),

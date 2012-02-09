@@ -42,7 +42,7 @@ type std_logic_2d_32    is array (natural range <>) of std_logic_vector(31 downt
 type std_logic_2d_128   is array (natural range <>) of std_logic_vector(127 downto 0);
 type sys_state_type is (disabled, idle, enabled);
 
-type device_t is (BPM, PMC, SNIFFER_V5, SNIFFER_V6, PBPM);
+type device_t is (BPM, PMC, PMCEVR, SNIFFER_V5, SNIFFER_V6, PBPM);
 
 --------------------------- BPM Firmware Version -----------------------------
 constant BPMFirmwareVersion : std_logic_vector(31 downto 0) := FPGAFirmwareVersion;

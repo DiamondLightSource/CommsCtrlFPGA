@@ -36,6 +36,7 @@ entity fofb_cc_mgt_tile is
         txcharisk_i             : in  std_logic_vector(1 downto 0);
         txdata_i                : in  std_logic_vector(15 downto 0);
         txreset_i               : in  std_logic;
+        txpolarity_i            : in  std_logic;
         rxbufstatus_o           : out std_logic;
         rxcharisk_o             : out std_logic_vector(1 downto 0);
         rxcheckingcrc_o         : out std_logic;
@@ -261,8 +262,8 @@ MGT_INST : GT_CUSTOM
         RX_CRC_USE                  => TRUE,
         TX_CRC_USE                  => TRUE,
         TX_DATA_WIDTH               => 2,
-        TX_DIFF_CTRL                => 800,
-        TX_PREEMPHASIS              => 3,
+        TX_DIFF_CTRL                => 400,
+        TX_PREEMPHASIS              => 0,
         REF_CLK_V_SEL               => 1
 )
 port map (
@@ -292,7 +293,7 @@ port map (
         CONFIGIN                    => '0',
         TXFORCECRCERR               => '0',
         TXINHIBIT                   => '0',
-        TXPOLARITY                  => '0',
+        TXPOLARITY                  => txpolarity_i,
         TXCHARISK(3 downto 2)       => "00",
         TXCHARISK(1 downto 0)       => txcharisk_i,
         TXDATA(31 downto 16)        => GND4(15 downto 0),
