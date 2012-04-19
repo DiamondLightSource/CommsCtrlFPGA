@@ -34,6 +34,7 @@ function transpose_data(inp : std_logic_vector) return std_logic_vector;
 type std_logic_2d       is array (natural range <>) of std_logic_vector(31 downto 0);
 type std_logic_2d_2     is array (natural range <>) of std_logic_vector(1 downto 0);
 type std_logic_2d_3     is array (natural range <>) of std_logic_vector(2 downto 0);
+type std_logic_2d_8     is array (natural range <>) of std_logic_vector(7 downto 0);
 type std_logic_2d_9     is array (natural range <>) of std_logic_vector(8 downto 0);
 type std_logic_2d_10    is array (natural range <>) of std_logic_vector(9 downto 0);
 type std_logic_2d_16    is array (natural range <>) of std_logic_vector(15 downto 0);
@@ -127,6 +128,9 @@ constant cc_cmd_powerdown_rdback    : unsigned(7 downto 0)  := X"1F";
 constant cc_cmd_loopback_rdback     : unsigned(7 downto 0)  := X"20";
 constant cc_cmd_faival_rdback       : unsigned(7 downto 0)  := X"21";
 constant cc_cmd_feature_rdback      : unsigned(7 downto 0)  := X"22";
+constant cc_cmd_rx_maxcount         : unsigned(7 downto 0)  := X"23";
+constant cc_cmd_tx_maxcount         : unsigned(7 downto 0)  := X"24";
+constant cc_cmd_rx_resetcount       : unsigned(7 downto 0)  := X"25";
 
 --
 -- Global component declarations

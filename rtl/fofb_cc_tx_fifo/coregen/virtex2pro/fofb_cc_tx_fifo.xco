@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version K.39
-# Date: Fri Nov 26 18:02:31 2010
+# Date: Thu Apr 19 07:48:27 2012
 #
 ##############################################################
 #
@@ -39,7 +39,7 @@ CSET almost_empty_flag=false
 CSET almost_full_flag=false
 CSET component_name=fofb_cc_tx_fifo
 CSET data_count=false
-CSET data_count_width=5
+CSET data_count_width=7
 CSET disable_timing_violations=false
 CSET dout_reset_value=0
 CSET empty_threshold_assert_value=2
@@ -48,12 +48,12 @@ CSET enable_ecc=false
 CSET enable_int_clk=false
 CSET fifo_implementation=Independent_Clocks_Block_RAM
 CSET full_flags_reset_value=1
-CSET full_threshold_assert_value=29
-CSET full_threshold_negate_value=28
+CSET full_threshold_assert_value=125
+CSET full_threshold_negate_value=124
 CSET input_data_width=128
-CSET input_depth=32
+CSET input_depth=128
 CSET output_data_width=16
-CSET output_depth=256
+CSET output_depth=1024
 CSET overflow_flag=false
 CSET overflow_sense=Active_High
 CSET performance_options=Standard_FIFO
@@ -61,7 +61,7 @@ CSET programmable_empty_type=No_Programmable_Empty_Threshold
 CSET programmable_full_type=No_Programmable_Full_Threshold
 CSET read_clock_frequency=1
 CSET read_data_count=false
-CSET read_data_count_width=8
+CSET read_data_count_width=10
 CSET reset_pin=true
 CSET reset_type=Asynchronous_Reset
 CSET underflow_flag=false
@@ -74,9 +74,9 @@ CSET valid_sense=Active_High
 CSET write_acknowledge_flag=false
 CSET write_acknowledge_sense=Active_High
 CSET write_clock_frequency=1
-CSET write_data_count=false
-CSET write_data_count_width=5
+CSET write_data_count=true
+CSET write_data_count_width=7
 # END Parameters
 GENERATE
-# CRC: a70606ac
+# CRC: edd2f1e6
 

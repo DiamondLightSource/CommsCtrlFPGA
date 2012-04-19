@@ -19,6 +19,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library work;
 use work.fofb_cc_pkg.all;-- DLS FOFB package
@@ -64,6 +65,8 @@ entity fofb_cc_top is
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
         fai_psel_val_i          : in  std_logic_vector(31 downto 0);
+        fai_rxfifo_clear        : in  std_logic;
+        fai_txfifo_clear        : in  std_logic;
         -- serial I/Os for eight RocketIOs on the Libera 
         fai_rio_rdp_i           : in  std_logic_vector(LANE_COUNT-1 downto 0);
         fai_rio_rdn_i           : in  std_logic_vector(LANE_COUNT-1 downto 0);
@@ -101,37 +104,6 @@ entity fofb_cc_top is
 end fofb_cc_top;
 
 architecture structural of fofb_cc_top is
-
---
--- Coregen RX and TX FIFO component declarations
---
-component fofb_cc_rx_fifo
-    port (
-        rd_en                   : in  std_logic;
-        wr_en                   : in  std_logic;
-        full                    : out std_logic;
-        empty                   : out std_logic;
-        wr_clk                  : in  std_logic;
-        rst                     : in  std_logic;
-        rd_clk                  : in  std_logic;
-        dout                    : out std_logic_vector(127 downto 0);
-        din                     : in  std_logic_vector(15 downto 0)
-    );
-end component;
-
-component fofb_cc_tx_fifo
-    port (
-        rd_en                   : in  std_logic;
-        wr_en                   : in  std_logic;
-        full                    : out std_logic;
-        empty                   : out std_logic;
-        wr_clk                  : in  std_logic;
-        rst                     : in  std_logic;
-        rd_clk                  : in  std_logic;
-        dout                    : out std_logic_vector(15 downto 0);
-        din                     : in  std_logic_vector(127 downto 0)
-    );
-end component;
 
 --
 -- Communication Controller has to be compiled with ISE 7.1i and
@@ -362,6 +334,8 @@ signal timeframe_start      : std_logic := '0';
 signal bpm_own_xpos         : std_logic_vector(31 downto 0);
 signal bpm_own_ypos         : std_logic_vector(31 downto 0);
 -- status info
+signal rx_max_data_count    : std_logic_2d_8(3 downto 0);
+signal tx_max_data_count    : std_logic_2d_8(3 downto 0);
 signal tx_fsm_busy          : std_logic_vector(LANE_COUNT-1 downto 0);
 signal rx_fsm_busy          : std_logic_vector(LANE_COUNT-1 downto 0);
 signal harderror_cnt        : std_logic_2d_16(3 downto 0);
@@ -394,7 +368,18 @@ signal fofb_cc_enable       : std_logic;
 
 signal tied_to_ground       : std_logic;
 
+signal resetcount           : unsigned(31 downto 0);
+
 begin
+
+process(userclk)
+begin
+    if rising_edge(userclk) then
+        if (fai_rxfifo_clear = '1') then
+            resetcount <= resetcount + 1;
+        end if;
+    end if;
+end process;
 
 -- Static
 tied_to_ground <= '0';
@@ -672,7 +657,7 @@ end generate;
 -- 16-bit input/128-bit output
 ----------------------------------------------
 RX_FIFO_GEN: for N in 0 to (LANE_COUNT - 1) generate
-fofb_cc_rx_fifo_i : fofb_cc_rx_fifo
+fofb_cc_rx_buffer_inst : entity work.fofb_cc_rx_buffer
 port map (
     din                     => rxf_din(N),
     rd_clk                  => userclk,
@@ -682,7 +667,10 @@ port map (
     wr_en                   => rxf_wr_en(N),
     dout                    => rxf_dout(N),
     empty                   => rxf_empty(N),
-    full                    => rxf_full(N)
+    full                    => rxf_full(N),
+    reset                   => fai_rxfifo_clear,
+    timeframe               => not timeframe_end,
+    max_data_count          => rx_max_data_count(N)
 );
 end generate;
 
@@ -757,17 +745,20 @@ port map (
 -- 128-bit input/16-bit output
 -------------------------------------------------
 TX_FIFO_GEN: for N in 0 to (LANE_COUNT - 1) generate
-fofb_cc_tx_fifo_i : fofb_cc_tx_fifo
+fofb_cc_tx_buffer_inst : entity work.fofb_cc_tx_buffer
 port map (
     din                     => txf_din,
     wr_clk                  => userclk,
     rd_clk                  => userclk,
-    rd_en                   => txf_rd_en(N),  
+    rd_en                   => txf_rd_en(N),
     rst                     => tx_fifo_rst(N),
     wr_en                   => txf_wr_en(N),
     dout                    => txf_dout(N),
     empty                   => txf_empty(N),
-    full                    => txf_full(N)
+    full                    => txf_full(N),
+    reset                   => fai_txfifo_clear,
+    timeframe               => not timeframe_end,
+    max_data_count          => tx_max_data_count(N)
 );
 end generate;
 
@@ -802,6 +793,11 @@ port map(
     txpck_cnt_i             => txpck_count,
     bpmcount_i              => bpm_count,
     fodprocess_time_i       => fodprocess_time,
+    rx_max_data_count_i     => rx_max_data_count,
+    tx_max_data_count_i     => tx_max_data_count,
+
+    rx_reset_count          => std_logic_vector(resetcount),
+
     coeff_x_addr_i          => coeff_x_addr_i,
     coeff_x_dat_o           => coeff_x_dat_o, 
     coeff_y_addr_i          => coeff_y_addr_i,

@@ -50,7 +50,8 @@ ENTITY fofb_cc_rx_fifo IS
 	wr_en: IN std_logic;
 	dout: OUT std_logic_VECTOR(127 downto 0);
 	empty: OUT std_logic;
-	full: OUT std_logic);
+	full: OUT std_logic;
+	rd_data_count: OUT std_logic_VECTOR(5 downto 0));
 END fofb_cc_rx_fifo;
 
 ARCHITECTURE fofb_cc_rx_fifo_a OF fofb_cc_rx_fifo IS
@@ -65,7 +66,8 @@ component wrapped_fofb_cc_rx_fifo
 	wr_en: IN std_logic;
 	dout: OUT std_logic_VECTOR(127 downto 0);
 	empty: OUT std_logic;
-	full: OUT std_logic);
+	full: OUT std_logic;
+	rd_data_count: OUT std_logic_VECTOR(5 downto 0));
 end component;
 
 -- Configuration specification 
@@ -75,7 +77,7 @@ end component;
 			c_rd_freq => 1,
 			c_wr_response_latency => 1,
 			c_has_srst => 0,
-			c_has_rd_data_count => 0,
+			c_has_rd_data_count => 1,
 			c_din_width => 16,
 			c_has_wr_data_count => 0,
 			c_full_flags_rst_val => 1,
@@ -91,38 +93,38 @@ end component;
 			c_preload_latency => 1,
 			c_dout_width => 128,
 			c_msgon_val => 1,
-			c_rd_depth => 32,
+			c_rd_depth => 64,
 			c_default_value => "BlankString",
 			c_mif_file_name => "BlankString",
 			c_has_underflow => 0,
 			c_has_rd_rst => 0,
 			c_has_almost_full => 0,
 			c_has_rst => 1,
-			c_data_count_width => 8,
+			c_data_count_width => 9,
 			c_has_wr_ack => 0,
 			c_use_ecc => 0,
 			c_wr_ack_low => 0,
 			c_common_clock => 0,
-			c_rd_pntr_width => 5,
+			c_rd_pntr_width => 6,
 			c_use_fwft_data_count => 0,
 			c_has_almost_empty => 0,
-			c_rd_data_count_width => 5,
+			c_rd_data_count_width => 6,
 			c_enable_rlocs => 0,
-			c_wr_pntr_width => 8,
+			c_wr_pntr_width => 9,
 			c_overflow_low => 0,
 			c_prog_empty_type => 0,
 			c_optimization_mode => 0,
-			c_wr_data_count_width => 8,
+			c_wr_data_count_width => 9,
 			c_preload_regs => 0,
 			c_dout_rst_val => "0",
 			c_has_data_count => 0,
-			c_prog_full_thresh_negate_val => 252,
-			c_wr_depth => 256,
+			c_prog_full_thresh_negate_val => 508,
+			c_wr_depth => 512,
 			c_prog_empty_thresh_negate_val => 3,
 			c_prog_empty_thresh_assert_val => 2,
 			c_has_valid => 0,
 			c_init_wr_pntr_val => 0,
-			c_prog_full_thresh_assert_val => 253,
+			c_prog_full_thresh_assert_val => 509,
 			c_use_fifo16_flags => 0,
 			c_has_backup => 0,
 			c_valid_low => 0,
@@ -143,7 +145,8 @@ U0 : wrapped_fofb_cc_rx_fifo
 			wr_en => wr_en,
 			dout => dout,
 			empty => empty,
-			full => full);
+			full => full,
+			rd_data_count => rd_data_count);
 -- synthesis translate_on
 
 END fofb_cc_rx_fifo_a;

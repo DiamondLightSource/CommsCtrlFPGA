@@ -51,6 +51,9 @@ entity fofb_cc_cfg_if is
         txpck_cnt_i             : in std_logic_2d_16(3 downto 0);
         bpmcount_i              : in std_logic_vector(7 downto 0);
         fodprocess_time_i       : in std_logic_vector(15 downto 0);
+        rx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
+        tx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
+        rx_reset_count          : in std_logic_vector(31 downto 0);
         -- feedback algorithm interface
         coeff_x_addr_i          : in  std_logic_vector(7 downto 0);
         coeff_x_dat_o           : out std_logic_vector(31 downto 0);
@@ -73,13 +76,13 @@ architecture rtl of fofb_cc_cfg_if is
 --  Signal declarations
 -----------------------------------------------
 -- Configuration read address space
-constant    cfg_read_start_addr     : unsigned(11 downto 0) := X"000"; 
+constant    cfg_read_start_addr     : unsigned(11 downto 0) := X"000";
 constant    cfg_read_end_addr       : unsigned(11 downto 0) := X"2FF";
 -- Status write address space
 constant    sta_write_start_addr    : unsigned(11 downto 0) := X"300";
 constant    sta_write_end_addr      : unsigned(11 downto 0) := X"3FF";
 -- State machine
-type state_type is (st1_idle, st2_read, st3_write); 
+type state_type is (st1_idle, st2_read, st3_write);
 signal state : state_type; 
 
 signal cfg_ack_prev                 : std_logic;
@@ -171,12 +174,12 @@ process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i='1') then
         if (timeframe_end_i = '1') then
-            bpmid_o         <= bpmid;
-            timeframe_len_o <= timeframe_len;
-            powerdown_o     <= powerdown;
-            loopback_o      <= loopback;
-            golden_x_orb_o  <= golden_x_orb;
-            golden_y_orb_o  <= golden_y_orb;
+          bpmid_o         <= bpmid;
+          timeframe_len_o <= timeframe_len;
+          powerdown_o     <= powerdown;
+          loopback_o      <= loopback;
+          golden_x_orb_o  <= golden_x_orb;
+          golden_y_orb_o  <= golden_y_orb;
         end if;
     end if;
 end process;
@@ -267,7 +270,7 @@ begin
         else
             if (state = st3_write and fai_cfg_act_part_i = '0' and cfg_addr(9 downto 8) = "11") then
                 case(cfg_addr(7 downto 0)) is
-                    when cc_cmd_firmware_ver    => 
+                    when cc_cmd_firmware_ver    =>
                         fai_cfg_do_o <= BPMFirmwareVersion;
                         fai_cfg_we_o <= '1';
                     when cc_cmd_sys_status  => 
@@ -375,7 +378,23 @@ begin
                     when cc_cmd_feature_rdback  => 
                         fai_cfg_do_o <= cust_feature_val;
                         fai_cfg_we_o <= '1';
-                    when others =>  
+                    when cc_cmd_rx_maxcount =>
+                        fai_cfg_do_o <= rx_max_data_count_i(3)&
+                                        rx_max_data_count_i(2)&
+                                        rx_max_data_count_i(1)&
+                                        rx_max_data_count_i(0);
+                        fai_cfg_we_o <= '1';
+                     when cc_cmd_tx_maxcount =>
+                        fai_cfg_do_o <= tx_max_data_count_i(3)&
+                                        tx_max_data_count_i(2)&
+                                        tx_max_data_count_i(1)&
+                                        tx_max_data_count_i(0);
+                        fai_cfg_we_o <= '1';
+                     when cc_cmd_rx_resetcount =>
+                        fai_cfg_do_o <= X"1234" &
+                                        rx_reset_count(15 downto 0);
+                        fai_cfg_we_o <= '1';
+                   when others =>  
                         fai_cfg_do_o <= (others => '0');
                         fai_cfg_we_o <= '0';
                 end case;
