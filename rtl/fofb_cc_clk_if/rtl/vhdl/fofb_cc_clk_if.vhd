@@ -39,9 +39,11 @@ entity fofb_cc_clk_if is
         USE_DCM                 : boolean := true
     );
     port (
-        refclk_n_i              : in std_logic;
-        refclk_p_i              : in std_logic;
+        refclk_n_i              : in  std_logic;
+        refclk_p_i              : in  std_logic;
         -- clocks and resets
+        extreset_i              : in  std_logic;
+        initclk_o               : out std_logic;
         refclk_o                : out std_logic;
         mgtreset_o              : out std_logic;
         gtreset_o               : out std_logic;
@@ -99,11 +101,11 @@ end component;
 -----------------------------------------------
 -- Signal declaration
 -----------------------------------------------
+signal init_clk         : std_logic;
 signal refclk           : std_logic;
 signal refclk_i         : std_logic;
 signal userclk          : std_logic;
 signal dcm_reset        : std_logic;
-signal txoutclk_to_dcm  : std_logic;
 signal dcm_clkdiv1      : std_logic;
 signal dcm_clkdiv2      : std_logic;
 signal mgtreset_n       : std_logic;
@@ -111,6 +113,12 @@ signal init_reset       : std_logic;
 signal dcm_locked       : std_logic;
 signal tied_to_ground   : std_logic;
 signal tied_to_vcc      : std_logic;
+signal pll_not_locked   : std_logic;
+signal reset_debounce_r   : std_logic_vector(0 to 3);
+signal reset_debounce_r2  : std_logic;
+signal reset_debounce_r3  : std_logic;
+signal reset_debounce_r4  : std_logic;
+signal txoutclk_to_dcm    : std_logic;
 
 begin
 
@@ -124,19 +132,43 @@ tied_to_vcc <= '1';
 v6_clk_if : if (DEVICE = SNIFFER_V6) generate
 
 refclk_ibufds : IBUFDS_GTXE1
+port map (
+    O                   => refclk_i,
+    ODIV2               => open,
+    CEB                 => tied_to_ground,
+    I                   => refclk_p_i,
+    IB                  => refclk_n_i
+);
+
+-- Direct reference clock to GTX
+refclk_o     <= refclk_i;
+
+-- User Clock Module
+--fofb_cc_v6_usrclk_inst : entity work.fofb_cc_v6_usrclk
+--port map (
+--    gt_clk              => txoutclk_i,
+--    gt_clk_locked       => plllkdet_i,
+--    user_clk            => userclk,
+--    sync_clk            => open,
+--    pll_not_locked      => pll_not_locked
+--);
+pll_not_locked <= not plllkdet_i;
+-- Output MGT clock as init_clk via BUFG
+userclk_bufg : BUFG
     port map (
-        O       => refclk_i,
-        ODIV2   => open,
-        CEB     => tied_to_ground,
-        I       => refclk_p_i,
-        IB      => refclk_n_i
+        I=>      txoutclk_i,
+        O=>      userclk
     );
 
+
+-- Output MGT clock as init_clk via BUFG
 refclk_bufg : BUFG
     port map (
         I=>      refclk_i,
-        O=>      refclk
+        O=>      init_clk
     );
+
+initclk_o <= init_clk;
 
 -- initial reset to to GTX
 SRL16_dcmreset : SRL16
@@ -146,36 +178,36 @@ SRL16_dcmreset : SRL16
         A1  => '1',
         A2  => '1',
         A3  => '1',
-        CLK => refclk,
+        CLK => init_clk,
         D   => '1'
     );
 
--- MGT/GTP clock domain reset is based on DCM lock output
-SRL16_mgtreset : SRL16
-    port map    (
-        Q   => mgtreset_n,
-        A0  => '1',
-        A1  => '1',
-        A2  => '1',
-        A3  => '1',
-        CLK => txoutclk_to_dcm,
-        D   => plllkdet_i
-    );
+process(userclk, init_reset)
+begin
+    if (init_reset = '0') then
+        reset_debounce_r <= "0000";
+    elsif rising_edge(userclk) then
+        reset_debounce_r <= extreset_i & reset_debounce_r(0 to 2);
+    end if;
+end process;
 
--- User clock comes from GTXE1 txoutclk for 2-Byte mode
--- there is no need to use a DCM
-txoutclk_dcm0_bufg : BUFG
-    port map (
-        I   => txoutclk_i,
-        O   => txoutclk_to_dcm
-    );
+process(userclk)
+begin
+    if rising_edge(userclk) then
+        reset_debounce_r2 <=  (reset_debounce_r(0) and
+                              reset_debounce_r(1) and
+                              reset_debounce_r(2) and
+                              reset_debounce_r(3));
+        reset_debounce_r3 <=  reset_debounce_r2 or (not plllkdet_i);
+        reset_debounce_r4 <=  reset_debounce_r3;
+    end if;
+end process;
 
 -- Output assignments
-refclk_o     <= refclk_i;
 gtreset_o    <= not init_reset;
-mgtreset_o   <= not mgtreset_n;
-userclk_o    <= txoutclk_to_dcm;   -- 106.25MHz
-userclk_2x_o <= tied_to_ground;    -- not used since TXUSRCLK2 = TXUSRCLK for 2-byte mode
+mgtreset_o   <= reset_debounce_r4 or pll_not_locked;
+userclk_o    <= userclk;            -- 106.25MHz
+userclk_2x_o <= tied_to_ground;     -- not used since TXUSRCLK2 = TXUSRCLK for 2-byte mode
 
 end generate v6_clk_if;
 

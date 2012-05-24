@@ -62,6 +62,8 @@ port (
     ---------------- Transmit Ports - 8b10b Encoder Control Ports --------------
     TXCHARISK_IN                            : in   std_logic_vector(1 downto 0);
     TXKERR_OUT                              : out  std_logic_vector(1 downto 0);
+   ------------------------- Transmit Ports - GTX Ports -----------------------
+    GTXTEST_IN                              : in   std_logic_vector(12 downto 0);
     ------------------ Transmit Ports - TX Data Path interface -----------------
     TXDATA_IN                               : in   std_logic_vector(15 downto 0);
     TXOUTCLK_OUT                            : out  std_logic;
@@ -233,7 +235,7 @@ generic map
     CDR_PH_ADJ_TIME                         =>     ("10100"),
     OOBDETECT_THRESHOLD                     =>     ("011"),
     PMA_CDR_SCAN                            =>     (x"640404C"),
-    PMA_RX_CFG                              =>     (x"05ce048"),
+    PMA_RX_CFG                              =>     (x"05ce049"),
     RCV_TERM_GND                            =>     (FALSE),
     RCV_TERM_VTTRX                          =>     (FALSE),
     RX_EN_IDLE_HOLD_CDR                     =>     (FALSE),
@@ -262,8 +264,8 @@ generic map
     ALIGN_COMMA_WORD                        =>     (2),
     COMMA_10B_ENABLE                        =>     ("1111111111"),
     COMMA_DOUBLE                            =>     (FALSE),
-    DEC_MCOMMA_DETECT                       =>     (FALSE),
-    DEC_PCOMMA_DETECT                       =>     (FALSE),
+    DEC_MCOMMA_DETECT                       =>     (TRUE),
+    DEC_PCOMMA_DETECT                       =>     (TRUE),
     DEC_VALID_COMMA_ONLY                    =>     (FALSE),
     MCOMMA_10B_VALUE                        =>     ("1010000011"),
     MCOMMA_DETECT                           =>     (TRUE),
@@ -305,11 +307,12 @@ generic map
     CLK_COR_INSERT_IDLE_FLAG                =>     (FALSE),
     CLK_COR_KEEP_IDLE                       =>     (FALSE),
     CLK_COR_MAX_LAT                         =>     (18),
-    CLK_COR_MIN_LAT                         =>     (14),
+    CLK_COR_MIN_LAT                         =>     (16),
     CLK_COR_PRECEDENCE                      =>     (TRUE),
     CLK_COR_REPEAT_WAIT                     =>     (0),
-    CLK_COR_SEQ_1_1                         =>     ("0110111100"),
-    CLK_COR_SEQ_1_2                         =>     ("0110010101"),
+    CLK_COR_SEQ_1_1                         =>     ("0110111100"), -- K28.5 = BC
+    CLK_COR_SEQ_1_2                         =>     ("0010010101"), -- D21.4 = 95
+--    CLK_COR_SEQ_1_2                         =>     ("0110010101"),
     CLK_COR_SEQ_1_3                         =>     ("0100000000"),
     CLK_COR_SEQ_1_4                         =>     ("0100000000"),
     CLK_COR_SEQ_1_ENABLE                    =>     ("1111"),
@@ -322,20 +325,20 @@ generic map
     CLK_CORRECT_USE                         =>     (TRUE),
 
    ------------------------Channel Bonding----------------------
-    CHAN_BOND_1_MAX_SKEW                    =>     (1),
-    CHAN_BOND_2_MAX_SKEW                    =>     (1),
+    CHAN_BOND_1_MAX_SKEW                    =>     (7),
+    CHAN_BOND_2_MAX_SKEW                    =>     (7),
     CHAN_BOND_KEEP_ALIGN                    =>     (FALSE),
-    CHAN_BOND_SEQ_1_1                       =>     ("0000000000"),
+    CHAN_BOND_SEQ_1_1                       =>     ("0101111100"),
     CHAN_BOND_SEQ_1_2                       =>     ("0000000000"),
     CHAN_BOND_SEQ_1_3                       =>     ("0000000000"),
     CHAN_BOND_SEQ_1_4                       =>     ("0000000000"),
-    CHAN_BOND_SEQ_1_ENABLE                  =>     ("1111"),
+    CHAN_BOND_SEQ_1_ENABLE                  =>     ("0001"),
     CHAN_BOND_SEQ_2_1                       =>     ("0000000000"),
     CHAN_BOND_SEQ_2_2                       =>     ("0000000000"),
     CHAN_BOND_SEQ_2_3                       =>     ("0000000000"),
     CHAN_BOND_SEQ_2_4                       =>     ("0000000000"),
     CHAN_BOND_SEQ_2_CFG                     =>     ("00000"),
-    CHAN_BOND_SEQ_2_ENABLE                  =>     ("1111"),
+    CHAN_BOND_SEQ_2_ENABLE                  =>     ("0000"),
     CHAN_BOND_SEQ_2_USE                     =>     (FALSE),
     CHAN_BOND_SEQ_LEN                       =>     (1),
     PCI_EXPRESS_MODE                        =>     (FALSE),
@@ -345,11 +348,11 @@ generic map
     SAS_MIN_COMSAS                          =>     (40),
     SATA_BURST_VAL                          =>     ("100"),
     SATA_IDLE_VAL                           =>     ("100"),
-    SATA_MAX_BURST                          =>     (8),
-    SATA_MAX_INIT                           =>     (23),
-    SATA_MAX_WAKE                           =>     (8),
+    SATA_MAX_BURST                          =>     (7),
+    SATA_MAX_INIT                           =>     (22),
+    SATA_MAX_WAKE                           =>     (7),
     SATA_MIN_BURST                          =>     (4),
-    SATA_MIN_INIT                           =>     (13),
+    SATA_MIN_INIT                           =>     (12),
     SATA_MIN_WAKE                           =>     (4),
     TRANS_TIME_FROM_P2                      =>     (x"03c"),
     TRANS_TIME_NON_P2                       =>     (x"19"),
@@ -430,7 +433,7 @@ generic map
     IGNORESIGDET                    =>      tied_to_ground_i,
     RXCDRRESET                      =>      tied_to_ground_i,
     RXELECIDLE                      =>      open,
-    RXEQMIX                         =>      "0000000111",
+    RXEQMIX                         =>      "0000000000",
     RXN                             =>      RXN_IN,
     RXP                             =>      RXP_IN,
     -------- Receive Ports - RX Elastic Buffer and Phase Alignment Ports -------
@@ -501,7 +504,7 @@ generic map
     TXKERR(1 downto 0)              =>      TXKERR_OUT,
     TXRUNDISP                       =>      open,
     ------------------------- Transmit Ports - GTX Ports -----------------------
-    GTXTEST                         =>      "1000000000000",
+    GTXTEST                         =>      GTXTEST_IN,
     MGTREFCLKFAB                    =>      open,
     TSTCLK0                         =>      tied_to_ground_i,
     TSTCLK1                         =>      tied_to_ground_i,
@@ -516,7 +519,7 @@ generic map
     TXUSRCLK2                       =>      TXUSRCLK2_IN,
     ---------------- Transmit Ports - TX Driver and OOB signaling --------------
     TXBUFDIFFCTRL                   =>      "100",
-    TXDIFFCTRL                      =>      "0000",
+    TXDIFFCTRL                      =>      "1000",
     TXINHIBIT                       =>      tied_to_ground_i,
     TXN                             =>      TXN_OUT,
     TXP                             =>      TXP_OUT,

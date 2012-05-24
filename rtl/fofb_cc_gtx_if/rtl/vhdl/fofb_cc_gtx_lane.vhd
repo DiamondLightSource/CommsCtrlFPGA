@@ -45,10 +45,10 @@ port (
     bpmid_i                 : in  std_logic_vector(7 downto 0);
 
     -- status information
-    linksup_o               : out std_logic_vector(1 downto 0); 
-    frameerror_cnt_o        : inout std_logic_vector(15 downto 0);
-    softerror_cnt_o         : inout std_logic_vector(15 downto 0);
-    harderror_cnt_o         : inout std_logic_vector(15 downto 0);
+    linksup_o               : out std_logic_vector(1 downto 0);
+    frameerror_cnt_o        : out std_logic_vector(15 downto 0);
+    softerror_cnt_o         : out std_logic_vector(15 downto 0);
+    harderror_cnt_o         : out std_logic_vector(15 downto 0);
     txpck_cnt_o             : out std_logic_vector(15 downto 0);
     rxpck_cnt_o             : out std_logic_vector(15 downto 0);
 
@@ -110,6 +110,9 @@ signal rx_harderror         : std_logic;
 signal harderror_prev       : std_logic;
 signal harderror_rise       : std_logic;
 signal harderror            : std_logic;
+signal frameerror_cnt_buf   : std_logic_vector(15 downto 0);
+signal softerror_cnt_buf    : std_logic_vector(15 downto 0);
+signal harderror_cnt_buf    : std_logic_vector(15 downto 0);
 
 begin
 
@@ -201,7 +204,8 @@ rx_ll : entity work.fofb_cc_gtx_rx_ll
 --
 -- Error Counters
 --
-harderror <= tx_harderror or rx_harderror;
+--harderror <= tx_harderror or rx_harderror;
+harderror <= rx_harderror;
 frameerror_rise <= frameerror and not frameerror_prev;
 softerror_rise <= softerror and not softerror_prev;
 harderror_rise <= harderror and not harderror_prev;
@@ -210,29 +214,31 @@ process (userclk_i)
 begin
 if (userclk_i'event and userclk_i = '1') then
     if (mgtreset_i = '1') then
-        frameerror_cnt_o <= (others => '0');
-        softerror_cnt_o <= (others => '0');
-        harderror_cnt_o <= (others => '0');
+        frameerror_cnt_buf <= (others => '0');
+        softerror_cnt_buf <= (others => '0');
+        harderror_cnt_buf <= (others => '0');
     else
         frameerror_prev <= frameerror;
         softerror_prev <= softerror;
         harderror_prev <= harderror;
 
         if (frameerror_rise = '1') then
-            frameerror_cnt_o <= std_logic_vector(unsigned(frameerror_cnt_o) + 1);
+            frameerror_cnt_buf <= std_logic_vector(unsigned(frameerror_cnt_buf) + 1);
         end if;
 
         if (softerror_rise = '1') then
-            softerror_cnt_o <= std_logic_vector(unsigned(softerror_cnt_o) + 1);
+            softerror_cnt_buf <= std_logic_vector(unsigned(softerror_cnt_buf) + 1);
         end if;
 
         if (harderror_rise = '1') then
-            harderror_cnt_o <= std_logic_vector(unsigned(harderror_cnt_o) + 1);
+            harderror_cnt_buf <= std_logic_vector(unsigned(harderror_cnt_buf) + 1);
         end if;
     end if;
 end if;
 end process;
 
-
+frameerror_cnt_o <= frameerror_cnt_buf;
+softerror_cnt_o <= softerror_cnt_buf;
+harderror_cnt_o <= harderror_cnt_buf;
 
 end rtl;

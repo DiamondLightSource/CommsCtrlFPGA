@@ -35,6 +35,7 @@ port (
     -- clocks and resets
     refclk_i                : in  std_logic;
     mgtreset_i              : in  std_logic;
+    initclk_i               : in  std_logic;
 
     -- system interface
     gtreset_i               : in  std_logic;
@@ -61,9 +62,9 @@ port (
 
     -- status information
     linksup_o               : out std_logic_vector(7 downto 0);
-    frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0); 
-    softerror_cnt_o         : inout std_logic_2d_16(3 downto 0); 
-    harderror_cnt_o         : inout std_logic_2d_16(3 downto 0); 
+    frameerror_cnt_o        : out std_logic_2d_16(3 downto 0);
+    softerror_cnt_o         : out std_logic_2d_16(3 downto 0);
+    harderror_cnt_o         : out std_logic_2d_16(3 downto 0);
     txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
     rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
 
@@ -143,8 +144,12 @@ signal rx_dat_val_buffer    : std_logic_vector(LaneCount-1 downto 0);
 signal linksup_buffer       : std_logic_vector(7 downto 0);
 signal link_partner_buffer  : std_logic_2d_10(3 downto 0);
 
-signal  tied_to_ground      : std_logic;
-signal  tied_to_vcc         : std_logic;
+signal tied_to_ground       : std_logic;
+signal tied_to_vcc          : std_logic;
+
+signal control              : std_logic_vector(35 downto 0);
+signal data                 : std_logic_vector(63 downto 0);
+signal trig0                : std_logic_vector(7 downto 0);
 
 begin
 
@@ -162,12 +167,14 @@ linksup_o(1 downto 0) <= linksup_buffer(1 downto 0);
 link_partner_o <= link_partner_buffer;
 
 -- connect tx_lock to tx_lock_i from lane 0
-process(userclk)
-begin
-    if rising_edge(userclk) then
-        plllkdet_o <= rxplllkdet(0) and txplllkdet(0);
-    end if;
-end process;
+plllkdet_o <= rxplllkdet(0);
+
+--process(userclk)
+--begin
+--    if rising_edge(userclk) then
+----        plllkdet_o <= rxplllkdet(0) and txplllkdet(0);
+--    end if;
+--end process;
 
 userclk <= txusrclk2_i;
 resetdone <= rxresetdone and txresetdone;
@@ -250,7 +257,7 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
 --
 -- GTP Tile instantiation
 --
-    gtx_tile : entity work.fofb_cc_gtx_tile
+    gtx_tile_wrapper : entity work.fofb_cc_gtx_tile_wrapper
         generic map (
             -- simulation attributes
             GTX_SIM_GTXRESET_SPEEDUP    => SIM_GTPRESET_SPEEDUP
@@ -286,6 +293,8 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             plltxreset_in              => tied_to_ground,
             txplllkdet_out             => txplllkdet(n),
             txresetdone_out            => txresetdone(n),
+            init_clk_in                => initclk_i,
+            link_reset_in              => "00",
 
             txcharisk_in               => txcharisk(N),
             txkerr_out                 => txkerr(N),
@@ -298,6 +307,42 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             txn_out                    => txn(N),
             txp_out                    => txp(N)
         );
+end generate;
+
+--
+-- Conditional chipscope generation
+--
+CSCOPE_GEN : if (GTX_IF_CSGEN = true) generate
+
+icon_inst : icon
+    port map (
+        control0        => control
+    );
+
+ila_inst : ila_t8_d64_s16384
+    port map (
+        control         => control,
+        clk             => userclk,
+        data            => data,
+        trig0           => trig0
+     );
+
+trig0(0)           <= rxbuferr(0);
+trig0(1)           <= rxrealign(0);
+trig0(7 downto 2)  <= (others => '0');
+
+data(15 downto  0) <= rxdata(0);
+data(16)           <= rxreset(0);
+data(17)           <= rxplllkdet(0);
+data(18)           <= rxresetdone(0);
+data(20 downto 19) <= rxnotintable(0);
+data(22 downto 21) <= rxdisperr(0);
+data(24 downto 23) <= rxcharisk(0);
+data(25)           <= rxbuferr(0);
+data(26)           <= rxrealign(0);
+data(29 downto 27) <= rxbuferr(0) & open_rxbufstatus0(1 downto 0);
+data(63 downto 30) <= (others => '0');
+
 end generate;
 
 end rtl;

@@ -177,6 +177,11 @@ component ila_t8_d128_s8192
      );
 end component;
 
+--
+-- Conditional Chipscope generation defines
+--
+constant GTX_IF_CSGEN       : boolean := FALSE;
+
 end fofb_cc_pkg;
 
 -----------------------------------------------------------------------------------

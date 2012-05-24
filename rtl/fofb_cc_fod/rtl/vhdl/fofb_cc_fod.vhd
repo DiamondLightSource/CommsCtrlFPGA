@@ -152,8 +152,10 @@ timeframe_end_rise_o <= timeframe_end_sys_rise;
 fofb_node_mask_o <= fofb_nodemask_buffer_synced;
 
 -- Sniffer devide does not inject and forwards any packets to the network
-fod_dat_val_o <= fod_odat_val;
+--fod_dat_val_o <= fod_odat_val;
 --fod_dat_val_o <= fod_odat_val when (DEVICE /= SNIFFER_V5) else (others => '0');
+fod_dat_val_o <= (others => '0') when (DEVICE = SNIFFER_V5 or DEVICE /= SNIFFER_V6) 
+                 else fod_odat_val;
 
 -- Latch input data when it is valid
 process(mgtclk_i)

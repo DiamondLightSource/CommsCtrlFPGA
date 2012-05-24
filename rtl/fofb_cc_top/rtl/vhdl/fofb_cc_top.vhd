@@ -244,6 +244,7 @@ port (
     -- clocks and resets
     refclk_i                : in  std_logic;
     mgtreset_i              : in  std_logic;
+    initclk_i               : in  std_logic;
     -- system interface
     gtreset_i               : in  std_logic;
     txoutclk_o              : out std_logic;
@@ -369,6 +370,7 @@ signal fofb_cc_enable       : std_logic;
 signal tied_to_ground       : std_logic;
 
 signal resetcount           : unsigned(31 downto 0);
+signal initclk              : std_logic;
 
 begin
 
@@ -446,6 +448,8 @@ port map (
     refclk_n_i              => refclk_n_i,
     refclk_p_i              => refclk_p_i,
 
+    extreset_i              => '0',
+    initclk_o               => initclk,
     refclk_o                => refclk,
     mgtreset_o              => mgtreset,
     gtreset_o               => gtreset,
@@ -587,6 +591,8 @@ generic map (
 port map (
     refclk_i                => refclk,
     mgtreset_i              => mgtreset,
+    initclk_i               => initclk,
+
     gtreset_i               => gtreset,
     txoutclk_o              => txoutclk,
     plllkdet_o              => plllkdet,

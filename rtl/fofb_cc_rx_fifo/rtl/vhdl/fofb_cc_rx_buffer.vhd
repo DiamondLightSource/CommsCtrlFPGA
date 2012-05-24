@@ -22,12 +22,27 @@ end fofb_cc_rx_buffer;
 
 architecture rtl of fofb_cc_rx_buffer is
 
+component fofb_cc_rx_fifo
+port (
+    rst             : in  std_logic;
+    wr_clk          : in  std_logic;
+    rd_clk          : in  std_logic;
+    din             : in  std_logic_vector(15 DOWNTO 0);
+    wr_en           : in  std_logic;
+    rd_en           : in  std_logic;
+    dout            : out std_logic_vector(127 DOWNTO 0);
+    full            : out std_logic;
+    empty           : out std_logic;
+    rd_data_count   : out std_logic_vector(5 DOWNTO 0)
+  );
+end component;
+
 signal rd_data_count            : std_logic_vector(5 downto 0);
 signal max_rd_data              : unsigned(5 downto 0) := (others => '0');
 
 begin
 
-fofb_cc_rx_fifo_inst : entity work.fofb_cc_rx_fifo
+fofb_cc_rx_fifo_inst : fofb_cc_rx_fifo
     port map (
         rd_en                   => rd_en,
         wr_en                   => wr_en,
