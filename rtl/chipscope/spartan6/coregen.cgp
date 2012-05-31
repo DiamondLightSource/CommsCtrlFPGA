@@ -1,0 +1,22 @@
+# Date: Wed May 30 14:04:29 2012
+
+SET addpads = false
+SET asysymbol = false
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = VHDL
+SET device = xc6slx45t
+SET devicefamily = spartan6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = fgg484
+SET removerpms = false
+SET simulationfiles = Behavioral
+SET speedgrade = -3
+SET verilogsim = false
+SET vhdlsim = true
+SET workingdirectory = /home/iu42/MyProjects/FPGADevelopment/Libera/trunk/FPGA_EBPM/FastFeedbackFPGA/rtl/chipscope/virtex2pro/tmp/
+
+# CRC: a6298411

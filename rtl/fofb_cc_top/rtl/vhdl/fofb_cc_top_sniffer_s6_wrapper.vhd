@@ -100,6 +100,5 @@ fofb_cc_top : entity work.fofb_cc_top
         pbpm_xpos_1_i           => (others => '0'),
         pbpm_ypos_1_i           => (others => '0')
     );
-
 end structure;
 

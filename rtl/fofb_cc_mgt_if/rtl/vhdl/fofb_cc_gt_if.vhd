@@ -21,21 +21,31 @@ use ieee.std_logic_1164.all;
 library work;
 use work.fofb_cc_pkg.all;
 
-entity fofb_cc_mgt_if is
+entity fofb_cc_gt_if is
     generic (
         -- CC Design selection parameters
         DEVICE                  : device_t := BPM;
         LaneCount               : integer := 4;
         TX_IDLE_NUM             : natural := 16;    --32767 cc
         RX_IDLE_NUM             : natural := 13;    --4095 cc
-        SEND_ID_NUM             : natural := 14     --8191 cc
+        SEND_ID_NUM             : natural := 14;    --8191 cc
+        -- Simulation parameters
+        SIM_GTPRESET_SPEEDUP    : integer := 0      -- Not used
     );
     port (
-        -- clocks and resets
+        -- Main clocks and resets
         refclk_i                : in  std_logic;
-        userclk_i               : in  std_logic;
         mgtreset_i              : in  std_logic;
 
+        -- Main clocks and resets (NOT USED for V2P MGT Interface)
+        initclk_i               : in  std_logic;
+        gtreset_i               : in  std_logic;
+        userclk_i               : in  std_logic;
+        userclk_2x_i             : in  std_logic;
+        txoutclk_o              : out std_logic;
+        plllkdet_o              : out std_logic;
+
+        -- RocketIO
         rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
         rxp_i                   : in  std_logic_vector(LaneCount-1 downto 0);
         txn_o                   : out std_logic_vector(LaneCount-1 downto 0);
@@ -79,9 +89,9 @@ entity fofb_cc_mgt_if is
         rx_dat_o                : out std_logic_2d_16(LaneCount-1 downto 0);
         rx_dat_val_o            : out std_logic_vector(LaneCount-1 downto 0)
     );
-end fofb_cc_mgt_if;
+end fofb_cc_gt_if;
 
-architecture rtl of fofb_cc_mgt_if is 
+architecture rtl of fofb_cc_gt_if is
 
 signal txdata               : std_logic_2d_16(LaneCount-1 downto 0);
 signal rxdata               : std_logic_2d_16(LaneCount-1 downto 0);
@@ -100,6 +110,7 @@ signal rxcheckingcrc        : std_logic_vector(LaneCount-1 downto 0);
 signal rxcrcerr             : std_logic_vector(LaneCount-1 downto 0);
 signal refclksel            : std_logic;
 signal txpolarity           : std_logic;
+signal userclk              : std_logic;
 
 begin
 

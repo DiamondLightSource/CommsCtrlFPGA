@@ -105,191 +105,6 @@ end fofb_cc_top;
 
 architecture structural of fofb_cc_top is
 
---
--- Communication Controller has to be compiled with ISE 7.1i and
--- it does not support Virtex-5 devices. And > ISE 11.1i versions 
--- do not support Virtex2Pro devices.
---
-component fofb_cc_mgt_if
-generic (
-    -- CC Design selection parameters
-    DEVICE                  : device_t := BPM;
-    LaneCount               : integer := 4;
-    TX_IDLE_NUM             : natural := 16;
-    RX_IDLE_NUM             : natural := 13;
-    SEND_ID_NUM             : natural := 14
-);
-port (
-    -- clocks and resets
-    refclk_i                : in  std_logic;
-    userclk_i               : in  std_logic;
-    mgtreset_i              : in  std_logic;
-
-    rxn_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rxp_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txn_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-    txp_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-
-    -- time frame sync
-    timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in  std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
-
-    -- mgt configuration 
-    powerdown_i             : in  std_logic_vector(3 downto 0);
-    loopback_i              : in  std_logic_vector(7 downto 0);
-
-    -- status information
-    linksup_o               : out std_logic_vector(7 downto 0);
-    frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0);
-    softerror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    harderror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-
-    -- network information
-    tfs_bit_o               : out std_logic_vector(3 downto 0);
-    link_partner_o          : out std_logic_2d_10(3 downto 0);
-    pmc_timeframe_val_o     : out std_logic_2d_16(3 downto 0);
-    pmc_timestamp_val_o     : out std_logic_2d_32(3 downto 0);
-
-    -- tx/rx state machine status for reset operation
-    tx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-
-    -- TX FIFO interface
-    tx_dat_i                : in  std_logic_2d_16(LANE_COUNT-1 downto 0);
-    txf_empty_i             : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txf_rd_en_o             : out std_logic_vector(LANE_COUNT-1 downto 0);
-
-    -- RX FIFO interface
-    rxf_full_i              : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_dat_o                : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-    rx_dat_val_o            : out std_logic_vector(LANE_COUNT-1 downto 0)
-
-);
-end component;
-
-component fofb_cc_gtp_if
-generic (
-    -- CC Design selection parameters
-    LaneCount               : integer := 2;
-    TX_IDLE_NUM             : natural := 16;
-    RX_IDLE_NUM             : natural := 13;
-    SEND_ID_NUM             : natural := 14;
-    -- Simulation parameters
-    SIM_GTPRESET_SPEEDUP    : integer   := 0
-);
-port (
-    -- clocks and resets
-    refclk_i                : in  std_logic;
-    mgtreset_i              : in  std_logic;
-    -- system interface
-    gtreset_i               : in  std_logic;
-    txoutclk_o              : out std_logic;
-    plllkdet_o              : out std_logic;
-    txusrclk_i              : in  std_logic;
-    txusrclk2_i             : in  std_logic;
-    -- RocketIO·
-    rxn_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rxp_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txn_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-    txp_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- time frame sync
-    timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in  std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
-    -- mgt configuration·
-    powerdown_i             : in  std_logic_vector(3 downto 0);
-    loopback_i              : in  std_logic_vector(7 downto 0);
-    -- status information
-    linksup_o               : out std_logic_vector(7 downto 0);
-    frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0); 
-    softerror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    harderror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    -- network information
-    tfs_bit_o               : out std_logic_vector(3 downto 0);
-    link_partner_o          : out std_logic_2d_10(3 downto 0);
-    pmc_timeframe_val_o     : out std_logic_2d_16(3 downto 0);
-    pmc_timestamp_val_o     : out std_logic_2d_32(3 downto 0);
-    -- tx/rx state machine status for reset operation
-    tx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- TX FIFO interface
-    tx_dat_i                : in  std_logic_2d_16(LANE_COUNT-1 downto 0);
-    txf_empty_i             : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txf_rd_en_o             : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- RX FIFO interface
-    rxf_full_i              : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_dat_o                : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-    rx_dat_val_o            : out std_logic_vector(LANE_COUNT-1 downto 0)
-);
-end component;
-
-component fofb_cc_gtx_if
-generic (
-    -- CC Design selection parameters
-    LaneCount               : integer := 2;
-    TX_IDLE_NUM             : natural := 16;
-    RX_IDLE_NUM             : natural := 13;
-    SEND_ID_NUM             : natural := 14;
-    -- Simulation parameters
-    SIM_GTPRESET_SPEEDUP    : integer   := 0
-);
-port (
-    -- clocks and resets
-    refclk_i                : in  std_logic;
-    mgtreset_i              : in  std_logic;
-    initclk_i               : in  std_logic;
-    -- system interface
-    gtreset_i               : in  std_logic;
-    txoutclk_o              : out std_logic;
-    plllkdet_o              : out std_logic;
-    txusrclk_i              : in  std_logic;
-    txusrclk2_i             : in  std_logic;
-    -- RocketIO·
-    rxn_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rxp_i                   : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txn_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-    txp_o                   : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- time frame sync
-    timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in  std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
-    -- mgt configuration·
-    powerdown_i             : in  std_logic_vector(3 downto 0);
-    loopback_i              : in  std_logic_vector(7 downto 0);
-    -- status information
-    linksup_o               : out std_logic_vector(7 downto 0);
-    frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0); 
-    softerror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    harderror_cnt_o         : inout std_logic_2d_16(3 downto 0);
-    txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    -- network information
-    tfs_bit_o               : out std_logic_vector(3 downto 0);
-    link_partner_o          : out std_logic_2d_10(3 downto 0);
-    pmc_timeframe_val_o     : out std_logic_2d_16(3 downto 0);
-    pmc_timestamp_val_o     : out std_logic_2d_32(3 downto 0);
-    -- tx/rx state machine status for reset operation
-    tx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_sm_busy_o            : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- TX FIFO interface
-    tx_dat_i                : in  std_logic_2d_16(LANE_COUNT-1 downto 0);
-    txf_empty_i             : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    txf_rd_en_o             : out std_logic_vector(LANE_COUNT-1 downto 0);
-    -- RX FIFO interface
-    rxf_full_i              : in  std_logic_vector(LANE_COUNT-1 downto 0);
-    rx_dat_o                : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-    rx_dat_val_o            : out std_logic_vector(LANE_COUNT-1 downto 0)
-);
-end component;
-
 -----------------------------------------
 -- Signal declarations
 -----------------------------------------
@@ -433,154 +248,34 @@ fofb_pos_datsel <= fai_cfg_val_i(1);
 fai_cfg_act_part <= fai_cfg_val_i(0);
 
 sysreset <= mgtreset or not fofb_cc_enable;
-adcreset <= adcreset_i; -- or not fai_cfg_val_i(0);
+adcreset <= adcreset_i;
 
 ----------------------------------------------------------------------
 -- MGT reference clocks, user clocks and reset interface
 ---------------------------------------------------------------------- 
 fofb_cc_clk_if : entity work.fofb_cc_clk_if
-generic map (
-    -- FPGA Device
-    DEVICE                  => DEVICE,
-    USE_DCM                 => USE_DCM
-)
 port map (
     refclk_n_i              => refclk_n_i,
     refclk_p_i              => refclk_p_i,
 
-    extreset_i              => '0',
+    txoutclk_i              => txoutclk,
+    plllkdet_i              => plllkdet,
+
     initclk_o               => initclk,
     refclk_o                => refclk,
     mgtreset_o              => mgtreset,
     gtreset_o               => gtreset,
 
-    txoutclk_i              => txoutclk,
-    plllkdet_i              => plllkdet,
-
     userclk_o               => userclk,
     userclk_2x_o            => userclk_2x
 );
 
-----------------------------------------------
--- Generate N  Virtex-2Pro MGT Channels
-----------------------------------------------
-MGT_IF_GEN : if (DEVICE /= SNIFFER_V5 and DEVICE /= SNIFFER_V6) generate
-MGT_LANE: fofb_cc_mgt_if
-generic map (
-    DEVICE                  => DEVICE,
-    LaneCount               => LANE_COUNT,
-    TX_IDLE_NUM             => TX_IDLE_NUM,
-    RX_IDLE_NUM             => RX_IDLE_NUM,
-    SEND_ID_NUM             => SEND_ID_NUM
-)
-port map (
-    refclk_i                => refclk,
-    mgtreset_i              => mgtreset,
-    userclk_i               => userclk,
-
-    rxn_i                   => fai_rio_rdn_i,
-    rxp_i                   => fai_rio_rdp_i,
-    txn_o                   => fai_rio_tdn_o,
-    txp_o                   => fai_rio_tdp_o,
-
-    timeframe_start_i       => timeframe_start,
-    timeframe_end_i         => timeframe_end,
-    timeframe_val_i         => timeframe_count(15 downto 0),
-    bpmid_i                 => bpm_id(7 downto 0),
-
-    powerdown_i             => mgt_powerdown,
-    loopback_i              => mgt_loopback,
-    linksup_o               => linkup,
-    harderror_cnt_o         => harderror_cnt,
-    softerror_cnt_o         => softerror_cnt,
-    frameerror_cnt_o        => frameerror_cnt,
-
-    tx_sm_busy_o            => tx_fsm_busy,
-    rx_sm_busy_o            => rx_fsm_busy,
-
-    tfs_bit_o               => pmc_timeframe_start,
-    link_partner_o          => link_partners,
-    pmc_timeframe_val_o     => pmc_timeframe_val,
-    pmc_timestamp_val_o     => pmc_timestamp_val,
-
-    txpck_cnt_o             => txpck_count,
-    rxpck_cnt_o             => rxpck_count,
-
-    tx_dat_i                => txf_dout,
-    txf_empty_i             => txf_empty,
-    txf_rd_en_o             => txf_rd_en,
-
-    rxf_full_i              => rxf_full,
-    rx_dat_o                => rxf_din,
-    rx_dat_val_o            => rxf_wr_en
-);
-end generate;
-
 ----------------------------------------------------------------------
--- Generate N Virtex-5 GTP channels
+-- Generate N Gigabit Transceiver Channels
+-- This is an instantiation for wrapper component for various 
+-- Xilinx Devices support
 ----------------------------------------------------------------------
-GTP_IF_GEN : if (DEVICE = SNIFFER_V5) generate
-GTP_IF: fofb_cc_gtp_if
-generic map (
-    LaneCount               => LANE_COUNT,
-    TX_IDLE_NUM             => TX_IDLE_NUM,
-    RX_IDLE_NUM             => RX_IDLE_NUM,
-    SEND_ID_NUM             => SEND_ID_NUM,
-    SIM_GTPRESET_SPEEDUP    => SIM_GTPRESET_SPEEDUP
-)
-port map (
-    refclk_i                => refclk,
-    mgtreset_i              => mgtreset,
-    gtreset_i               => gtreset,
-    txoutclk_o              => txoutclk,
-    plllkdet_o              => plllkdet,
-    txusrclk_i              => userclk_2x,
-    txusrclk2_i             => userclk,
-
-    rxn_i                   => fai_rio_rdn_i,
-    rxp_i                   => fai_rio_rdp_i,
-    txn_o                   => fai_rio_tdn_o,
-    txp_o                   => fai_rio_tdp_o,
-
-    timeframe_start_i       => timeframe_start,
-    timeframe_end_i         => timeframe_end,
-    timeframe_val_i         => timeframe_count(15 downto 0),
-    bpmid_i                 => bpm_id(7 downto 0),
-
-    powerdown_i             => mgt_powerdown,
-    loopback_i              => mgt_loopback,
-    linksup_o               => linkup,
-    harderror_cnt_o         => harderror_cnt,
-    softerror_cnt_o         => softerror_cnt,
-    frameerror_cnt_o        => frameerror_cnt,
-
-    tx_sm_busy_o            => tx_fsm_busy,
-    rx_sm_busy_o            => rx_fsm_busy,
-
-    tfs_bit_o               => pmc_timeframe_start,
-    link_partner_o          => link_partners,
-    pmc_timeframe_val_o     => pmc_timeframe_val,
-    pmc_timestamp_val_o     => pmc_timestamp_val,
-
-
-    txpck_cnt_o             => txpck_count,
-    rxpck_cnt_o             => rxpck_count,
-
-    tx_dat_i                => txf_dout,
-    txf_empty_i             => txf_empty,
-    txf_rd_en_o             => txf_rd_en,
-
-    rxf_full_i              => rxf_full,
-    rx_dat_o                => rxf_din,
-    rx_dat_val_o            => rxf_wr_en
-);
-end generate;
-
-----------------------------------------------------------------------
--- Generate N Virtex-6 GTX channels
-----------------------------------------------------------------------
-GTX_IF_GEN : if (DEVICE = SNIFFER_V6) generate
-GTX_IF: fofb_cc_gtx_if
+GT_IF: entity work.fofb_cc_gt_if
 generic map (
     LaneCount               => LANE_COUNT,
     TX_IDLE_NUM             => TX_IDLE_NUM,
@@ -596,8 +291,8 @@ port map (
     gtreset_i               => gtreset,
     txoutclk_o              => txoutclk,
     plllkdet_o              => plllkdet,
-    txusrclk_i              => tied_to_ground,
-    txusrclk2_i             => userclk,
+    userclk_i               => userclk,
+    userclk_2x_i            => userclk_2x,
 
     rxn_i                   => fai_rio_rdn_i,
     rxp_i                   => fai_rio_rdp_i,
@@ -636,8 +331,6 @@ port map (
     rx_dat_o                => rxf_din,
     rx_dat_val_o            => rxf_wr_en
 );
-end generate;
-
 
 ----------------------------------------------
 -- fifo reset module. fifos are flushed at the end

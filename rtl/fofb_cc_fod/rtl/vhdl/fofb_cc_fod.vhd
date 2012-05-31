@@ -153,9 +153,7 @@ fofb_node_mask_o <= fofb_nodemask_buffer_synced;
 
 -- Sniffer devide does not inject and forwards any packets to the network
 --fod_dat_val_o <= fod_odat_val;
---fod_dat_val_o <= fod_odat_val when (DEVICE /= SNIFFER_V5) else (others => '0');
-fod_dat_val_o <= (others => '0') when (DEVICE = SNIFFER_V5 or DEVICE /= SNIFFER_V6) 
-                 else fod_odat_val;
+fod_dat_val_o <= (others => '0') when (DEVICE = SNIFFER) else fod_odat_val;
 
 -- Latch input data when it is valid
 process(mgtclk_i)
@@ -258,11 +256,7 @@ begin
             own_packet_to_inject <= pload_header & fofb_watchdog_i & fofb_event_i & timeframe_val_i;
             own_xpos_to_store   <= fofb_watchdog_i;
             own_ypos_to_store   <= fofb_event_i;
-        when SNIFFER_V5 =>
-            own_packet_to_inject <= pload_header & X"00000000" & X"00000000" & timeframe_val_i;
-            own_xpos_to_store   <= timestamp_val_i;
-            own_ypos_to_store   <= timestamp_val_i;
-        when SNIFFER_V6 =>
+        when SNIFFER =>
             own_packet_to_inject <= pload_header & X"00000000" & X"00000000" & timeframe_val_i;
             own_xpos_to_store   <= timestamp_val_i;
             own_ypos_to_store   <= timestamp_val_i;
@@ -478,7 +472,7 @@ begin
 end process; 
 
 -- PMC DMA engine has 32-bit data interface
-GEN_POS_DAQ_SERIAL : if (DEVICE /= SNIFFER_V5) generate
+GEN_POS_DAQ_SERIAL : if (DEVICE /= SNIFFER) generate
     dma_access: process(xy_buf_addr_i, xpos_to_read, ypos_to_read, fofb_nodemask_buffer_synced, xy_buf_addr_prev)
         variable  xy_buf_read_ptr : integer range 0 to NodeNum-1;
     begin
@@ -501,7 +495,7 @@ GEN_POS_DAQ_SERIAL : if (DEVICE /= SNIFFER_V5) generate
 end generate;
 
 -- PCI-E DMA engine has 64-bit data interface.
-GEN_POS_DAQ_PARALLEL : if (DEVICE = SNIFFER_V5) generate
+GEN_POS_DAQ_PARALLEL : if (DEVICE = SNIFFER) generate
     dma_access: process(xpos_to_read, ypos_to_read, fofb_nodemask_buffer_synced, xy_buf_addr_prev)
         variable xy_buf_read_ptr : integer range 0 to NodeNum-1;
     begin

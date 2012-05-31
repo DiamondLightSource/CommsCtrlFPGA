@@ -52,7 +52,7 @@ begin
 fofb_cc_top : entity work.fofb_cc_top
     generic map (
         ID                      => ID,
-        DEVICE                  => SNIFFER_V5,
+        DEVICE                  => SNIFFER,
         SIM_GTPRESET_SPEEDUP    => SIM_GTPRESET_SPEEDUP,
         LANE_COUNT              => LANE_COUNT
     )

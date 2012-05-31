@@ -21,77 +21,76 @@ use ieee.std_logic_1164.all;
 library work;
 use work.fofb_cc_pkg.all;
 
-entity fofb_cc_gtx_if is
-generic (
-    -- CC Design selection parameters
-    LaneCount               : integer := 1;
-    TX_IDLE_NUM             : integer := 16;    --32767 cc
-    RX_IDLE_NUM             : integer := 13;    --4095 cc
-    SEND_ID_NUM             : integer := 14;    --8191 cc
-    -- Simulation parameters
-    SIM_GTPRESET_SPEEDUP    : integer := 0
-);
-port (
-    -- clocks and resets
-    refclk_i                : in  std_logic;
-    mgtreset_i              : in  std_logic;
-    initclk_i               : in  std_logic;
+entity fofb_cc_gt_if is
+    generic (
+        -- CC Design selection parameters
+        LaneCount               : integer := 1;
+        TX_IDLE_NUM             : integer := 16;    --32767 cc
+        RX_IDLE_NUM             : integer := 13;    --4095 cc
+        SEND_ID_NUM             : integer := 14;    --8191 cc
+        -- Simulation parameters
+        SIM_GTPRESET_SPEEDUP    : integer := 0
+    );
+    port (
+        -- clocks and resets
+        refclk_i                : in  std_logic;
+        mgtreset_i              : in  std_logic;
+        initclk_i               : in  std_logic;
 
-    -- system interface
-    gtreset_i               : in  std_logic;
-    txoutclk_o              : out std_logic;
-    plllkdet_o              : out std_logic;
-    txusrclk_i              : in  std_logic;
-    txusrclk2_i             : in  std_logic;
+        -- system interface
+        gtreset_i               : in  std_logic;
+        txoutclk_o              : out std_logic;
+        plllkdet_o              : out std_logic;
+        userclk_i               : in  std_logic;
+        userclk_2x_i            : in  std_logic;
 
-    -- RocketIO 
-    rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
-    rxp_i                   : in  std_logic_vector(LaneCount-1 downto 0);
-    txn_o                   : out std_logic_vector(LaneCount-1 downto 0);
-    txp_o                   : out std_logic_vector(LaneCount-1 downto 0);
+        -- RocketIO
+        rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
+        rxp_i                   : in  std_logic_vector(LaneCount-1 downto 0);
+        txn_o                   : out std_logic_vector(LaneCount-1 downto 0);
+        txp_o                   : out std_logic_vector(LaneCount-1 downto 0);
 
-    -- time frame sync
-    timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in  std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
+        -- time frame sync
+        timeframe_start_i       : in  std_logic;
+        timeframe_end_i         : in  std_logic;
+        timeframe_val_i         : in  std_logic_vector(15 downto 0);
+        bpmid_i                 : in  std_logic_vector(7 downto 0);
 
-    -- mgt configuration 
-    powerdown_i             : in  std_logic_vector(3 downto 0);
-    loopback_i              : in  std_logic_vector(7 downto 0);
+        -- mgt configuration
+        powerdown_i             : in  std_logic_vector(3 downto 0);
+        loopback_i              : in  std_logic_vector(7 downto 0);
 
-    -- status information
-    linksup_o               : out std_logic_vector(7 downto 0);
-    frameerror_cnt_o        : out std_logic_2d_16(3 downto 0);
-    softerror_cnt_o         : out std_logic_2d_16(3 downto 0);
-    harderror_cnt_o         : out std_logic_2d_16(3 downto 0);
-    txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
-    rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
+        -- status information
+        linksup_o               : out std_logic_vector(7 downto 0);
+        frameerror_cnt_o        : out std_logic_2d_16(3 downto 0);
+        softerror_cnt_o         : out std_logic_2d_16(3 downto 0);
+        harderror_cnt_o         : out std_logic_2d_16(3 downto 0);
+        txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
+        rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
 
-    -- network information
-    tfs_bit_o               : out std_logic_vector(3 downto 0);
-    link_partner_o          : out std_logic_2d_10(3 downto 0);
-    pmc_timeframe_val_o     : out std_logic_2d_16(3 downto 0);
-    pmc_timestamp_val_o     : out std_logic_2d_32(3 downto 0);
+        -- network information
+        tfs_bit_o               : out std_logic_vector(3 downto 0);
+        link_partner_o          : out std_logic_2d_10(3 downto 0);
+        pmc_timeframe_val_o     : out std_logic_2d_16(3 downto 0);
+        pmc_timestamp_val_o     : out std_logic_2d_32(3 downto 0);
 
-    -- tx/rx state machine status for reset operation
-    tx_sm_busy_o            : out std_logic_vector(LaneCount-1 downto 0);
-    rx_sm_busy_o            : out std_logic_vector(LaneCount-1 downto 0);
+        -- tx/rx state machine status for reset operation
+        tx_sm_busy_o            : out std_logic_vector(LaneCount-1 downto 0);
+        rx_sm_busy_o            : out std_logic_vector(LaneCount-1 downto 0);
 
-    -- TX FIFO interface
-    tx_dat_i                : in  std_logic_2d_16(LaneCount-1 downto 0);
-    txf_empty_i             : in  std_logic_vector(LaneCount-1 downto 0);
-    txf_rd_en_o             : out std_logic_vector(LaneCount-1 downto 0);
+        -- TX FIFO interface
+        tx_dat_i                : in  std_logic_2d_16(LaneCount-1 downto 0);
+        txf_empty_i             : in  std_logic_vector(LaneCount-1 downto 0);
+        txf_rd_en_o             : out std_logic_vector(LaneCount-1 downto 0);
 
-    -- RX FIFO interface
-    rxf_full_i              : in  std_logic_vector(LaneCount-1 downto 0);
-    rx_dat_o                : out std_logic_2d_16(LaneCount-1 downto 0);
-    rx_dat_val_o            : out std_logic_vector(LaneCount-1 downto 0)
+        -- RX FIFO interface
+        rxf_full_i              : in  std_logic_vector(LaneCount-1 downto 0);
+        rx_dat_o                : out std_logic_2d_16(LaneCount-1 downto 0);
+        rx_dat_val_o            : out std_logic_vector(LaneCount-1 downto 0)
+    );
+end fofb_cc_gt_if;
 
-);
-end fofb_cc_gtx_if;
-
-architecture rtl of fofb_cc_gtx_if is 
+architecture rtl of fofb_cc_gt_if is 
 
 -- GTP_DUAL 0 & 1
 signal rxusrclk0            : std_logic := '0';
@@ -107,7 +106,7 @@ signal plllkdet             : std_logic;
 signal rxplllkdet           : std_logic_vector(3 downto 0);
 signal txplllkdet           : std_logic_vector(3 downto 0);
 signal refclkout            : std_logic;
-signal txoutclk0            : std_logic;
+signal txoutclk             : std_logic_vector(3 downto 0);
 signal open_rxbufstatus0    : std_logic_vector(1 downto 0);
 signal open_rxbufstatus1    : std_logic_vector(1 downto 0);
 signal open_txbufstatus0    : std_logic;
@@ -158,7 +157,7 @@ tied_to_ground <= '0';
 tied_to_vcc    <= '1';
 
 -- connect the txoutclk of lane 0 to txoutclk
-txoutclk_o <= txoutclk0;
+txoutclk_o <= txoutclk(0);
 
 -- assign outputs
 rx_dat_o <= rx_dat_buffer;
@@ -169,14 +168,7 @@ link_partner_o <= link_partner_buffer;
 -- connect tx_lock to tx_lock_i from lane 0
 plllkdet_o <= rxplllkdet(0);
 
---process(userclk)
---begin
---    if rising_edge(userclk) then
-----        plllkdet_o <= rxplllkdet(0) and txplllkdet(0);
---    end if;
---end process;
-
-userclk <= txusrclk2_i;
+userclk <= userclk_i;
 resetdone <= rxresetdone and txresetdone;
 
 --
@@ -274,7 +266,7 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             rxenpcommaalign_in         => rxenpcommaalign(N),
             rxdata_out                 => rxdata(N),
             rxreset_in                 => rxreset(N),
-            rxusrclk2_in               => txusrclk2_i,
+            rxusrclk2_in               => userclk_2x_i,
             rxn_in                     => rxn(N),
             rxp_in                     => rxp(N),
             rxbufstatus_out(2)         => rxbuferr(N),
@@ -301,9 +293,9 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             txbufstatus_out(1)         => txbuferr(N),
             txbufstatus_out(0)         => open_txbufstatus0,
             txdata_in                  => txdata(N),
-            txoutclk_out               => txoutclk0,
+            txoutclk_out               => txoutclk(N),
             txreset_in                 => txreset(N),
-            txusrclk2_in               => txusrclk2_i,
+            txusrclk2_in               => userclk_2x_i,
             txn_out                    => txn(N),
             txp_out                    => txp(N)
         );
