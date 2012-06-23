@@ -89,12 +89,12 @@ entity fofb_cc_top is
         fofb_bpm_count_o        : out std_logic_vector(7 downto 0);
         fofb_dma_ok_i           : in  std_logic;
         fofb_node_mask_o        : out std_logic_vector(NodeNum-1 downto 0);
-        fofb_rxlink_up_o        : out std_logic;
-        fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0);
+        fofb_rxlink_up_o        : out std_logic_vector(LANE_COUNT-1 downto 0);
+        fofb_rxlink_partner_o   : out std_logic_2d_10(LANE_COUNT-1 downto 0);
         fofb_timestamp_val_o    : out std_logic_vector(31 downto 0);
-        harderror_cnt_o         : out std_logic_vector(15 downto 0);
-        softerror_cnt_o         : out std_logic_vector(15 downto 0);
-        frameerror_cnt_o        : out std_logic_vector(15 downto 0);
+        harderror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
+        softerror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
+        frameerror_cnt_o        : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         -- PBPM position data interface
         pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
         pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
@@ -204,14 +204,14 @@ tied_to_ground <= '0';
 ----------------------------------------------
 -- Link status information to higher-level
 ----------------------------------------------
-fofb_rxlink_up_o      <= rx_linkup(0);
-fofb_rxlink_partner_o <= link_partners(0);
+fofb_rxlink_up_o      <= rx_linkup(LANE_COUNT-1 downto 0);
+fofb_rxlink_partner_o <= link_partners(LANE_COUNT-1 downto 0);
 fofb_process_time_o   <= fodprocess_time;
 fofb_bpm_count_o      <= bpm_count;
 fofb_timestamp_val_o  <= timestamp_val;
-harderror_cnt_o  <= harderror_cnt(0);
-softerror_cnt_o  <= softerror_cnt(0);
-frameerror_cnt_o <= frameerror_cnt(0);
+harderror_cnt_o  <= harderror_cnt(LANE_COUNT-1 downto 0);
+softerror_cnt_o  <= softerror_cnt(LANE_COUNT-1 downto 0);
+frameerror_cnt_o <= frameerror_cnt(LANE_COUNT-1 downto 0);
 
 fai_cfg_clk_o <= userclk;
 
@@ -285,7 +285,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => mgtreset,
+    mgtreset_i              => sysreset, --mgtreset,
     initclk_i               => initclk,
 
     gtreset_i               => gtreset,

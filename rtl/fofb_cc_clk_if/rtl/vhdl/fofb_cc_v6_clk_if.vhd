@@ -73,27 +73,27 @@ refclk_o     <= refclk;
 -- Output MGT clock as init_clk via BUFG
 userclk_bufg : BUFG
 port map (
-    I=>      txoutclk_i,
-    O=>      userclk
+    I                   => txoutclk_i,
+    O                   => userclk
 );
 
 -- Initial clock from GTP reference clocks via BUFG
 refclk_bufg : BUFG
 port map (
-    I=>      refclk,
-    O=>      init_clk
+    I                   => refclk,
+    O                   => init_clk
 );
 
 -- Initial reset to GTP using init_clk
 SRL16_dcmreset : SRL16
 port map    (
-    Q   => init_reset,
-    A0  => '1',
-    A1  => '1',
-    A2  => '1',
-    A3  => '1',
-    CLK => init_clk,
-    D   => '1'
+    Q                   => init_reset,
+    A0                  => '1',
+    A1                  => '1',
+    A2                  => '1',
+    A3                  => '1',
+    CLK                 => init_clk,
+    D                   => '1'
 );
 
 -- Output assignments
@@ -101,6 +101,6 @@ gtreset_o    <= not init_reset;
 mgtreset_o   <= not plllkdet_i;
 userclk_o    <= userclk; -- 106.25MHz
 userclk_2x_o <= userclk; -- not used since TXUSRCLK2 = TXUSRCLK for 2-byte mode
-initclk_o <= '0';        -- Not required for Spartan-6 GTP
+initclk_o    <= init_clk;
 
 end rtl;

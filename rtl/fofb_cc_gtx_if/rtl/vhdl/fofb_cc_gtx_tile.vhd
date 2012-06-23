@@ -312,7 +312,6 @@ generic map
     CLK_COR_REPEAT_WAIT                     =>     (0),
     CLK_COR_SEQ_1_1                         =>     ("0110111100"), -- K28.5 = BC
     CLK_COR_SEQ_1_2                         =>     ("0010010101"), -- D21.4 = 95
---    CLK_COR_SEQ_1_2                         =>     ("0110010101"),
     CLK_COR_SEQ_1_3                         =>     ("0100000000"),
     CLK_COR_SEQ_1_4                         =>     ("0100000000"),
     CLK_COR_SEQ_1_ENABLE                    =>     ("1111"),

@@ -107,10 +107,8 @@ signal rxplllkdet           : std_logic_vector(3 downto 0);
 signal txplllkdet           : std_logic_vector(3 downto 0);
 signal refclkout            : std_logic;
 signal txoutclk             : std_logic_vector(3 downto 0);
-signal open_rxbufstatus0    : std_logic_vector(1 downto 0);
-signal open_rxbufstatus1    : std_logic_vector(1 downto 0);
-signal open_txbufstatus0    : std_logic;
-signal open_txbufstatus1    : std_logic;
+signal open_rxbufstatus     : std_logic_vector(1 downto 0);
+signal open_txbufstatus     : std_logic;
 signal rxelecidlereset      : std_logic_vector(3 downto 0);
 
 signal loopback             : std_logic_2d_3(3 downto 0);
@@ -156,17 +154,17 @@ begin
 tied_to_ground <= '0';
 tied_to_vcc    <= '1';
 
--- connect the txoutclk of lane 0 to txoutclk
-txoutclk_o <= txoutclk(0);
+-- connect the txoutclk of lane 1 to txoutclk
+txoutclk_o <= txoutclk(1);
 
 -- assign outputs
 rx_dat_o <= rx_dat_buffer;
 rx_dat_val_o <= rx_dat_val_buffer;
-linksup_o(1 downto 0) <= linksup_buffer(1 downto 0);
+linksup_o <= linksup_buffer;
 link_partner_o <= link_partner_buffer;
 
 -- connect tx_lock to tx_lock_i from lane 0
-plllkdet_o <= rxplllkdet(0);
+plllkdet_o <= rxplllkdet(1);
 
 userclk <= userclk_i;
 resetdone <= rxresetdone and txresetdone;
@@ -270,7 +268,7 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             rxn_in                     => rxn(N),
             rxp_in                     => rxp(N),
             rxbufstatus_out(2)         => rxbuferr(N),
-            rxbufstatus_out(1 downto 0)=> open_rxbufstatus0(1 downto 0),
+            rxbufstatus_out(1 downto 0)=> open,
 
             gtxrxreset_in              => gtreset_i,
             mgtrefclkrx_in(0)          => refclk_i,
@@ -291,7 +289,7 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             txcharisk_in               => txcharisk(N),
             txkerr_out                 => txkerr(N),
             txbufstatus_out(1)         => txbuferr(N),
-            txbufstatus_out(0)         => open_txbufstatus0,
+            txbufstatus_out(0)         => open,
             txdata_in                  => txdata(N),
             txoutclk_out               => txoutclk(N),
             txreset_in                 => txreset(N),
@@ -319,21 +317,24 @@ ila_inst : ila_t8_d64_s16384
         trig0           => trig0
      );
 
-trig0(0)           <= rxbuferr(0);
-trig0(1)           <= rxrealign(0);
-trig0(7 downto 2)  <= (others => '0');
+trig0(0)           <= rxbuferr(1);
+trig0(1)           <= rxrealign(1);
+trig0(2)           <= rxresetdone(1);
+trig0(3)           <= rxreset(1);
+trig0(7 downto 4)  <= (others => '0');
 
-data(15 downto  0) <= rxdata(0);
-data(16)           <= rxreset(0);
-data(17)           <= rxplllkdet(0);
-data(18)           <= rxresetdone(0);
-data(20 downto 19) <= rxnotintable(0);
-data(22 downto 21) <= rxdisperr(0);
-data(24 downto 23) <= rxcharisk(0);
-data(25)           <= rxbuferr(0);
-data(26)           <= rxrealign(0);
-data(29 downto 27) <= rxbuferr(0) & open_rxbufstatus0(1 downto 0);
-data(63 downto 30) <= (others => '0');
+data(15 downto  0) <= rxdata(1);
+data(16)           <= rxreset(1);
+data(17)           <= rxplllkdet(1);
+data(18)           <= rxresetdone(1);
+data(20 downto 19) <= rxnotintable(1);
+data(22 downto 21) <= rxdisperr(1);
+data(24 downto 23) <= rxcharisk(1);
+data(25)           <= rxbuferr(1);
+data(26)           <= rxrealign(1);
+data(29 downto 27) <= rxbuferr(1) & "00";
+data(33 downto 30) <= linksup_buffer(3 downto 0);
+data(63 downto 34) <= (others => '0');
 
 end generate;
 
