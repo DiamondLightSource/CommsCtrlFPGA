@@ -47,6 +47,7 @@ i_fofb_cc_top : entity work.fofb_cc_top
         adcclk_i                => adcclk_i,
         adcreset_i              => adcreset_i,
         sysclk_i                => '0',
+        sysreset_n_i            => '1',
         fai_fa_block_start_i    => fai_fa_block_start_i,
         fai_fa_data_valid_i     => fai_fa_data_valid_i,
         fai_fa_d_i              => fai_fa_d_i   ,

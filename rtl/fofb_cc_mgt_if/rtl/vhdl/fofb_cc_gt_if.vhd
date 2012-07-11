@@ -41,7 +41,7 @@ entity fofb_cc_gt_if is
         initclk_i               : in  std_logic;
         gtreset_i               : in  std_logic;
         userclk_i               : in  std_logic;
-        userclk_2x_i             : in  std_logic;
+        userclk_2x_i            : in  std_logic;
         txoutclk_o              : out std_logic;
         plllkdet_o              : out std_logic;
 
@@ -53,9 +53,9 @@ entity fofb_cc_gt_if is
 
         -- time frame sync
         timeframe_start_i       : in  std_logic;
-        timeframe_end_i         : in  std_logic;
-        timeframe_val_i         : in  std_logic_vector(15 downto 0);
-        bpmid_i                 : in  std_logic_vector(7 downto 0);
+        timeframe_valid_i       : in  std_logic;
+        timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
 
         -- mgt configuration 
         powerdown_i             : in  std_logic_vector(3 downto 0);
@@ -133,9 +133,8 @@ MGT_LANES: entity work.fofb_cc_mgt_lane
         txreset_o               => txreset(N),
         powerdown_i             => powerdown_i(N),
 
-        timeframe_start_i       => timeframe_start_i,
-        timeframe_end_i         => timeframe_end_i,
-        timeframe_val_i         => timeframe_val_i,
+        timeframe_valid_i       => timeframe_valid_i,
+        timeframe_cntr_i        => timeframe_cntr_i,
         bpmid_i                 => bpmid_i,
 
         linksup_o               => linksup_o(2*N+1 downto 2*N),

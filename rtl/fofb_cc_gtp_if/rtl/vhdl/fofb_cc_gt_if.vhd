@@ -23,7 +23,7 @@ use ieee.std_logic_1164.all;
 library work;
 use work.fofb_cc_pkg.all;
 
-entity fofb_cc_gtp_if is
+entity fofb_cc_gt_if is
 generic (
     -- CC Design selection parameters
     LaneCount               : integer := 2;
@@ -37,13 +37,14 @@ port (
     -- clocks and resets
     refclk_i                : in  std_logic;
     mgtreset_i              : in  std_logic;
+    initclk_i               : in  std_logic;
 
     -- system interface
     gtreset_i               : in  std_logic;
+    userclk_i               : in  std_logic;
+    userclk_2x_i            : in  std_logic;
     txoutclk_o              : out std_logic;
     plllkdet_o              : out std_logic;
-    txusrclk_i              : in  std_logic;
-    txusrclk2_i             : in  std_logic;
 
     -- RocketIO 
     rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
@@ -53,11 +54,11 @@ port (
 
     -- time frame sync
     timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in  std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
+    timeframe_valid_i       : in  std_logic;
+    timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
+    bpmid_i                 : in  std_logic_vector(9 downto 0);
 
-    -- mgt configuration 
+    -- mgt configuration
     powerdown_i             : in  std_logic_vector(3 downto 0);
     loopback_i              : in  std_logic_vector(7 downto 0);
 
@@ -90,9 +91,9 @@ port (
     rx_dat_val_o            : out std_logic_vector(LaneCount-1 downto 0)
 
 );
-end fofb_cc_gtp_if;
+end fofb_cc_gt_if;
 
-architecture rtl of fofb_cc_gtp_if is 
+architecture rtl of fofb_cc_gt_if is
 
 -- GTP_DUAL 0 & 1
 signal rxusrclk0            : std_logic := '0';
@@ -157,7 +158,7 @@ begin
     end if;
 end process;
 
-userclk <= txusrclk2_i;
+userclk <= userclk_i;
 
 --
 --
@@ -200,8 +201,8 @@ GTP_LANE_GEN: for N in 0 to (LaneCount-1) generate
             rxelecidlereset_i       => rxelecidlereset(N),
 
             timeframe_start_i       => timeframe_start_i,
-            timeframe_end_i         => timeframe_end_i,
-            timeframe_val_i         => timeframe_val_i,
+            timeframe_valid_i       => timeframe_valid_i,
+            timeframe_cntr_i        => timeframe_cntr_i,
             bpmid_i                 => bpmid_i,
 
             linksup_o               => linksup_buffer(2*N+1 downto 2*N),
@@ -273,10 +274,10 @@ GTP_INST : entity work.fofb_cc_gtp_tile
         rxdata1_out                 => rxdata(1),
         rxreset0_in                 => rxreset(0),
         rxreset1_in                 => rxreset(1),
-        rxusrclk0_in                => txusrclk_i,
-        rxusrclk1_in                => txusrclk_i,
-        rxusrclk20_in               => txusrclk2_i,
-        rxusrclk21_in               => txusrclk2_i,
+        rxusrclk0_in                => userclk_2x_i,
+        rxusrclk1_in                => userclk_2x_i,
+        rxusrclk20_in               => userclk_i,
+        rxusrclk21_in               => userclk_i,
         rxn0_in                     => rxn(0),
         rxn1_in                     => rxn(1),
         rxp0_in                     => rxp(0),
@@ -307,10 +308,10 @@ GTP_INST : entity work.fofb_cc_gtp_tile
         txoutclk1_out               => open,
         txreset0_in                 => txreset(0),
         txreset1_in                 => txreset(1),
-        txusrclk0_in                => txusrclk_i,
-        txusrclk1_in                => txusrclk_i,
-        txusrclk20_in               => txusrclk2_i,
-        txusrclk21_in               => txusrclk2_i,
+        txusrclk0_in                => userclk_2x_i,
+        txusrclk1_in                => userclk_2x_i,
+        txusrclk20_in               => userclk_i,
+        txusrclk21_in               => userclk_i,
         txn0_out                    => txn(0),
         txn1_out                    => txn(1),
         txp0_out                    => txp(0),

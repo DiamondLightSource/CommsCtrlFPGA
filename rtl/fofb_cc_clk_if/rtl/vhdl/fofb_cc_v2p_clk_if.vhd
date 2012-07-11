@@ -20,6 +20,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library work;
 use work.fofb_cc_pkg.all;-- DLS FOFB package
@@ -39,15 +40,15 @@ entity fofb_cc_clk_if is
     port (
         refclk_n_i              : in  std_logic;
         refclk_p_i              : in  std_logic;
+        -- system interface
+        gtreset_i               : in  std_logic;
+        txoutclk_i              : in  std_logic;
+        plllkdet_i              : in  std_logic;
         -- clocks and resets
-        extreset_i              : in  std_logic;
         initclk_o               : out std_logic;
         refclk_o                : out std_logic;
         mgtreset_o              : out std_logic;
         gtreset_o               : out std_logic;
-        -- system interface
-        txoutclk_i              : in  std_logic;
-        plllkdet_i              : in  std_logic;
         -- user clocks
         userclk_o               : out std_logic;
         userclk_2x_o            : out std_logic
@@ -59,30 +60,16 @@ architecture rtl of fofb_cc_clk_if is
 -----------------------------------------------
 -- Signal declaration
 -----------------------------------------------
-signal init_clk         : std_logic;
-signal refclk           : std_logic;
-signal refclk_i         : std_logic;
-signal userclk          : std_logic;
-signal dcm_reset        : std_logic;
-signal dcm_clkdiv1      : std_logic;
-signal dcm_clkdiv2      : std_logic;
-signal mgtreset_n       : std_logic;
-signal init_reset       : std_logic;
-signal dcm_locked       : std_logic;
-signal tied_to_ground   : std_logic;
-signal tied_to_vcc      : std_logic;
-signal pll_not_locked   : std_logic;
-signal reset_debounce_r   : std_logic_vector(0 to 3);
-signal reset_debounce_r2  : std_logic;
-signal reset_debounce_r3  : std_logic;
-signal reset_debounce_r4  : std_logic;
-signal txoutclk_to_dcm    : std_logic;
+signal refclk               : std_logic;
+signal userclk              : std_logic;
+signal tied_to_ground       : std_logic;
+signal init_clk             : std_logic;
+signal mgtreset_n           : std_logic;
 
 begin
 
 --  Static signal Assigments
 tied_to_ground <= '0';
-tied_to_vcc <= '1';
 
 ----------------------------------------------------
 -- Virtex2Pro Clock Interface with or without a DCM
@@ -92,6 +79,7 @@ tied_to_vcc <= '1';
 refclk_o     <= refclk;
 userclk_o    <= userclk;        -- 106.25MHz
 userclk_2x_o <= userclk;        -- 106.25MHz
+initclk_o    <= tied_to_ground;
 gtreset_o    <= tied_to_ground;
 mgtreset_o   <= not mgtreset_n;
 
@@ -109,7 +97,7 @@ user_clock_bufg : BUFG
         O => userclk
     );
 
--- MGT/GTP clock domain reset is based on DCM lock output
+--- MGT/GTP clock domain reset is based on DCM lock output
 SRL16_mgtreset : SRL16
     port map    (
         Q   => mgtreset_n,

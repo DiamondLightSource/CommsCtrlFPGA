@@ -15,7 +15,7 @@ entity fofb_cc_rx_buffer is
         din                     : in  std_logic_vector(15 downto 0);
         -- Control interface
         reset                   : in  std_logic;
-        timeframe               : in  std_logic;
+        timeframe_valid_i               : in  std_logic;
         max_data_count          : out std_logic_vector(7 downto 0)
     );
 end fofb_cc_rx_buffer;
@@ -63,7 +63,7 @@ begin
     if rising_edge(rd_clk) then
         if (reset = '1') then
             max_rd_data <= (others => '0');
-        elsif (timeframe = '1') then
+        elsif (timeframe_valid_i = '1') then
             if (unsigned(rd_data_count) > max_rd_data) then
                 max_rd_data <= unsigned(rd_data_count);
             end if;

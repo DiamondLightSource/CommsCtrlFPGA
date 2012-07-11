@@ -72,9 +72,9 @@ constant SourceType             : std_logic_vector(2 downto 0) := "000";
 
 -- Number of BPMs + PMCs on the network
 -- Used in Forward and Discard module. It has to be power of 2.
--- Adjusting this parameter reduces logic 
-constant NodeNum                : integer := 256;   -- # of nodes
-constant NodeNumIndexWidth      : integer := 8;     -- log2(NodeNum)
+-- Adjusting this parameter reduces logic
+constant NodeNum                : integer := 512;   -- # of nodes
+constant NodeNumIndexWidth      : integer := 9;     -- log2(NodeNum)
 
 ----------------------------------------------------------------------
 -- ADDRESS SPACE

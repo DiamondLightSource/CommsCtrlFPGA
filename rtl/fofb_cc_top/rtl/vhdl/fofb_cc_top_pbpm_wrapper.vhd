@@ -10,7 +10,7 @@ use work.fofb_cc_pkg.all;
 entity fofb_cc_top_wrapper is
     generic (
         ID                      : integer := 255;
-        LANE_COUNT              : integer := 1
+        LANE_COUNT              : integer := 2
     );
     port (
         -- differential MGT/GTP clock inputs
@@ -43,7 +43,14 @@ entity fofb_cc_top_wrapper is
 end fofb_cc_top_wrapper;
 
 architecture structure of fofb_cc_top_wrapper is
+
+signal fofb_rxlink_up          : std_logic_vector(LANE_COUNT-1 downto 0);
+signal fofb_rxlink_partner     : std_logic_2d_10(LANE_COUNT-1 downto 0);
+
 begin
+
+fofb_rxlink_up_o        <= fofb_rxlink_up(0);
+fofb_rxlink_partner_o   <= fofb_rxlink_partner(0);
 
 fofb_cc_top : entity work.fofb_cc_top
     generic map (
@@ -57,6 +64,7 @@ fofb_cc_top : entity work.fofb_cc_top
         adcclk_i                => '0',
         adcreset_i              => '0',
         sysclk_i                => sysclk_i,
+        sysreset_n_i            => '1',
         fai_fa_block_start_i    => '0',
         fai_fa_data_valid_i     => '0',
         fai_fa_d_i              => (others => '0'),
@@ -67,6 +75,8 @@ fofb_cc_top : entity work.fofb_cc_top
         fai_cfg_clk_o           => fai_cfg_clk_o,
         fai_cfg_val_i           => fai_cfg_val_i,
         fai_psel_val_i          => X"000000FE",
+        fai_rxfifo_clear        => '0',
+        fai_txfifo_clear        => '0',
         fai_rio_rdp_i           => fai_rio_rdp_i,
         fai_rio_rdn_i           => fai_rio_rdn_i,
         fai_rio_tdp_o           => fai_rio_tdp_o,
@@ -86,8 +96,8 @@ fofb_cc_top : entity work.fofb_cc_top
         fofb_bpm_count_o        => open,
         fofb_dma_ok_i           => '1',
         fofb_node_mask_o        => open,
-        fofb_rxlink_up_o        => fofb_rxlink_up_o,
-        fofb_rxlink_partner_o   => fofb_rxlink_partner_o,
+        fofb_rxlink_up_o        => fofb_rxlink_up,
+        fofb_rxlink_partner_o   => fofb_rxlink_partner,
         fofb_timestamp_val_o    => open,
         harderror_cnt_o         => open,
         softerror_cnt_o         => open,

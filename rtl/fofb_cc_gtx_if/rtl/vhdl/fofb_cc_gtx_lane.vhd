@@ -40,9 +40,9 @@ port (
 
     -- time frame sync
     timeframe_start_i       : in  std_logic;
-    timeframe_end_i         : in std_logic;
-    timeframe_val_i         : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(7 downto 0);
+    timeframe_valid_i       : in std_logic;
+    timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
+    bpmid_i                 : in  std_logic_vector(9 downto 0);
 
     -- status information
     linksup_o               : out std_logic_vector(1 downto 0);
@@ -147,7 +147,7 @@ tx_ll : entity work.fofb_cc_gtx_tx_ll
         txreset_o           => txreset_o,
         powerdown_i         => powerdown_i,
         timeframe_start_i   => timeframe_start_i,
-        timeframe_end_i     => timeframe_end_i,
+        timeframe_valid_i   => timeframe_valid_i,
         bpmid_i             => bpmid_i,
         tx_link_up_o        => txlink_up,
         txpck_cnt_o         => txpck_cnt_o,
@@ -188,8 +188,8 @@ rx_ll : entity work.fofb_cc_gtx_rx_ll
         pmc_timeframe_val_o => pmc_timeframe_val_o,
         timestamp_val_o     => timestamp_val_o,
         timeframe_start_i   => timeframe_start_i,
-        timeframe_end_i     => timeframe_end_i,
-        timeframe_val_i     => timeframe_val_i,
+        timeframe_valid_i   => timeframe_valid_i,
+        timeframe_cntr_i    => timeframe_cntr_i,
         comma_align_o       => ena_comma_align,
         rxf_full_i          => rxf_full_i,
         rxbuferr_i          => rxbuferr_i,

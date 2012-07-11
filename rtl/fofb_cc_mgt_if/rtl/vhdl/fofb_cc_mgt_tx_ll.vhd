@@ -35,8 +35,8 @@ entity fofb_cc_mgt_tx_ll is
         txreset_o               : out std_logic;
         powerdown_i             : in  std_logic;
         -- time frame sync
-        timeframe_end_i         : in std_logic;
-        bpmid_i                 : in  std_logic_vector(7 downto 0);
+        timeframe_valid_i       : in  std_logic;
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
         -- status information
         tx_link_up_o            : out std_logic;
         txpck_cnt_o             : out std_logic_vector(15 downto 0);
@@ -65,7 +65,8 @@ architecture rtl of fofb_cc_mgt_tx_ll is
 constant IDLE           : std_logic_vector (15 downto 0) := X"BC95"; --/K28.5
 constant SOP            : std_logic_vector (15 downto 0) := X"5CFB"; --/K28.2/K27.7/
 constant EOP            : std_logic_vector (15 downto 0) := X"FDFE"; --/K29.7/K30.7/·
-constant SENDID         : std_logic_vector (7 downto 0)  := X"F7";   --/K23.7/
+constant SENDID_L       : std_logic_vector (7 downto 0)  := X"F7";   --/K23.7/
+constant SENDID_H       : std_logic_vector (7 downto 0)  := X"1C";   --/K28.0/
 
 -- state machine declarations
 type tx_state_type is (tx_rst, tx_sync, tx_init, tx_dly, tx_idle, tx_sop, tx_payload, tx_crc_holder, tx_eop, tx_wait);
@@ -81,6 +82,8 @@ signal txf_rd_en                : std_logic;
 signal tx_count                 : unsigned(4 downto 0);
 signal crc_cnt                  : unsigned(2 downto 0);
 signal wait_cnt                 : unsigned(2 downto 0);
+signal send_id                  : std_logic;
+signal send_id_prev             : std_logic;
 
 begin
 
@@ -119,7 +122,7 @@ begin
             counter4bit         <= (others => '0');
             error_detect_ena    <= '0';
             tx_link_up_o        <= '0';
-            send_id_cnt         <=  (others => '0');
+            send_id_cnt         <= (others => '0');
             tx_sm_busy_o        <= '0';
             txreset_o           <= '1';
             crc_cnt             <= "000";
@@ -152,23 +155,36 @@ begin
                 when tx_idle  =>
                     -- If TX_FIFO has packets, start...
                     -- TX_FIFO_EMPTY is set to '1' during FIFO reset.
-                    if (txf_empty_i = '0' and timeframe_end_i = '0') then
-                        tx_state         <= tx_sop;
-                        txf_rd_en      <= '1';    
-                        tx_sm_busy_o     <= '1';        --tx fifo can not be reset...
+                    if (txf_empty_i = '0' and timeframe_valid_i = '1') then
+                        tx_state       <= tx_sop;
+                        txf_rd_en      <= '1';
+                        tx_sm_busy_o   <= '1';        --tx fifo can not be reset...
                     else
-                        tx_state         <= tx_idle;
+                        tx_state       <= tx_idle;
                         txf_rd_en      <= '0';
-                        tx_sm_busy_o     <= '0';
+                        tx_sm_busy_o   <= '0';
                     end if;
 
                     -- Inject owm BPM ID periodically only in tx_idle state
-                    if (send_id_cnt(SEND_ID_NUM-1) = '1') then
-                        tx_d_o         <= SENDID & bpmid_i;
-                        send_id_cnt    <=  (others => '0');
+                    -- out of time frame period
+                    send_id <= send_id_cnt(SEND_ID_NUM-1) and not timeframe_valid_i;
+                    send_id_prev <= send_id;
+
+                    if (send_id = '1') then
+                        send_id_cnt <= (others => '0');
                     else
-                        tx_d_o         <= IDLE;
-                        send_id_cnt    <=  send_id_cnt + 1;
+                        send_id_cnt <= send_id_cnt + 1;
+                    end if;
+
+                    if (send_id = '1') then
+                        tx_d_o <= SENDID_L &
+                                  bpmid_i(7 downto 0);
+                    elsif (send_id_prev = '1') then
+                        tx_d_o <= SENDID_H &
+                                  "000000" &
+                                  bpmid_i(9 downto 8);
+                    else
+                        tx_d_o <= IDLE;
                     end if;
 
                     txcharisk_o        <= "10";
@@ -224,7 +240,7 @@ begin
                     tx_d_o   <= IDLE;
 
                     if (wait_cnt = 3) then
-                        if (txf_empty_i = '0' and timeframe_end_i = '0') then
+                        if (txf_empty_i = '0' and timeframe_valid_i = '1') then
                             tx_state     <= tx_sop;
                             txf_rd_en    <= '1';
                         else
@@ -238,11 +254,11 @@ begin
                     end if;
 
                 when others =>
-                    tx_d_o   <= IDLE;
+                    tx_d_o <= IDLE;
                     txcharisk_o <= "10";
-                    tx_state        <= tx_idle;
+                    tx_state <= tx_idle;
                     txf_rd_en <= '0';
-                    tx_count        <= (others => '0');
+                    tx_count <= (others => '0');
             end case;
         end if;
     end if;

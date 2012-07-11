@@ -47,12 +47,13 @@ entity fofb_cc_top is
     );
     port (
         -- differential MGT/GTP clock inputs
-        refclk_p_i              : in  std_logic;
-        refclk_n_i              : in  std_logic;
+        refclk_p_i              : in std_logic;
+        refclk_n_i              : in std_logic;
         -- clock and reset interface
         adcclk_i                : in std_logic;
         adcreset_i              : in std_logic;
         sysclk_i                : in std_logic;
+        sysreset_n_i            : in std_logic;
         -- fast acquisition data interface
         fai_fa_block_start_i    : in std_logic;
         fai_fa_data_valid_i     : in std_logic;
@@ -79,7 +80,7 @@ entity fofb_cc_top is
         coeff_y_addr_i          : in  std_logic_vector(7 downto 0);
         coeff_y_dat_o           : out std_logic_vector(31 downto 0);
         -- Higher-level integration interface (PMC, SNIFFER_V5)
-        xy_buf_addr_i           : in  std_logic_vector(8 downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(NodeNumIndexWidth downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
         timeframe_end_rise_o    : out std_logic;
         timeframe_start_o       : out std_logic;
@@ -124,7 +125,6 @@ signal rxf_empty            : std_logic_vector(LANE_COUNT-1 downto 0);
 signal rxf_empty_n          : std_logic_vector(LANE_COUNT-1 downto 0);
 signal rxf_full             : std_logic_vector(LANE_COUNT-1 downto 0);
 -- frame status 
-signal timeframe_end        : std_logic;
 signal timeframe_count      : std_logic_vector(31 downto 0) := (others=>'0');
 signal link_partners        : std_logic_2d_10(3 downto 0);
 signal timeframe_len        : std_logic_vector(15 downto 0);
@@ -146,6 +146,8 @@ signal mgt_loopback         : std_logic_vector(7 downto 0);
 signal bpm_timeframe_start  : std_logic := '0';
 signal pmc_timeframe_start  : std_logic_vector(3 downto 0);
 signal timeframe_start      : std_logic := '0';
+signal timeframe_end        : std_logic;
+signal timeframe_valid      : std_logic;
 -- own bpm position
 signal bpm_own_xpos         : std_logic_vector(31 downto 0);
 signal bpm_own_ypos         : std_logic_vector(31 downto 0);
@@ -241,8 +243,6 @@ port map (
 ----------------------------------------------------------------------
 -- reset signals: fai_cfg_val(3) from user is used as user reset
 ----------------------------------------------------------------------
---
---
 fofb_cc_enable <= fai_cfg_val_i(3);
 fofb_pos_datsel <= fai_cfg_val_i(1);
 fai_cfg_act_part <= fai_cfg_val_i(0);
@@ -258,6 +258,7 @@ port map (
     refclk_n_i              => refclk_n_i,
     refclk_p_i              => refclk_p_i,
 
+    gtreset_i               => not sysreset_n_i, --not fofb_cc_enable,
     txoutclk_i              => txoutclk,
     plllkdet_i              => plllkdet,
 
@@ -272,7 +273,7 @@ port map (
 
 ----------------------------------------------------------------------
 -- Generate N Gigabit Transceiver Channels
--- This is an instantiation for wrapper component for various 
+-- This is an instantiation for wrapper component for various
 -- Xilinx Devices support
 ----------------------------------------------------------------------
 GT_IF: entity work.fofb_cc_gt_if
@@ -285,7 +286,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => sysreset, --mgtreset,
+    mgtreset_i              => mgtreset, --sysreset,
     initclk_i               => initclk,
 
     gtreset_i               => gtreset,
@@ -300,9 +301,9 @@ port map (
     txp_o                   => fai_rio_tdp_o,
 
     timeframe_start_i       => timeframe_start,
-    timeframe_end_i         => timeframe_end,
-    timeframe_val_i         => timeframe_count(15 downto 0),
-    bpmid_i                 => bpm_id(7 downto 0),
+    timeframe_valid_i       => timeframe_valid,
+    timeframe_cntr_i        => timeframe_count(15 downto 0),
+    bpmid_i                 => bpm_id,
 
     powerdown_i             => mgt_powerdown,
     loopback_i              => mgt_loopback,
@@ -352,7 +353,7 @@ port map(
 end generate;
 
 ----------------------------------------------
--- asymetrical rx fifo generation for each mgt channel 
+-- asymetrical rx fifo generation for each mgt channel
 -- 16-bit input/128-bit output
 ----------------------------------------------
 RX_FIFO_GEN: for N in 0 to (LANE_COUNT - 1) generate
@@ -368,7 +369,7 @@ port map (
     empty                   => rxf_empty(N),
     full                    => rxf_full(N),
     reset                   => fai_rxfifo_clear,
-    timeframe               => not timeframe_end,
+    timeframe_valid_i       => timeframe_valid,
     max_data_count          => rx_max_data_count(N)
 );
 end generate;
@@ -390,8 +391,7 @@ port map (
     channel_up              => rx_linkup(LANE_COUNT-1 downto 0),
     data_out                => arbmux_dout,
     data_out_rdy            => arbmux_dout_rdy,
-    timeframe_start_i       => timeframe_start,
-    timeframe_end_i         => timeframe_end
+    timeframe_valid_i       => timeframe_valid
 );
 
 rxf_empty_n <= not rxf_empty;
@@ -408,14 +408,15 @@ port map (
     mgtclk_i                => userclk,
     sysclk_i                => sysclk_i,
     mgtreset_i              => sysreset,
-    timeframe_start_i       => timeframe_start ,
+    timeframe_valid_i       => timeframe_valid,
+    timeframe_start_i       => timeframe_start,
+    timeframe_end_i         => timeframe_end,
     linksup_i               => tx_linkup(LANE_COUNT-1 downto 0),
     fod_dat_i               => arbmux_dout,
     fod_dat_val_i           => arbmux_dout_rdy,
     fod_dat_o               => txf_din,
     fod_dat_val_o           => txf_wr_en,
-    timeframe_val_i         => timeframe_count,
-    timeframe_end_i         => timeframe_end,
+    timeframe_cntr_i        => timeframe_count,
     timeframe_end_rise_o    => timeframe_end_rise_o,
     bpm_x_pos_i             => bpm_own_xpos,
     bpm_y_pos_i             => bpm_own_ypos,
@@ -456,7 +457,7 @@ port map (
     empty                   => txf_empty(N),
     full                    => txf_full(N),
     reset                   => fai_txfifo_clear,
-    timeframe               => not timeframe_end,
+    timeframe_valid_i       => timeframe_valid,
     max_data_count          => tx_max_data_count(N)
 );
 end generate;
@@ -503,7 +504,6 @@ port map(
     coeff_y_dat_o           => coeff_y_dat_o,
     golden_x_orb_o          => golden_orb_x,
     golden_y_orb_o          => golden_orb_y,
-    timeframe_end_i         => timeframe_end,
     fai_cfg_val_i           => fai_cfg_val_i
 );
 
@@ -540,12 +540,14 @@ port map(
     tfs_bpm_i               => bpm_timeframe_start,
     tfs_pmc_i               => pmc_timeframe_start,
     timeframe_len_i         => timeframe_len,
+    timeframe_valid_o       => timeframe_valid,
     timeframe_start_o       => timeframe_start,
     timeframe_end_o         => timeframe_end,
-    timeframe_val_o         => timeframe_count,
-    timestamp_val_o         => timestamp_val,
-    pmc_timeframe_val_i     => pmc_timeframe_val,
-    pmc_timestamp_val_i     => pmc_timestamp_val
+    pmc_timeframe_cntr_i    => pmc_timeframe_val,
+    pmc_timestamp_val_i     => pmc_timestamp_val,
+    timeframe_cntr_o        => timeframe_count,
+    timestamp_value_o       => timestamp_val
 );
+
 
 end structural;

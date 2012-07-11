@@ -51,8 +51,8 @@ entity fofb_cc_mgt_rx_ll is
         pmc_timeframe_val_o : out std_logic_vector(15 downto 0);
         timestamp_val_o     : out std_logic_vector(31 downto 0);
         --
-        timeframe_end_i     : in std_logic;
-        timeframe_val_i     : in  std_logic_vector(15 downto 0);
+        timeframe_valid_i   : in std_logic;
+        timeframe_cntr_i     : in  std_logic_vector(15 downto 0);
         comma_align_o       : out std_logic;
         rxf_full_i          : in  std_logic;
         --
@@ -77,8 +77,9 @@ architecture rtl of fofb_cc_mgt_rx_ll is
 -- RocketIO protocol symbols
 constant IDLE           : std_logic_vector (15 downto 0) :=X"BC95"; --/K28.5
 constant SOP            : std_logic_vector (15 downto 0) :=X"5CFB"; --/K28.2/K27.7/
-constant EOP            : std_logic_vector (15 downto 0) :=X"FDFE"; --/K29.7/K30.7/ 
-constant SENDID         : std_logic_vector (7 downto 0)  :=X"F7";   --/K23.7/
+constant EOP            : std_logic_vector (15 downto 0) :=X"FDFE"; --/K29.7/K30.7/
+constant SENDID_L       : std_logic_vector (7 downto 0)  := X"F7";  --/K23.7/
+constant SENDID_H       : std_logic_vector (7 downto 0)  := X"1C";  --/K28.0/
 
 -- MGT protocol configuration constants
 constant RX_DELAY_NUM   : natural := 21;
@@ -214,8 +215,11 @@ begin
             if (rx_link_up = '0') then
                 link_partner_o <= (others => '1');
             else
-                if (rx_d_i(15 downto 8) = SENDID and rxcharisk_i = "10") then
-                    link_partner_o <= "00" & rx_d_i(7 downto 0);
+                if (rx_d_i(15 downto 8) = SENDID_L and rxcharisk_i = "10") then
+                    link_partner_o(7 downto 0) <= rx_d_i(7 downto 0);
+                end if;
+                if (rx_d_i(15 downto 8) = SENDID_H and rxcharisk_i = "10") then
+                    link_partner_o(9 downto 8) <= rx_d_i(1 downto 0);
                 end if;
             end if;
         end if;
@@ -322,7 +326,9 @@ begin
                     when rx_wait_1 =>
                         -- Discard packet when time frame does not match and time frame is 
                         -- not ended and RX fifo is not full
-                        if (rx_dl(18) = timeframe_val_i and timeframe_end_i = '0' and rxf_full_i = '0') then
+                        if (rx_dl(18) = timeframe_cntr_i
+                                    and timeframe_valid_i = '1'
+                                        and rxf_full_i = '0') then
                             rx_data_state <= rx_write_data;
                         else
                             rx_data_state <= rx_crc_wait;

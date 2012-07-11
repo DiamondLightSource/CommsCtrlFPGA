@@ -1,82 +1,65 @@
-##############################################################
-#
-# Xilinx Core Generator version K.39
-# Date: Thu Apr 19 07:48:27 2012
-#
-##############################################################
-#
-#  This file contains the customisation parameters for a
-#  Xilinx CORE Generator IP GUI. It is strongly recommended
-#  that you do not manually alter this file as it may cause
-#  unexpected and unsupported behavior.
-#
-##############################################################
-#
 # BEGIN Project Options
-SET addpads = False
+SET flowvendor = Other
+SET vhdlsim = True
+SET verilogsim = False
+SET workingdirectory = ../implementation
+SET outputdirectory = ../implementation
+SET speedgrade = -5
+SET simulationfiles = Behavioral
 SET asysymbol = False
+SET addpads = False
+SET device = xc2vp30
+SET implementationfiletype = Ngc
 SET busformat = BusFormatAngleBracketNotRipped
+SET foundationsym = False
+SET package = ff1152
 SET createndf = False
 SET designentry = VHDL
-SET device = xc2vp30
 SET devicefamily = virtex2p
-SET flowvendor = Other
 SET formalverification = False
-SET foundationsym = False
-SET implementationfiletype = Ngc
-SET package = ff1152
 SET removerpms = False
-SET simulationfiles = Behavioral
-SET speedgrade = -5
-SET verilogsim = False
-SET vhdlsim = True
 # END Project Options
 # BEGIN Select
-SELECT Fifo_Generator family Xilinx,_Inc. 4.4
+SELECT Fifo_Generator family Xilinx,_Inc. 2.2
 # END Select
 # BEGIN Parameters
 CSET almost_empty_flag=false
-CSET almost_full_flag=false
-CSET component_name=fofb_cc_tx_fifo
-CSET data_count=false
-CSET data_count_width=7
-CSET disable_timing_violations=false
-CSET dout_reset_value=0
-CSET empty_threshold_assert_value=2
-CSET empty_threshold_negate_value=3
-CSET enable_ecc=false
-CSET enable_int_clk=false
-CSET fifo_implementation=Independent_Clocks_Block_RAM
-CSET full_flags_reset_value=1
-CSET full_threshold_assert_value=125
-CSET full_threshold_negate_value=124
-CSET input_data_width=128
-CSET input_depth=128
-CSET output_data_width=16
-CSET output_depth=1024
-CSET overflow_flag=false
-CSET overflow_sense=Active_High
-CSET performance_options=Standard_FIFO
-CSET programmable_empty_type=No_Programmable_Empty_Threshold
-CSET programmable_full_type=No_Programmable_Full_Threshold
-CSET read_clock_frequency=1
-CSET read_data_count=false
-CSET read_data_count_width=10
-CSET reset_pin=true
-CSET reset_type=Asynchronous_Reset
-CSET underflow_flag=false
-CSET underflow_sense=Active_High
-CSET use_dout_reset=true
-CSET use_embedded_registers=false
-CSET use_extra_logic=false
-CSET valid_flag=false
-CSET valid_sense=Active_High
-CSET write_acknowledge_flag=false
-CSET write_acknowledge_sense=Active_High
-CSET write_clock_frequency=1
 CSET write_data_count=true
+CSET full_threshold_negate_value=96
+CSET use_built_in_fifo_flags=false
+CSET empty_threshold_negate_value=256
+CSET output_data_width=16
+CSET input_depth=128
+CSET valid_flag=false
+CSET empty_threshold_negate_presets=3/4_Empty
+CSET write_acknowledge_flag=false
+CSET programmable_empty_type=No_Programmable_Empty_Threshold
+CSET full_threshold_negate_presets=3/4_Full
+CSET fifo_implementation=Independent_Clocks_Block_RAM
+CSET underflow_flag=false
+CSET use_extra_logic=false
+CSET valid_sense=Active_High
 CSET write_data_count_width=7
+CSET data_count_width=2
+CSET output_depth=1024
+CSET dout_reset_value=0
+CSET underflow_sense=Active_High
+CSET component_name=fofb_cc_tx_fifo
+CSET overflow_sense=Active_High
+CSET overflow_flag=false
+CSET read_data_count=false
+CSET data_count=false
+CSET primitive_depth=512
+CSET programmable_full_type=No_Programmable_Full_Threshold
+CSET read_data_count_width=2
+CSET performance_options=Standard_FIFO
+CSET empty_threshold_assert_presets=3/4_Empty
+CSET full_threshold_assert_value=96
+CSET almost_full_flag=false
+CSET full_threshold_assert_presets=3/4_Full
+CSET write_acknowledge_sense=Active_High
+CSET empty_threshold_assert_value=256
+CSET input_data_width=128
 # END Parameters
 GENERATE
-# CRC: edd2f1e6
 

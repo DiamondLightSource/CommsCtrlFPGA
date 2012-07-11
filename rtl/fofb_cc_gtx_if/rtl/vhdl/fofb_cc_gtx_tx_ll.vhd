@@ -37,8 +37,8 @@ entity fofb_cc_gtx_tx_ll is
         powerdown_i             : in  std_logic;
         -- time frame sync
         timeframe_start_i       : in std_logic;
-        timeframe_end_i         : in std_logic;
-        bpmid_i                 : in  std_logic_vector(7 downto 0);
+        timeframe_valid_i       : in std_logic;
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
         -- status information
         tx_link_up_o            : out std_logic; 
         txpck_cnt_o             : out std_logic_vector(15 downto 0);
@@ -71,7 +71,8 @@ architecture rtl of fofb_cc_gtx_tx_ll is
 constant IDLE           : std_logic_vector (15 downto 0) :=X"BC95"; --/K28.5
 constant SOP            : std_logic_vector (15 downto 0) :=X"5CFB"; --/K28.2/K27.7/
 constant EOP            : std_logic_vector (15 downto 0) :=X"FDFE"; --/K29.7/K30.7/ 
-constant SENDID         : std_logic_vector (7 downto 0)  :=X"F7";   --/K23.7/
+constant SENDID_L       : std_logic_vector (7 downto 0)  := X"F7";   --/K23.7/
+constant SENDID_H       : std_logic_vector (7 downto 0)  := X"1C";   --/K28.0/
 
 -- state machine declarations
 type tx_state_type is (tx_rst, tx_wait_resetdone, tx_sync, tx_idle, tx_sop, tx_payload, tx_eop);
@@ -95,6 +96,9 @@ signal error_detect_ena         : std_logic;
 signal counter4bit              : unsigned(3 downto 0);
 signal txpck_cnt                : unsigned(15 downto 0);
 signal tx_harderror             : std_logic;
+signal send_id                  : std_logic;
+signal send_id_prev             : std_logic;
+
 
 begin
 
@@ -117,7 +121,7 @@ begin
             tx_crc_din_val_cnt <= "1001";
         else
             -- Read 8x16-bit words from tx fifo
-            if (txf_empty_i = '0' and timeframe_end_i = '0' and
+            if (txf_empty_i = '0' and timeframe_valid_i = '1' and
                     txf_rd_en = '0' and tx_state = tx_idle) then
                 txf_rd_en <= '1';
             elsif (txf_rd_cnt = "000") then
@@ -130,7 +134,7 @@ begin
 
             -- Data train to CRC32 block is 10x16-bit in length. Therefore, we need a
             -- seperate counter
-            if (txf_empty_i = '0' and timeframe_end_i = '0' and
+            if (txf_empty_i = '0' and timeframe_valid_i = '1' and
                     tx_crc_din_val = '0' and tx_state = tx_idle) then
                 tx_crc_din_val <= '1';
             elsif (tx_crc_din_val_cnt = "0000") then
@@ -252,12 +256,24 @@ begin
                     end if;
 
                     -- Inject owm BPM ID periodically only in tx_idle state
-                    if (send_id_cnt(SEND_ID_NUM-1) = '1') then
-                        tx_d_o      <= SENDID & bpmid_i;
+                    send_id <= send_id_cnt(SEND_ID_NUM-1) and not timeframe_valid_i;
+                    send_id_prev <= send_id;
+
+                    if (send_id = '1') then
                         send_id_cnt <= (others => '0');
                     else
-                        tx_d_o      <= IDLE;
                         send_id_cnt <= send_id_cnt + 1;
+                    end if;
+
+                    if (send_id = '1') then
+                        tx_d_o <= SENDID_L &
+                                  bpmid_i(7 downto 0);
+                    elsif (send_id_prev = '1') then
+                        tx_d_o <= SENDID_H &
+                                  "000000" &
+                                  bpmid_i(9 downto 8);
+                    else
+                        tx_d_o <= IDLE;
                     end if;
 
                     error_detect_ena <= '1';

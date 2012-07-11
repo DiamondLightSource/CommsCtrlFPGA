@@ -16,6 +16,8 @@
 #
 ##############################################################
 #
+NEWPROJECT ../implementation
+
 # BEGIN Project Options
 SET addpads = false
 SET asysymbol = false
@@ -36,7 +38,7 @@ SET verilogsim = false
 SET vhdlsim = true
 # END Project Options
 # BEGIN Select
-SELECT Fifo_Generator xilinx.com:ip:fifo_generator:8.4
+SELECT Fifo_Generator xilinx.com:ip:fifo_generator:9.1
 # END Select
 # BEGIN Parameters
 CSET add_ngc_constraint_axi=false

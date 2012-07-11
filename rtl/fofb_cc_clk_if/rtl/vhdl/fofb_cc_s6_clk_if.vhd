@@ -33,16 +33,18 @@ entity fofb_cc_clk_if is
         -- Differential GT clock inputs
         refclk_n_i              : in  std_logic;
         refclk_p_i              : in  std_logic;
-        -- System level clock and reset inputs
+        -- system interface
+        gtreset_i               : in  std_logic;
         txoutclk_i              : in  std_logic;
         plllkdet_i              : in  std_logic;
-        -- System level clock and reset outputs
-        refclk_o                : out std_logic;
+        -- clocks and resets
         initclk_o               : out std_logic;
-        userclk_o               : out std_logic;
-        userclk_2x_o            : out std_logic;
+        refclk_o                : out std_logic;
         mgtreset_o              : out std_logic;
-        gtreset_o               : out std_logic
+        gtreset_o               : out std_logic;
+        -- user clocks
+        userclk_o               : out std_logic;
+        userclk_2x_o            : out std_logic
     );
 end fofb_cc_clk_if;
 

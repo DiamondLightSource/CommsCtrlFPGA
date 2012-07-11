@@ -39,10 +39,10 @@ entity fofb_cc_gt_if is
 
         -- system interface
         gtreset_i               : in  std_logic;
-        txoutclk_o              : out std_logic;
-        plllkdet_o              : out std_logic;
         userclk_i               : in  std_logic;
         userclk_2x_i            : in  std_logic;
+        txoutclk_o              : out std_logic;
+        plllkdet_o              : out std_logic;
 
         -- RocketIO
         rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
@@ -52,9 +52,9 @@ entity fofb_cc_gt_if is
 
         -- time frame sync
         timeframe_start_i       : in  std_logic;
-        timeframe_end_i         : in  std_logic;
-        timeframe_val_i         : in  std_logic_vector(15 downto 0);
-        bpmid_i                 : in  std_logic_vector(7 downto 0);
+        timeframe_valid_i       : in  std_logic;
+        timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
 
         -- mgt configuration
         powerdown_i             : in  std_logic_vector(3 downto 0);
@@ -204,8 +204,8 @@ gtx_if_gen : for N in 0 to (LaneCount-1) generate
             rxelecidlereset_i       => tied_to_ground,
 
             timeframe_start_i       => timeframe_start_i,
-            timeframe_end_i         => timeframe_end_i,
-            timeframe_val_i         => timeframe_val_i,
+            timeframe_valid_i       => timeframe_valid_i,
+            timeframe_cntr_i        => timeframe_cntr_i,
             bpmid_i                 => bpmid_i,
 
             linksup_o               => linksup_buffer(2*N+1 downto 2*N),

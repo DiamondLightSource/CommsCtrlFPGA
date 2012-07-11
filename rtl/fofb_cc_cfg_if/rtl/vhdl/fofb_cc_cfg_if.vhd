@@ -30,19 +30,19 @@ entity fofb_cc_cfg_if is
         mgtreset_i              : in std_logic;
         -- Config interface to libera
         fai_cfg_act_part_i      : in  std_logic;
-        fai_cfg_a_o             : out std_logic_vector(10 downto 0); 
-        fai_cfg_do_o            : out std_logic_vector(31 downto 0); 
+        fai_cfg_a_o             : out std_logic_vector(10 downto 0);
+        fai_cfg_do_o            : out std_logic_vector(31 downto 0);
         fai_cfg_di_i            : in  std_logic_vector(31 downto 0);
         fai_cfg_we_o            : out std_logic;
         -- Configuration data read from config bram
-        bpmid_o                 : out std_logic_vector(9 downto 0);  
-        timeframe_len_o         : out std_logic_vector(15 downto 0); 
+        bpmid_o                 : out std_logic_vector(9 downto 0);
+        timeframe_len_o         : out std_logic_vector(15 downto 0);
         powerdown_o             : out std_logic_vector(3 downto 0);
         loopback_o              : out std_logic_vector(7 downto 0);
         -- Configuration data written to config bram
-        pmc_heart_beat_i        : in  std_logic_vector(31 downto 0); 
-        link_partners_i         : in std_logic_2d_10(3 downto 0);   
-        link_up_i               : in std_logic_vector(7 downto 0);  
+        pmc_heart_beat_i        : in  std_logic_vector(31 downto 0);
+        link_partners_i         : in std_logic_2d_10(3 downto 0);
+        link_up_i               : in std_logic_vector(7 downto 0);
         timeframe_cnt_i         : in std_logic_vector(15 downto 0);
         harderror_cnt_i         : in std_logic_2d_16(3 downto 0);
         softerror_cnt_i         : in std_logic_2d_16(3 downto 0);
@@ -62,7 +62,6 @@ entity fofb_cc_cfg_if is
         golden_x_orb_o          : out std_logic_vector(31 downto 0);
         golden_y_orb_o          : out std_logic_vector(31 downto 0);
         --
-        timeframe_end_i         : in  std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0)
      );
 end fofb_cc_cfg_if;
@@ -83,7 +82,7 @@ constant    sta_write_start_addr    : unsigned(11 downto 0) := X"300";
 constant    sta_write_end_addr      : unsigned(11 downto 0) := X"3FF";
 -- State machine
 type state_type is (st1_idle, st2_read, st3_write);
-signal state : state_type; 
+signal state : state_type := st1_idle;
 
 signal cfg_ack_prev                 : std_logic;
 signal cfg_ack_rise                 : std_logic;
@@ -168,21 +167,12 @@ begin
     end if;
 end process;
 
--- Assign config parameters when there is no transmission on the
--- network
-process(mgtclk_i)
-begin
-    if (mgtclk_i'event and mgtclk_i='1') then
-        if (timeframe_end_i = '1') then
-          bpmid_o         <= bpmid;
-          timeframe_len_o <= timeframe_len;
-          powerdown_o     <= powerdown;
-          loopback_o      <= loopback;
-          golden_x_orb_o  <= golden_x_orb;
-          golden_y_orb_o  <= golden_y_orb;
-        end if;
-    end if;
-end process;
+bpmid_o         <= bpmid;
+timeframe_len_o <= timeframe_len;
+powerdown_o     <= powerdown;
+loopback_o      <= loopback;
+golden_x_orb_o  <= golden_x_orb;
+golden_y_orb_o  <= golden_y_orb;
 
 ----------------------------------------------------------
 -- Read CC configuration parameters from addr space 0-255
@@ -205,7 +195,7 @@ begin
 
                 if (cfg_addr_prev(9 downto 8) = "00") then
                     if (cfg_addr_prev(7 downto 0) = cc_cmd_bpm_id) then
-                        bpmid <= fai_cfg_di_i(9 downto 0);
+                        bpmid(NodeNumIndexWidth-1 downto 0) <= fai_cfg_di_i(NodeNumIndexWidth-1 downto 0);
                     end if; 
 
                     if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_length) then

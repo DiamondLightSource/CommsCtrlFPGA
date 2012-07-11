@@ -51,8 +51,8 @@ entity fofb_cc_gtx_rx_ll is
         timestamp_val_o     : out std_logic_vector(31 downto 0);
         --
         timeframe_start_i   : in  std_logic;
-        timeframe_end_i     : in std_logic;
-        timeframe_val_i     : in  std_logic_vector(15 downto 0);
+        timeframe_valid_i   : in std_logic;
+        timeframe_cntr_i    : in  std_logic_vector(15 downto 0);
         comma_align_o       : out std_logic;
         rxf_full_i          : in  std_logic;
         --
@@ -76,7 +76,8 @@ architecture rtl of fofb_cc_gtx_rx_ll is
 constant IDLE           : std_logic_vector (15 downto 0) :=X"BC95"; --/K28.5
 constant SOP            : std_logic_vector (15 downto 0) :=X"5CFB"; --/K28.2/K27.7/
 constant EOP            : std_logic_vector (15 downto 0) :=X"FDFE"; --/K29.7/K30.7/ 
-constant SENDID         : std_logic_vector (7 downto 0)  :=X"F7";   --/K23.7/
+constant SENDID_L       : std_logic_vector (7 downto 0)  := X"F7";  --/K23.7/
+constant SENDID_H       : std_logic_vector (7 downto 0)  := X"1C";  --/K28.0/
 
 -- MGT protocol configuration constants
 constant RX_DELAY_NUM   : natural := 4;
@@ -93,7 +94,7 @@ type std_logic_2d_16 is array (natural range <>) of std_logic_vector(15 downto 0
 signal rx_dl                    : std_logic_2d_16(RX_DELAY_NUM-1 downto 0) := (others => X"0000");
 
 signal counter_idle_rx          : unsigned(RX_IDLE_NUM-1 downto 0);
-signal counter_odd_word_rx      : unsigned(RX_IDLE_NUM-1 downto 0);
+signal counter_odd_word_rx      : unsigned(3 downto 0);
 signal rx_link_up               : std_logic;
 signal payload_word_cnt         : unsigned(4 downto 0);
 signal rx_d_val                 : std_logic;
@@ -118,6 +119,7 @@ signal good_count_r             : std_logic_vector(0 to 1);
 signal timestamp_val_lt         : std_logic_vector(31 downto 0);
 signal pmc_timeframe_val_lt     : std_logic_vector(15 downto 0);
 signal tfs_bit_lt               : std_logic;
+signal link_partner             : std_logic_vector(9 downto 0);
 
 begin
 
@@ -127,6 +129,7 @@ rx_link_up_o <= rx_link_up;
 rx_harderror_o <= rx_harderror; 
 rx_softerror_o <= rx_softerror;
 rx_frameerror_o<= rx_frameerror;
+link_partner_o <= link_partner;
 
 ------------------------------------------------------------
 -- RX Link initialisation
@@ -136,7 +139,7 @@ begin
 if (mgtclk_i'event and mgtclk_i = '1') then
     if (mgtreset_i = '1' or rx_harderror = '1' or powerdown_i = '1' 
             or rxelecidlereset_i = '1'
-            or counter_odd_word_rx(RX_IDLE_NUM-1) = '1') then
+            or counter_odd_word_rx(3) = '1') then
         rx_link_up          <= '0';
         counter_idle_rx     <= (others => '0');
         counter_odd_word_rx <= (others => '0');
@@ -207,11 +210,14 @@ process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i = '1') then
         if (mgtreset_i = '1' or rx_link_up = '0') then
-            link_partner_o <= (others => '1');
+            link_partner <= (others => '1');
         else
-            if (rx_d_i(15 downto 8) = SENDID and rxcharisk_i = "10") then
-                link_partner_o <= "00" & rx_d_i(7 downto 0);
-            end if;
+                if (rx_d_i(15 downto 8) = SENDID_L and rxcharisk_i = "10") then
+                    link_partner(7 downto 0) <= rx_d_i(7 downto 0);
+                end if;
+                if (rx_d_i(15 downto 8) = SENDID_H and rxcharisk_i = "10") then
+                    link_partner(9 downto 8) <= rx_d_i(1 downto 0);
+                end if;
         end if;
     end if;
 end process;
@@ -322,7 +328,7 @@ if (mgtclk_i'event and mgtclk_i = '1') then
             when rx_wait_1 =>
                 -- Discard packet when time frame does not match and time frame is not ended
                 -- and RX fifo is not full
-                if (rx_dl(1) = timeframe_val_i and timeframe_end_i = '0' and rxf_full_i = '0') then
+                if (rx_dl(1) = timeframe_cntr_i and timeframe_valid_i = '1' and rxf_full_i = '0') then
                     rx_data_state <= rx_write_data;
                 else
                     rx_data_state <= rx_crc_wait;

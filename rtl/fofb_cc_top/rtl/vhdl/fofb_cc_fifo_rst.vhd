@@ -45,32 +45,25 @@ signal tx_rst_cnt               : unsigned(1 downto 0);
 signal tx_rst_cnt_en            : std_logic;
 signal rx_rst_cnt               : unsigned(1 downto 0);
 signal rx_rst_cnt_en            : std_logic;
-signal timeframe_end_reg        : std_logic;
-signal timeframe_end_rise       : std_logic;
 
 begin
 
 txfifo_reset_o <= not tx_linkup_i or (tx_rst_cnt_en and not tx_sm_busy_i);
 rxfifo_reset_o <= not rx_linkup_i or (rx_rst_cnt_en and not rx_sm_busy_i);
 
-timeframe_end_rise <= timeframe_end_i and not timeframe_end_reg;
-
 process(mgtclk_i)
 begin
     if(mgtclk_i'event and mgtclk_i = '1')then
 
         if (mgtreset_i = '1') then
-            timeframe_end_reg <= '0';
             tx_rst_cnt         <= "11";
             tx_rst_cnt_en      <= '0';
             rx_rst_cnt         <= "11";
             rx_rst_cnt_en      <= '0';
         else
 
-            timeframe_end_reg  <= timeframe_end_i;
-
             -- fifo reset must be 4 clock cycles in length.
-            if (timeframe_end_rise = '1') then
+            if (timeframe_end_i = '1') then
                 tx_rst_cnt_en   <= '1';
             elsif (tx_rst_cnt = 0) then
                 tx_rst_cnt_en   <= '0';
@@ -82,7 +75,7 @@ begin
             end if; 
 
             -- fifo reset must be 4 clock cycles in length.
-            if (timeframe_end_rise = '1') then
+            if (timeframe_end_i = '1') then
                 rx_rst_cnt_en <= '1';
             elsif (rx_rst_cnt = 0) then
                 rx_rst_cnt_en <= '0';

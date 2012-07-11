@@ -29,13 +29,10 @@ generic (
     LaneCount               : integer := 4
 );
 port (
-    -- mgt_clk
     mgt_clk                 : in std_logic;
-    -- System Reset (Active high)
     mgt_rst                 : in std_logic;
     -- Input Data structure (LaneCount x 128-bit wide)
     data_in                 : in std_logic_2d_128(LaneCount-1 downto 0);
-    -- DataRdy in for each channel
     data_in_rdy             : in std_logic_vector(LaneCount-1 downto 0);
     -- Read enable output to RX FIFO
     rx_fifo_rd_en           : out std_logic_vector(LaneCount-1 downto 0);
@@ -43,12 +40,9 @@ port (
     channel_up              : in std_logic_vector(LaneCount-1 downto 0);
     -- Output data (1 x (32*PacketSize)-bit wide)
     data_out                : out std_logic_vector((32*PacketSize-1) downto 0);
-    -- Output Data ready signal. Active for 1 cc during first word of packet.
     data_out_rdy            : out std_logic;
-    -- time frame start 
-    timeframe_start_i       : in std_logic;
-    -- time frame finished
-    timeframe_end_i         : in std_logic
+    -- time frame valid
+    timeframe_valid_i       : in std_logic
 );
 end fofb_cc_arbmux;
 
@@ -60,129 +54,79 @@ architecture rtl of fofb_cc_arbmux is
 -----------------------------------------------
 --  Signal declaration
 -----------------------------------------------
-signal data_in_reg          : std_logic_2d_128(LaneCount-1 downto 0);
-signal data_in_rdy_reg      : std_logic_vector(LaneCount-1 downto 0);
-signal timeframe_start_prev : std_logic;    
-signal timeframe_end_prev   : std_logic;
-signal timeframe_end_rise   : std_logic;
-
--- Mux state machine
-type mux_state_type is (mux_start, mux_idle, mux_transfer, mux_register);
-signal mux_state                : mux_state_type;
+signal packet_counter       : integer range 0 to LaneCount-1;
+signal channel_counter      : integer range 0 to LaneCount-1;
+signal linkup               : std_logic;
+signal data_valid           : std_logic;
+signal fifo_rd_en           : std_logic;
 
 begin
 
-data_in_reg         <= data_in; 
-data_in_rdy_reg     <= data_in_rdy;
+linkup <= channel_up(channel_counter);
+data_valid <= data_in_rdy(channel_counter);
 
-timeframe_end_rise <= timeframe_end_i and not timeframe_end_prev;
-
-arbmux: process (mgt_clk)
-
-variable ActiveInputIndex_v     : integer range 0 to (LaneCount-1):= 0;
-variable StoredInputIndex_v     : integer range 0 to (LaneCount-1):= 0;
-variable PacketCount            : integer range 0 to LaneCount := 0;
-
+process (mgt_clk)
 begin
---------------------------------------------
---  Arbitrer state machine
---------------------------------------------
-if (mgt_clk'event and mgt_clk='1') then
-    if (mgt_rst = '1') then
-        ActiveInputIndex_v   := 0;
-        PacketCount          := 0; 
-        mux_state            <= mux_start;
-        rx_fifo_rd_en        <= (others => '0');
-        data_out_rdy         <= '0';
-        data_out             <= (others => '0');
-        timeframe_start_prev <= '0';
-        timeframe_end_prev   <= '0';
-    else
-        -- Delay start by 1 clock cycle for sync
-        timeframe_start_prev <= timeframe_start_i;
-        timeframe_end_prev <= timeframe_end_i;
-
-        -- Registered output
-        data_out            <= data_in_reg(ActiveInputIndex_v);
-
-        case mux_state is
-
-            when mux_start =>       -- start state  
-
-                -- Wait for TimeFrameStart
-                if (timeframe_start_prev = '1') then
-                    mux_state   <= mux_idle;
-                else    
-                    mux_state   <= mux_start;
-                end if; 
-
-                data_out_rdy                      <= '0';
-                rx_fifo_rd_en(ActiveInputIndex_v) <= '0';
-                PacketCount := 0;
-
-            when mux_idle =>        -- Idle State
-                data_out_rdy  <= '0';
-
-                -- Frame timeout go back to idle state and wait for new time frame
-                if (timeframe_end_rise = '1') then  
-                    mux_state <= mux_start;
-                -- Look for Active Channels with Packet being ready in the RX fifo
-                elsif (data_in_rdy_reg(ActiveInputIndex_v) = '1' and channel_up(ActiveInputIndex_v) = '1') then 
-                    mux_state <= mux_register;
-                    rx_fifo_rd_en(ActiveInputIndex_v) <= '1';
-                -- Go on other channels
-                else    
-                    if (ActiveInputIndex_v = LaneCount-1) then
-                        ActiveInputIndex_v := 0;
-                    else    
-                        ActiveInputIndex_v := ActiveInputIndex_v + 1;
-                    end if;
-                    mux_state                         <= mux_idle;
-                    rx_fifo_rd_en(ActiveInputIndex_v) <= '0';
-                    PacketCount := 0;
-                end if;
-
-            when mux_register =>
-                -- Frame timeout go back to idle state and wait for new time frame
-                if (timeframe_end_rise = '1') then  
-                    mux_state <= mux_start;
-                else
-                -- wait for 1cc to read from RX FIFO
-                    mux_state <= mux_transfer;
-                end if;
-
-                data_out_rdy <= '0';
-                rx_fifo_rd_en(ActiveInputIndex_v) <= '0';
-                PacketCount := PacketCount + 1;
-
-            when mux_transfer =>        -- Start Packet Transfer
-                data_out_rdy <= '1';
-
-                -- Frame timeout go back to idle state and wait for new time frame
-                if (timeframe_end_rise = '1') then  
-                    mux_state <= mux_start;
-                -- Check timeslot/data ready/link status to continue on the same link.
-                elsif (not (PacketCount = LaneCount) and data_in_rdy_reg(ActiveInputIndex_v)='1' and channel_up(ActiveInputIndex_v) = '1') then
-                    mux_state <= mux_register;
-                    rx_fifo_rd_en(ActiveInputIndex_v) <= '1';
-                else    -- Go on to next available link
-                    StoredInputIndex_v := ActiveInputIndex_v;
-                    if (ActiveInputIndex_v = LaneCount-1) then
-                        ActiveInputIndex_v := 0;
+    if (mgt_clk'event and mgt_clk = '1') then
+        if (mgt_rst = '1') then
+            packet_counter <= 0;
+            channel_counter <= 0;
+        else
+            if (timeframe_valid_i = '1') then
+                if (linkup = '1' and data_valid = '1') then
+                    if (packet_counter = LaneCount-1) then
+                        if (channel_counter = LaneCount-1) then
+                            channel_counter <= 0;
+                        else
+                            channel_counter <= channel_counter + 1;
+                        end if;
+                        packet_counter <= 0;
                     else
-                        ActiveInputIndex_v := ActiveInputIndex_v + 1;
+                        if (packet_counter = LaneCount-1) then
+                        channel_counter <= 0;
+                        else
+                            packet_counter <= packet_counter + 1;
+                        end if;
                     end if;
-                    mux_state   <= mux_idle;
-                    PacketCount := 0;
-                    rx_fifo_rd_en(StoredInputIndex_v) <= '0';
+                else
+                    if (channel_counter = LaneCount-1) then
+                        channel_counter <= 0;
+                    else
+                        channel_counter <= channel_counter + 1;
+                    end if;
+                    packet_counter <= 0;
                 end if;
-
-            when others =>
-                null;
-
-        end case;
+            else
+                packet_counter <= 0;
+                channel_counter <= 0;
+            end if;
+        end if;
     end if;
-end if;
 end process;
+
+-- FIFO read enable output multiplexer
+fifo_rd_en <= '1' when (timeframe_valid_i = '1' and linkup = '1' and data_valid = '1')
+                  else '0';
+
+process(fifo_rd_en, channel_counter)
+begin
+    for I in 0 to LaneCount-1 loop
+        if (I = channel_counter) then
+            rx_fifo_rd_en(I) <= fifo_rd_en;
+        else
+            rx_fifo_rd_en(I) <= '0';
+        end if;
+    end loop;
+end process;
+
+-- Register outputs
+process (mgt_clk)
+begin
+    if (mgt_clk'event and mgt_clk = '1') then
+        data_out <= data_in(channel_counter);
+        data_out_rdy <= fifo_rd_en;
+    end if;
+end process;
+
 end rtl;
 
