@@ -67,6 +67,7 @@ entity fofb_cc_gt_if is
         harderror_cnt_o         : out std_logic_2d_16(3 downto 0);
         txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
         rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
+        fofb_err_clear          : in  std_logic;
 
         -- network information
         tfs_bit_o               : out std_logic_vector(3 downto 0);

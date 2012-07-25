@@ -68,6 +68,7 @@ entity fofb_cc_gt_if is
         harderror_cnt_o         : inout std_logic_2d_16(3 downto 0); 
         txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
         rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
+        fofb_err_clear          : in  std_logic;
 
         -- network information
         tfs_bit_o               : out std_logic_vector(3 downto 0);
@@ -143,6 +144,7 @@ MGT_LANES: entity work.fofb_cc_mgt_lane
         harderror_cnt_o         => harderror_cnt_o(N),
         txpck_cnt_o             => txpck_cnt_o(N),
         rxpck_cnt_o             => rxpck_cnt_o(N),
+        fofb_err_clear          => fofb_err_clear,
 
         tfs_bit_o               => tfs_bit_o(N),
         link_partner_o          => link_partner_o(N),

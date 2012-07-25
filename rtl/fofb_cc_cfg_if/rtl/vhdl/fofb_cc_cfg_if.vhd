@@ -53,7 +53,6 @@ entity fofb_cc_cfg_if is
         fodprocess_time_i       : in std_logic_vector(15 downto 0);
         rx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
         tx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
-        rx_reset_count          : in std_logic_vector(31 downto 0);
         -- feedback algorithm interface
         coeff_x_addr_i          : in  std_logic_vector(7 downto 0);
         coeff_x_dat_o           : out std_logic_vector(31 downto 0);
@@ -380,11 +379,7 @@ begin
                                         tx_max_data_count_i(1)&
                                         tx_max_data_count_i(0);
                         fai_cfg_we_o <= '1';
-                     when cc_cmd_rx_resetcount =>
-                        fai_cfg_do_o <= X"1234" &
-                                        rx_reset_count(15 downto 0);
-                        fai_cfg_we_o <= '1';
-                   when others =>  
+                   when others =>
                         fai_cfg_do_o <= (others => '0');
                         fai_cfg_we_o <= '0';
                 end case;

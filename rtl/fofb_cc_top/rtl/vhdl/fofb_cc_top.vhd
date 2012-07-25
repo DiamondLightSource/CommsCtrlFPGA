@@ -183,25 +183,11 @@ signal gtreset              : std_logic;
 signal fai_cfg_act_part     : std_logic;
 signal fofb_pos_datsel      : std_logic;
 signal fofb_cc_enable       : std_logic;
+signal fofb_err_clear       : std_logic;
 
-signal tied_to_ground       : std_logic;
-
-signal resetcount           : unsigned(31 downto 0);
 signal initclk              : std_logic;
 
 begin
-
-process(userclk)
-begin
-    if rising_edge(userclk) then
-        if (fai_rxfifo_clear = '1') then
-            resetcount <= resetcount + 1;
-        end if;
-    end if;
-end process;
-
--- Static
-tied_to_ground <= '0';
 
 ----------------------------------------------
 -- Link status information to higher-level
@@ -244,6 +230,7 @@ port map (
 -- reset signals: fai_cfg_val(3) from user is used as user reset
 ----------------------------------------------------------------------
 fofb_cc_enable <= fai_cfg_val_i(3);
+fofb_err_clear <= fai_cfg_val_i(2);
 fofb_pos_datsel <= fai_cfg_val_i(1);
 fai_cfg_act_part <= fai_cfg_val_i(0);
 
@@ -272,9 +259,11 @@ port map (
 );
 
 ----------------------------------------------------------------------
--- Generate N Gigabit Transceiver Channels
+-- Generate LANE_COUNT Gigabit Transceiver Channels
 -- This is an instantiation for wrapper component for various
 -- Xilinx Devices support
+-- This module reset is not tied to CC enable signal to initialise
+-- links even CC is not running
 ----------------------------------------------------------------------
 GT_IF: entity work.fofb_cc_gt_if
 generic map (
@@ -286,7 +275,7 @@ generic map (
 )
 port map (
     refclk_i                => refclk,
-    mgtreset_i              => mgtreset, --sysreset,
+    mgtreset_i              => mgtreset,
     initclk_i               => initclk,
 
     gtreset_i               => gtreset,
@@ -311,6 +300,7 @@ port map (
     harderror_cnt_o         => harderror_cnt,
     softerror_cnt_o         => softerror_cnt,
     frameerror_cnt_o        => frameerror_cnt,
+    fofb_err_clear          => fofb_err_clear,
 
     tx_sm_busy_o            => tx_fsm_busy,
     rx_sm_busy_o            => rx_fsm_busy,
@@ -495,9 +485,6 @@ port map(
     fodprocess_time_i       => fodprocess_time,
     rx_max_data_count_i     => rx_max_data_count,
     tx_max_data_count_i     => tx_max_data_count,
-
-    rx_reset_count          => std_logic_vector(resetcount),
-
     coeff_x_addr_i          => coeff_x_addr_i,
     coeff_x_dat_o           => coeff_x_dat_o, 
     coeff_y_addr_i          => coeff_y_addr_i,

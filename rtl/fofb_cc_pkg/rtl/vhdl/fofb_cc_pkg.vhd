@@ -130,7 +130,6 @@ constant cc_cmd_faival_rdback       : unsigned(7 downto 0)  := X"21";
 constant cc_cmd_feature_rdback      : unsigned(7 downto 0)  := X"22";
 constant cc_cmd_rx_maxcount         : unsigned(7 downto 0)  := X"23";
 constant cc_cmd_tx_maxcount         : unsigned(7 downto 0)  := X"24";
-constant cc_cmd_rx_resetcount       : unsigned(7 downto 0)  := X"25";
 
 --
 -- Global component declarations

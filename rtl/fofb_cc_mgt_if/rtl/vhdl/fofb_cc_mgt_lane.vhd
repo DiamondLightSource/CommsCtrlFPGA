@@ -48,6 +48,7 @@ entity fofb_cc_mgt_lane is
         harderror_cnt_o         : inout std_logic_vector(15 downto 0);
         txpck_cnt_o             : out std_logic_vector(15 downto 0);
         rxpck_cnt_o             : out std_logic_vector(15 downto 0);
+        fofb_err_clear          : in  std_logic;
 
         -- network information
         tfs_bit_o               : out std_logic;
@@ -185,7 +186,7 @@ harderror_rise <= harderror and not harderror_prev;
 process (userclk_i)
 begin
 if (userclk_i'event and userclk_i = '1') then
-    if (mgtreset_i = '1') then
+    if (mgtreset_i = '1' or fofb_err_clear = '1') then
         frameerror_cnt_o <= (others => '0');
         softerror_cnt_o <= (others => '0');
         harderror_cnt_o <= (others => '0');
