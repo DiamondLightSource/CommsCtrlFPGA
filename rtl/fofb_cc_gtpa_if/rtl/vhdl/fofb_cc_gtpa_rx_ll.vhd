@@ -122,6 +122,7 @@ signal good_count_r             : std_logic_vector(0 to 1);
 signal timestamp_val_lt         : std_logic_vector(31 downto 0);
 signal pmc_timeframe_val_lt     : std_logic_vector(15 downto 0);
 signal tfs_bit_lt               : std_logic;
+signal link_partner             : std_logic_vector(9 downto 0);
 
 begin
 
@@ -131,6 +132,7 @@ rx_link_up_o <= rx_link_up;
 rx_harderror_o <= rx_harderror; 
 rx_softerror_o <= rx_softerror;
 rx_frameerror_o<= rx_frameerror;
+link_partner_o <= link_partner when (rx_link_up = '1') else (others => '1');
 
 ------------------------------------------------------------
 -- RX Link initialisation
@@ -210,19 +212,15 @@ end process;
 process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i = '1') then
-        if (mgtreset_i = '1') then
-            link_partner_o <= (others => '1');
+        if (mgtreset_i = '1' or rx_link_up = '0') then
+            link_partner <= (others => '0');
         else
-            if (rx_link_up = '0') then
-                link_partner_o <= (others => '1');
-            else
                 if (rx_d_i(15 downto 8) = SENDID_L and rxcharisk_i = "10") then
-                    link_partner_o(7 downto 0) <= rx_d_i(7 downto 0);
+                    link_partner(7 downto 0) <= rx_d_i(7 downto 0);
                 end if;
                 if (rx_d_i(15 downto 8) = SENDID_H and rxcharisk_i = "10") then
-                    link_partner_o(9 downto 8) <= rx_d_i(1 downto 0);
+                    link_partner(9 downto 8) <= rx_d_i(1 downto 0);
                 end if;
-            end if;
         end if;
     end if;
 end process;

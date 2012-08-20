@@ -139,7 +139,7 @@ rx_link_up_o <= rx_link_up;
 rx_harderror_o <= rx_harderror; 
 rx_softerror_o <= rx_softerror;
 rx_frameerror_o<= rx_frameerror;
-link_partner_o <= link_partner;
+link_partner_o <= link_partner when (rx_link_up = '1') else (others => '1');
 
 ------------------------------------------------------------
 -- RX Link initialisation
@@ -225,7 +225,7 @@ process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i = '1') then
         if (mgtreset_i = '1' or rx_link_up = '0') then
-            link_partner <= (others => '1');
+            link_partner <= (others => '0');
         else
                 if (rx_d_i(15 downto 8) = SENDID_L and rxcharisk_i = "10") then
                     link_partner(7 downto 0) <= rx_d_i(7 downto 0);

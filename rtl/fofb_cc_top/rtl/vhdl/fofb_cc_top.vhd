@@ -186,6 +186,7 @@ signal fofb_cc_enable       : std_logic;
 signal fofb_err_clear       : std_logic;
 
 signal initclk              : std_logic;
+signal initreset            : std_logic;
 
 begin
 
@@ -240,12 +241,14 @@ adcreset <= adcreset_i;
 ----------------------------------------------------------------------
 -- MGT reference clocks, user clocks and reset interface
 ---------------------------------------------------------------------- 
+initreset <= not fofb_cc_enable when (DEVICE=SNIFFER) else not sysreset_n_i;
+
 fofb_cc_clk_if : entity work.fofb_cc_clk_if
 port map (
     refclk_n_i              => refclk_n_i,
     refclk_p_i              => refclk_p_i,
 
-    gtreset_i               => not sysreset_n_i, --not fofb_cc_enable,
+    gtreset_i               => initreset,
     txoutclk_i              => txoutclk,
     plllkdet_i              => plllkdet,
 

@@ -129,7 +129,7 @@ rx_link_up_o <= rx_link_up;
 rx_harderror_o <= rx_harderror; 
 rx_softerror_o <= rx_softerror;
 rx_frameerror_o<= rx_frameerror;
-link_partner_o <= link_partner;
+link_partner_o <= link_partner when (rx_link_up = '1') else (others => '0');
 
 ------------------------------------------------------------
 -- RX Link initialisation
