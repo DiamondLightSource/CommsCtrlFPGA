@@ -33,11 +33,12 @@ entity fofb_cc_fod is
     port (
         mgtclk_i                : in  std_logic;
         sysclk_i                : in  std_logic;
-        mgtreset_i              : in  std_logic; 
+        mgtreset_i              : in  std_logic;
         -- Frame start (1cc long)
         timeframe_valid_i       : in  std_logic;
         timeframe_start_i       : in  std_logic;
         timeframe_end_i         : in  std_logic;
+        timeframe_dly_i         : in  std_logic_vector(15 downto 0);
         -- Channel up between channels
         linksup_i               : in  std_logic_vector(LaneCount-1 downto 0);
         -- Incoming data for arbmux to be Forwarded or Discarded
@@ -97,6 +98,8 @@ signal timeframe_start_d1           : std_logic;
 signal timeframe_start_d2           : std_logic;
 signal bpm_xpos_val                 : std_logic_vector(31 downto 0);
 signal bpm_ypos_val                 : std_logic_vector(31 downto 0);
+signal pmc_xpos_val                 : std_logic_vector(31 downto 0);
+signal pmc_ypos_val                 : std_logic_vector(31 downto 0);
 -- input connections
 signal fod_idat                     : std_logic_vector((PacketSize*32-1) downto 0);
 -- position memory connections
@@ -152,6 +155,8 @@ signal maskmem_wea                  : std_logic;
 signal fod_ok_n                     : std_logic;
 signal timeframe_end_sys            : std_logic;
 signal fodid_repeat                 : std_logic;
+signal timeframe_cnt                : unsigned(15 downto 0);
+signal timeframe_inject             : std_logic;
 
 begin
 
@@ -172,7 +177,9 @@ fodid_repeat <= '1' when (fod_dat_i(NodeNumIndexWidth+95 downto 96) =
 process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i='1') then
-        if (fod_dat_val_i = '1') then
+        if (timeframe_start_i = '1') then
+            fod_id_prev <= bpmid_i(NodeNumIndexWidth-1 downto 0);
+        elsif (fod_dat_val_i = '1') then
              fod_id_prev <= fod_dat_i(NodeNumIndexWidth+95 downto 96);
         end if;
 
@@ -199,10 +206,14 @@ begin
             pbpm_ypos_0 <= pbpm_ypos_0_i;
             pbpm_xpos_1 <= pbpm_xpos_1_i;
             pbpm_ypos_1 <= pbpm_ypos_1_i;
+            pmc_xpos_val <= fofb_watchdog_i;
+            pmc_ypos_val <= fofb_event_i;
         else
             -- Inject synth. pos data for debugging
             bpm_xpos_val <= timeframe_cntr_i;
             bpm_ypos_val <= timeframe_cntr_i;
+            pmc_xpos_val <= timeframe_cntr_i;
+            pmc_ypos_val <= timeframe_cntr_i;
             pbpm_xpos_0 <= timeframe_cntr_i;
             pbpm_ypos_0 <= timeframe_cntr_i;
             pbpm_xpos_1 <= timeframe_cntr_i;
@@ -229,7 +240,7 @@ pload_header(31 downto 16) <= timeframe_cntr_i(15 downto 0);
 --  1/ own data packet (4 x 32-bit words)
 --  2/ positions to store for processing
 --
-process(timeframe_cntr_i, bpm_ypos_val, bpm_xpos_val, pload_header, fofb_watchdog_i, fofb_event_i,timestamp_val_i, pbpm_xpos_0, pbpm_ypos_0, pbpm_xpos_1, pbpm_ypos_1)
+process(timeframe_cntr_i, bpm_ypos_val, bpm_xpos_val, pload_header, pmc_xpos_val, pmc_ypos_val,timestamp_val_i, pbpm_xpos_0, pbpm_ypos_0, pbpm_xpos_1, pbpm_ypos_1)
 begin
     case DEVICE is
         when BPM =>
@@ -237,13 +248,13 @@ begin
             own_xpos_to_store   <= bpm_xpos_val;
             own_ypos_to_store   <= bpm_ypos_val;
         when PMC =>
-            own_packet_to_inject <= pload_header & fofb_watchdog_i & fofb_event_i & timeframe_cntr_i;
-            own_xpos_to_store   <= fofb_watchdog_i;
-            own_ypos_to_store   <= fofb_event_i;
+            own_packet_to_inject <= pload_header & pmc_xpos_val & pmc_ypos_val & timeframe_cntr_i;
+            own_xpos_to_store   <= pmc_xpos_val;
+            own_ypos_to_store   <= pmc_ypos_val;
         when PMCEVR =>
-            own_packet_to_inject <= pload_header & fofb_watchdog_i & fofb_event_i & timeframe_cntr_i;
-            own_xpos_to_store   <= fofb_watchdog_i;
-            own_ypos_to_store   <= fofb_event_i;
+            own_packet_to_inject <= pload_header & pmc_xpos_val & pmc_ypos_val & timeframe_cntr_i;
+            own_xpos_to_store   <= pmc_xpos_val;
+            own_ypos_to_store   <= pmc_ypos_val;
         when SNIFFER =>
             own_packet_to_inject <= pload_header & X"00000000" & X"00000000" & timeframe_cntr_i;
             own_xpos_to_store   <= timestamp_val_i;
@@ -287,6 +298,9 @@ maskmem_wea   <= posmem_wea;
 
 fod_ok_n <= maskmem_doutb(0) when (maskmem_sw = '0') else maskmem_doutb(1);
 
+timeframe_inject <= '1' when (timeframe_cnt = unsigned(timeframe_dly_i) and
+                    timeframe_valid_i = '1') else '0';
+
 FodProcess : process(mgtclk_i)
 begin
 if (mgtclk_i'event and mgtclk_i = '1') then
@@ -300,11 +314,17 @@ if (mgtclk_i'event and mgtclk_i = '1') then
         posmem_addra <= (others => '0');
         posmem_wea <= '0';
     else
-        timeframe_start_d1 <= timeframe_start_i;
+        timeframe_start_d1 <= timeframe_inject;
         timeframe_start_d2 <= timeframe_start_d1;
 
         if (timeframe_end_i = '1') then
             maskmem_sw <= not maskmem_sw;
+        end if;
+
+        if (timeframe_valid_i = '1') then
+            timeframe_cnt <= timeframe_cnt + 1;
+        else
+            timeframe_cnt <= (others=> '0');
         end if;
 
         if (timeframe_start_i = '1') then

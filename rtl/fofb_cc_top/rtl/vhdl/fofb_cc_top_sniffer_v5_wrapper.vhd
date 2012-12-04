@@ -42,7 +42,10 @@ entity fofb_cc_top_wrapper is
         fofb_rxlink_partner_o   : out std_logic_vector(9 downto 0);
         harderror_cnt_o         : out std_logic_vector(15 downto 0);
         softerror_cnt_o         : out std_logic_vector(15 downto 0);
-        frameerror_cnt_o        : out std_logic_vector(15 downto 0)
+        frameerror_cnt_o        : out std_logic_vector(15 downto 0);
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        timeframe_length_i      : in  std_logic_vector(15 downto 0)
+
 );
 end fofb_cc_top_wrapper;
 
@@ -113,6 +116,8 @@ fofb_cc_top : entity work.fofb_cc_top
         harderror_cnt_o         => harderror_cnt,
         softerror_cnt_o         => softerror_cnt,
         frameerror_cnt_o        => frameerror_cnt,
+        bpmid_i                 => bpmid_i,
+        timeframe_length_i      => timeframe_length_i,
         pbpm_xpos_0_i           => (others => '0'),
         pbpm_ypos_0_i           => (others => '0'),
         pbpm_xpos_1_i           => (others => '0'),

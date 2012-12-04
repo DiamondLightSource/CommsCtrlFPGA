@@ -85,6 +85,8 @@ i_fofb_cc_top : entity work.fofb_cc_top
         harderror_cnt_o         => open,
         softerror_cnt_o         => open,
         frameerror_cnt_o        => open,
+        bpmid_i                 => (others => '0'),
+        timeframe_length_i      => (others => '0'),
         pbpm_xpos_0_i           => (others => '0'),
         pbpm_ypos_0_i           => (others => '0'),
         pbpm_xpos_1_i           => (others => '0'),

@@ -62,6 +62,8 @@ constant def_LinkLayerWordSize  : integer := 12;
 constant def_BpmId              : std_logic_vector(9 downto 0):= (others => '1');
 -- default node (including PMCs) count on the network
 constant def_bpm_count          : std_logic_vector(9 downto 0):= "0000000111";
+-- default timeframe start delay in cc
+constant def_TimeFrameDelay    : std_logic_vector(15 downto 0) := X"0000";
 
 constant PacketSize             : integer := def_PacketSize;
 constant LinkLayerWordSize      : integer := def_LinkLayerWordSize;
@@ -82,9 +84,10 @@ constant NodeNumIndexWidth      : integer := 9;     -- log2(NodeNum)
 -- CC Configuration Registers
 ----------------------------------------------------------------------
 constant cc_cmd_bpm_id              : unsigned(7 downto 0)  := X"00";
-constant cc_cmd_time_frame_length   : unsigned(7 downto 0)  := X"01"; 
-constant cc_cmd_mgt_powerdown       : unsigned(7 downto 0)  := X"02"; 
+constant cc_cmd_time_frame_len      : unsigned(7 downto 0)  := X"01";
+constant cc_cmd_mgt_powerdown       : unsigned(7 downto 0)  := X"02";
 constant cc_cmd_mgt_loopback        : unsigned(7 downto 0)  := X"03";
+constant cc_cmd_time_frame_dly      : unsigned(7 downto 0)  := X"04";
 constant cc_cmd_golden_orb_x        : unsigned(7 downto 0)  := X"05";
 constant cc_cmd_golden_orb_y        : unsigned(7 downto 0)  := X"06";
 constant cc_cmd_cust_feature        : unsigned(7 downto 0)  := X"07";

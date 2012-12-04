@@ -72,6 +72,7 @@ fofb_cc_top : entity work.fofb_cc_top
         adcclk_i                => '0',
         adcreset_i              => '0',
         sysclk_i                => sysclk_i,
+        sysreset_n_i            => '1',
         fai_fa_block_start_i    => '0',
         fai_fa_data_valid_i     => '0',
         fai_fa_d_i              => (others => '0'),

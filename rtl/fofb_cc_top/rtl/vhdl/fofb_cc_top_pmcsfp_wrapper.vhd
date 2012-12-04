@@ -10,10 +10,7 @@ use work.fofb_cc_pkg.all;
 entity fofb_cc_top_wrapper is
     generic (
         USE_DCM                 : boolean := false;
-        LANE_COUNT              : integer := 4;
-        TX_IDLE_NUM             : integer := 16;
-        RX_IDLE_NUM             : integer := 13;
-        SEND_ID_NUM             : integer := 14
+        LANE_COUNT              : integer := 4
     );
     port (
         -- differential MGT/GTP clock inputs
@@ -57,10 +54,7 @@ fofb_cc_top : entity work.fofb_cc_top
     generic map (
         DEVICE                  => PMC,
         USE_DCM                 => USE_DCM,
-        LANE_COUNT              => LANE_COUNT,
-        TX_IDLE_NUM             => TX_IDLE_NUM,
-        RX_IDLE_NUM             => RX_IDLE_NUM,
-        SEND_ID_NUM             => SEND_ID_NUM
+        LANE_COUNT              => LANE_COUNT
     )
     port map (
         refclk_p_i              => refclk_p_i,
@@ -106,6 +100,8 @@ fofb_cc_top : entity work.fofb_cc_top
         harderror_cnt_o         => open,
         softerror_cnt_o         => open,
         frameerror_cnt_o        => open,
+        bpmid_i                 => (others => '0'),
+        timeframe_length_i      => (others => '0'),
         pbpm_xpos_0_i           => (others => '0'),
         pbpm_ypos_0_i           => (others => '0'),
         pbpm_xpos_1_i           => (others => '0'),

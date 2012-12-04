@@ -42,7 +42,7 @@ entity fofb_cc_top is
         -- MGT Interface Parameters
         LANE_COUNT              : integer := 4;
         TX_IDLE_NUM             : integer := 16;
-        RX_IDLE_NUM             : integer := 13;
+        RX_IDLE_NUM             : integer := 8;
         SEND_ID_NUM             : integer := 14
     );
     port (
@@ -96,6 +96,8 @@ entity fofb_cc_top is
         harderror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         softerror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         frameerror_cnt_o        : out std_logic_2d_16(LANE_COUNT-1 downto 0);
+        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        timeframe_length_i      : in  std_logic_vector(15 downto 0);
         -- PBPM position data interface
         pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
         pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
@@ -128,6 +130,7 @@ signal rxf_full             : std_logic_vector(LANE_COUNT-1 downto 0);
 signal timeframe_count      : std_logic_vector(31 downto 0) := (others=>'0');
 signal link_partners        : std_logic_2d_10(3 downto 0);
 signal timeframe_len        : std_logic_vector(15 downto 0);
+signal timeframe_dly        : std_logic_vector(15 downto 0);
 -- channel status signals
 signal linkup               : std_logic_vector(7 downto 0);
 signal rx_linkup            : std_logic_vector(3 downto 0);
@@ -169,6 +172,8 @@ signal golden_orb_y         : std_logic_vector(31 downto 0);
 signal pmc_timeframe_val    : std_logic_2d_16(3 downto 0);
 signal pmc_timestamp_val    : std_logic_2d_32(3 downto 0);
 signal timestamp_val        : std_logic_vector(31 downto 0);
+signal bpmid                : std_logic_vector(9 downto 0);
+signal timeframelen         : std_logic_vector(15 downto 0);
 
 signal refclk               : std_logic;
 signal sysreset             : std_logic;
@@ -240,7 +245,7 @@ adcreset <= adcreset_i;
 
 ----------------------------------------------------------------------
 -- MGT reference clocks, user clocks and reset interface
----------------------------------------------------------------------- 
+----------------------------------------------------------------------
 initreset <= not fofb_cc_enable when (DEVICE=SNIFFER) else not sysreset_n_i;
 
 fofb_cc_clk_if : entity work.fofb_cc_clk_if
@@ -404,6 +409,7 @@ port map (
     timeframe_valid_i       => timeframe_valid,
     timeframe_start_i       => timeframe_start,
     timeframe_end_i         => timeframe_end,
+    timeframe_dly_i         => timeframe_dly,
     linksup_i               => tx_linkup(LANE_COUNT-1 downto 0),
     fod_dat_i               => arbmux_dout,
     fod_dat_val_i           => arbmux_dout_rdy,
@@ -471,10 +477,11 @@ port map(
     fai_cfg_do_o            => fai_cfg_d_o,
     fai_cfg_di_i            => fai_cfg_d_i,
     fai_cfg_we_o            => fai_cfg_we_o,
-    bpmid_o                 => bpm_id,
-    timeframe_len_o         => timeframe_len,
+    bpmid_o                 => bpmid,
+    timeframe_len_o         => timeframelen,
     powerdown_o             => mgt_powerdown,
     loopback_o              => mgt_loopback,
+    timeframe_dly_o         => timeframe_dly,
     pmc_heart_beat_i        => X"00000000",
     link_partners_i         => link_partners,
     link_up_i               => link_up_i,
@@ -497,6 +504,8 @@ port map(
     fai_cfg_val_i           => fai_cfg_val_i
 );
 
+bpm_id <= bpmid_i when (DEVICE=SNIFFER) else bpmid;
+timeframe_len <= timeframe_length_i when (DEVICE=SNIFFER) else timeframelen;
 ----------------------------------------------
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------
