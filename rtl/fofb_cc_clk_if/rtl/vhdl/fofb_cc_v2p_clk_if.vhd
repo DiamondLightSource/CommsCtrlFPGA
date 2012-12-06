@@ -64,7 +64,7 @@ signal refclk               : std_logic;
 signal userclk              : std_logic;
 signal tied_to_ground       : std_logic;
 signal init_clk             : std_logic;
-signal mgtreset_n           : std_logic;
+signal mgtreset             : std_logic;
 
 begin
 
@@ -81,7 +81,7 @@ userclk_o    <= userclk;        -- 106.25MHz
 userclk_2x_o <= userclk;        -- 106.25MHz
 initclk_o    <= tied_to_ground;
 gtreset_o    <= tied_to_ground;
-mgtreset_o   <= not mgtreset_n;
+mgtreset_o   <= mgtreset;
 
 -- Differential clock input for MGT/GTP
 refclk_ibufds : IBUFGDS
@@ -97,16 +97,22 @@ user_clock_bufg : BUFG
         O => userclk
     );
 
---- MGT/GTP clock domain reset is based on DCM lock output
-SRL16_mgtreset : SRL16
-    port map    (
-        Q   => mgtreset_n,
-        A0  => '1',
-        A1  => '1',
-        A2  => '1',
-        A3  => '1',
-        CLK => userclk,
-        D   => '1'
-    );
+-- Initial reset is based on external reset
+process(gtreset_i, userclk)
+    variable cnt    : unsigned(4 downto 0) := "00000";
+begin
+    if (gtreset_i = '1') then
+        mgtreset <= '1';
+    elsif rising_edge(refclk) then
+        if (cnt(4) = '1') then
+            mgtreset <= '0';
+        else
+            cnt := cnt + 1;
+            mgtreset <= '1';
+        end if;
+    end if;
+end process;
+
+
 
 end rtl;

@@ -21,6 +21,7 @@ entity fofb_cc_top_wrapper is
         refclk_n_i              : in  std_logic;
         -- clock and reset interface
         sysclk_i                : in  std_logic;
+        sysreset_n_i            : in  std_logic;
         -- FOFB communication controller configuration interface
         fai_cfg_a_o             : out std_logic_vector(10 downto 0);
         fai_cfg_d_o             : out std_logic_vector(31 downto 0);
@@ -68,6 +69,7 @@ fofb_cc_top : entity work.fofb_cc_top
         adcclk_i                => '0',
         adcreset_i              => '0',
         sysclk_i                => sysclk_i,
+        sysreset_n_i            => sysreset_n_i,
         fai_fa_block_start_i    => '0',
         fai_fa_data_valid_i     => '0',
         fai_fa_d_i              => (others => '0'),
