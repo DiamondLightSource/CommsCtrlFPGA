@@ -23,6 +23,7 @@ use work.fofb_cc_pkg.all;
 
 entity fofb_cc_gt_if is
     generic (
+        DEVICE                  : device_t := BPM;
         -- CC Design selection parameters
         LaneCount               : integer := 1;
         TX_IDLE_NUM             : integer := 16;    --32767 cc

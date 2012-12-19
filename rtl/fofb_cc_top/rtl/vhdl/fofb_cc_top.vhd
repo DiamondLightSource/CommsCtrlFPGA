@@ -82,8 +82,8 @@ entity fofb_cc_top is
         -- Higher-level integration interface (PMC, SNIFFER_V5)
         xy_buf_addr_i           : in  std_logic_vector(NodeNumIndexWidth downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
-        timeframe_end_rise_o    : out std_logic;
         timeframe_start_o       : out std_logic;
+        timeframe_end_o         : out std_logic;
         fofb_watchdog_i         : in  std_logic_vector(31 downto 0);
         fofb_event_i            : in  std_logic_vector(31 downto 0);
         fofb_process_time_o     : out std_logic_vector(15 downto 0);
@@ -224,13 +224,8 @@ fai_rio_tdis_o <= (others => '0');
 ----------------------------------------------------------------------
 -- timeframe pulses to top level
 ----------------------------------------------------------------------
-timeframe_start_exp : entity work.fofb_cc_puls_exp
-port map (
-    mgtclk_i                => userclk,
-    mgtreset_i              => sysreset,
-    short_pulse_i           => timeframe_start,
-    long_pulse_o            => timeframe_start_o
-);
+timeframe_start_o <= timeframe_start;
+timeframe_end_o <= timeframe_end;
 
 ----------------------------------------------------------------------
 -- reset signals: fai_cfg_val(3) from user is used as user reset
@@ -246,7 +241,7 @@ adcreset <= adcreset_i;
 ----------------------------------------------------------------------
 -- MGT reference clocks, user clocks and reset interface
 ----------------------------------------------------------------------
-initreset <= not fofb_cc_enable when (DEVICE=SNIFFER) else not sysreset_n_i;
+initreset <= not fofb_cc_enable when (DEVICE = SNIFFER) else not sysreset_n_i;
 
 fofb_cc_clk_if : entity work.fofb_cc_clk_if
 port map (
@@ -275,6 +270,7 @@ port map (
 ----------------------------------------------------------------------
 GT_IF: entity work.fofb_cc_gt_if
 generic map (
+    DEVICE                  => DEVICE,
     LaneCount               => LANE_COUNT,
     TX_IDLE_NUM             => TX_IDLE_NUM,
     RX_IDLE_NUM             => RX_IDLE_NUM,
@@ -416,7 +412,6 @@ port map (
     fod_dat_o               => txf_din,
     fod_dat_val_o           => txf_wr_en,
     timeframe_cntr_i        => timeframe_count,
-    timeframe_end_rise_o    => timeframe_end_rise_o,
     bpm_x_pos_i             => bpm_own_xpos,
     bpm_y_pos_i             => bpm_own_ypos,
     timestamp_val_i         => timestamp_val,
@@ -504,8 +499,11 @@ port map(
     fai_cfg_val_i           => fai_cfg_val_i
 );
 
-bpm_id <= bpmid_i when (DEVICE=SNIFFER) else bpmid;
-timeframe_len <= timeframe_length_i when (DEVICE=SNIFFER) else timeframelen;
+-- Sniffer configuration comes from direct register space
+-- This should be modified accordingly.
+bpm_id <= bpmid_i when (DEVICE = SNIFFER) else bpmid;
+timeframe_len <= timeframe_length_i when (DEVICE = SNIFFER) else timeframelen;
+
 ----------------------------------------------
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------

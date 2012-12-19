@@ -35,7 +35,7 @@ entity fofb_cc_top_wrapper is
         -- PMC-SFP module interface
         xy_buf_addr_i           : in  std_logic_vector(NodeNumIndexWidth downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
-        timeframe_end_rise_o    : out std_logic;
+        timeframe_end_o         : out std_logic;
         -- Higher-level integration interface (used for PMC)
         fofb_dma_ok_i           : in  std_logic;
         fofb_rxlink_up_o        : out std_logic;
@@ -103,7 +103,7 @@ fofb_cc_top : entity work.fofb_cc_top
         xy_buf_addr_i           => xy_buf_addr_i,
         xy_buf_dat_o            => xy_buf_dat_o,
         timeframe_start_o       => open,
-        timeframe_end_rise_o    => timeframe_end_rise_o,
+        timeframe_end_o         => timeframe_end_o,
         fofb_watchdog_i         => (others => '0'),
         fofb_event_i            => (others => '0'),
         fofb_process_time_o     => open,

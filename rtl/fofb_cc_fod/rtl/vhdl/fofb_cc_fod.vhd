@@ -50,7 +50,6 @@ entity fofb_cc_fod is
         -- Frame status data
         timeframe_cntr_i        : in  std_logic_vector(31 downto 0);
         timestamp_val_i         : in  std_logic_vector(31 downto 0);
-        timeframe_end_rise_o    : out std_logic;
         -- Packet information coming from Libera interface
         bpm_x_pos_i             : in  std_logic_vector(31 downto 0);
         bpm_y_pos_i             : in  std_logic_vector(31 downto 0);
@@ -160,11 +159,9 @@ signal timeframe_inject             : std_logic;
 
 begin
 
--- Outputs to top-level are already synced to SYS clock domain.
-timeframe_end_rise_o <= timeframe_end_sys;
 fofb_node_mask_o <= fofb_nodemask_sys;
 
--- Sniffer devide does not inject and forwards any packets to the network
+-- Sniffer device does not inject and forwards any packets to the network
 fod_dat_o <= fod_odat;
 fod_dat_val_o <= (others => '0') when (DEVICE = SNIFFER) else
                  (LaneCount-1 downto 0 => fod_odat_val) and  not txf_full_i and linksup_i;
@@ -252,6 +249,10 @@ begin
             own_xpos_to_store   <= pmc_xpos_val;
             own_ypos_to_store   <= pmc_ypos_val;
         when PMCEVR =>
+            own_packet_to_inject <= pload_header & pmc_xpos_val & pmc_ypos_val & timeframe_cntr_i;
+            own_xpos_to_store   <= pmc_xpos_val;
+            own_ypos_to_store   <= pmc_ypos_val;
+        when PMCSFPEVR =>
             own_packet_to_inject <= pload_header & pmc_xpos_val & pmc_ypos_val & timeframe_cntr_i;
             own_xpos_to_store   <= pmc_xpos_val;
             own_ypos_to_store   <= pmc_ypos_val;

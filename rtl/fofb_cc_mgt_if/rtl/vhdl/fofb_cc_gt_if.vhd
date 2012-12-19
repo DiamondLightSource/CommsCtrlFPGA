@@ -23,8 +23,8 @@ use work.fofb_cc_pkg.all;
 
 entity fofb_cc_gt_if is
     generic (
+        DEVICE                  : device_t;
         -- CC Design selection parameters
-        DEVICE                  : device_t := BPM;
         LaneCount               : integer := 4;
         TX_IDLE_NUM             : natural := 16;    --32767 cc
         RX_IDLE_NUM             : natural := 13;    --4095 cc
@@ -115,7 +115,9 @@ signal userclk              : std_logic;
 
 begin
 
-refclksel <= '0'; -- for BREFCLK
+-- 0=BREFCLK, 1=BREFCLK2
+refclksel <= '1' when (DEVICE = PMCSFPEVR) else '0';
+
 txpolarity <= '1' when (DEVICE = PMCEVR) else '0';
 
 MGT_IF_GEN: for N in 0 to (LaneCount-1) generate

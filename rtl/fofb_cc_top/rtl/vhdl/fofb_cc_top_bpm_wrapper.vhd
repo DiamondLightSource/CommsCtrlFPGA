@@ -72,7 +72,7 @@ i_fofb_cc_top : entity work.fofb_cc_top
         xy_buf_addr_i           => (others => '0'),
         xy_buf_dat_o            => open,
         timeframe_start_o       => open,
-        timeframe_end_rise_o    => open,
+        timeframe_end_o         => open,
         fofb_watchdog_i         => (others => '0'),
         fofb_event_i            => (others => '0'),
         fofb_process_time_o     => open,

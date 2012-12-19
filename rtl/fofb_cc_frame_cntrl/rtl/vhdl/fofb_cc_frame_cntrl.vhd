@@ -71,11 +71,11 @@ begin
 
 -- timeframe_start pulse is generated (1) from fai data interface on Libera BPMs,
 -- (2) from incoming packets for PMC, PBPM, SNIFFER designs
-timeframe_start <= tfs_bpm_i when (DEVICE=BPM) else tfbit_mgt_ored;
+timeframe_start <= tfs_bpm_i when (DEVICE = BPM) else tfbit_mgt_ored;
 
 -- timeframe count value is (1) incremented with every frame on BPM design,
 -- (2) extracted from first arriving primary BPM packet on others
-timeframe_cntr_o <= std_logic_vector(timeframe_cntr) when (DEVICE=BPM) else (X"0000" & pmc_timeframe_val);
+timeframe_cntr_o <= std_logic_vector(timeframe_cntr) when (DEVICE = BPM) else (X"0000" & pmc_timeframe_val);
 
 ---------------------------------------------------
 -- timeframe start bits extracted form RocketIO

@@ -25,6 +25,7 @@ use work.fofb_cc_pkg.all;
 
 entity fofb_cc_gt_if is
 generic (
+    DEVICE                  : device_t;
     -- CC Design selection parameters
     LaneCount               : integer := 2;
     TX_IDLE_NUM             : natural := 16;    --32767 cc
