@@ -75,18 +75,18 @@ architecture rtl of fofb_cc_cfg_if is
 --  Signal declarations
 -----------------------------------------------
 -- Configuration read address space
-constant    cfg_read_start_addr     : unsigned(11 downto 0) := X"000";
-constant    cfg_read_end_addr       : unsigned(11 downto 0) := X"2FF";
+constant    cfg_read_start_addr     : unsigned(9 downto 0) := "0000000000";
+constant    cfg_read_end_addr       : unsigned(9 downto 0) := "1011111111";
 -- Status write address space
-constant    sta_write_start_addr    : unsigned(11 downto 0) := X"300";
-constant    sta_write_end_addr      : unsigned(11 downto 0) := X"3FF";
+constant    sta_write_start_addr    : unsigned(9 downto 0) := "1100000000";
+constant    sta_write_end_addr      : unsigned(9 downto 0) := "1111111111";
 -- State machine
 type state_type is (st1_idle, st2_read, st3_write);
 signal state : state_type := st1_idle;
 
 signal cfg_ack_prev                 : std_logic;
 signal cfg_ack_rise                 : std_logic;
-signal cfg_addr                     : unsigned(11 downto 0);
+signal cfg_addr                     : unsigned(9 downto 0);
 signal cfg_addr_prev                : unsigned(9 downto 0);
 signal bpmid                        : std_logic_vector(9 downto 0);
 signal timeframe_len                : std_logic_vector(15 downto 0);
@@ -99,12 +99,11 @@ signal cust_feature_val             : std_logic_vector(31 downto 0);
 -- Following signals are related to mode of operation where feedback algorithm runs
 -- on the FPGA
 signal coef_x_wr                    : std_logic;
-signal coef_y_wr                    : std_logic; 
-
+signal coef_y_wr                    : std_logic;
 
 begin
 
-fai_cfg_a_o <= std_logic_vector(cfg_addr(10 downto 0));
+fai_cfg_a_o <= '0' & std_logic_vector(cfg_addr);
 
 -- Register address input
 cfg_ack_rise <= fai_cfg_act_part_i and (not cfg_ack_prev);
@@ -112,7 +111,7 @@ cfg_ack_rise <= fai_cfg_act_part_i and (not cfg_ack_prev);
 process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i='1') then
-        cfg_addr_prev <= cfg_addr(9 downto 0);
+        cfg_addr_prev <= cfg_addr;
         cfg_ack_prev <= fai_cfg_act_part_i;
     end if;
 end process;
