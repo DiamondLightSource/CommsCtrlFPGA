@@ -66,6 +66,12 @@ entity fofb_cc_top is
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
         fai_psel_val_i          : in  std_logic_vector(31 downto 0);
+        toa_rstb_i              : in  std_logic;
+        toa_rden_i              : in  std_logic;
+        toa_dat_o               : out std_logic_vector(31 downto 0);
+        rcb_rstb_i              : in  std_logic;
+        rcb_rden_i              : in  std_logic;
+        rcb_dat_o               : out std_logic_vector(31 downto 0);
         fai_rxfifo_clear        : in  std_logic;
         fai_txfifo_clear        : in  std_logic;
         -- serial I/Os for eight RocketIOs on the Libera 
@@ -80,8 +86,9 @@ entity fofb_cc_top is
         coeff_y_addr_i          : in  std_logic_vector(7 downto 0);
         coeff_y_dat_o           : out std_logic_vector(31 downto 0);
         -- Higher-level integration interface (PMC, SNIFFER_V5)
-        xy_buf_addr_i           : in  std_logic_vector(NodeNumIndexWidth downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(NodeW downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
+        xy_buf_rstb_i           : in  std_logic;
         timeframe_start_o       : out std_logic;
         timeframe_end_o         : out std_logic;
         fofb_watchdog_i         : in  std_logic_vector(31 downto 0);
@@ -416,10 +423,17 @@ port map (
     bpm_y_pos_i             => bpm_own_ypos,
     timestamp_val_i         => timestamp_val,
     pos_datsel_i            => fofb_pos_datsel,
+    toa_rstb_i              => toa_rstb_i,
+    toa_rden_i              => toa_rden_i,
+    toa_dat_o               => toa_dat_o,
+    rcb_rstb_i              => rcb_rstb_i,
+    rcb_rden_i              => rcb_rden_i,
+    rcb_dat_o               => rcb_dat_o,
     txf_full_i              => txf_full,
     bpmid_i                 => bpm_id,
     xy_buf_dout_o           => xy_buf_dat_o,
     xy_buf_addr_i           => xy_buf_addr_i,
+    xy_buf_rstb_i           => xy_buf_rstb_i,
     fodprocess_time_o       => fodprocess_time,
     bpm_count_o             => bpm_count,
     golden_orb_x_i          => golden_orb_x,
@@ -508,7 +522,7 @@ timeframe_len <= timeframe_length_i when (DEVICE = SNIFFER) else timeframelen;
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------
 fofb_cc_fa_if : entity work.fofb_cc_fa_if
-port map( 
+port map(
     mgtclk_i                => userclk,
     adcclk_i                => adcclk_i,
     adcreset_i              => adcreset,

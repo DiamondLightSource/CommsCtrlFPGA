@@ -24,7 +24,7 @@ entity fofb_cc_syncdmux is
         clk_i       : in  std_logic;
         dat_i       : in  std_logic_vector(DW-1 downto 0);
         ctrl_i      : in  std_logic;
-        dat_o       : out std_logic_vector(DW-1 downto 0)
+        dat_o       : out std_logic_vector(DW-1 downto 0) := (others => '0')
     );
 end fofb_cc_syncdmux;
 

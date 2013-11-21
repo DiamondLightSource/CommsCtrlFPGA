@@ -28,7 +28,7 @@ function vectorise(s: std_logic) return std_logic_vector;
 function zeros(N: integer) return std_logic_vector;
 -- Function to transpose CRC & Data
 function transpose_data(inp : std_logic_vector) return std_logic_vector;
-
+function tostd(inp : boolean) return std_logic;
 -- Type definitions
 -- 2D arrays
 type std_logic_2d       is array (natural range <>) of std_logic_vector(31 downto 0);
@@ -76,7 +76,7 @@ constant SourceType             : std_logic_vector(2 downto 0) := "000";
 -- Used in Forward and Discard module. It has to be power of 2.
 -- Adjusting this parameter reduces logic
 constant NodeNum                : integer := 512;   -- # of nodes
-constant NodeNumIndexWidth      : integer := 9;     -- log2(NodeNum)
+constant NodeW                  : integer := 9;     -- log2(NodeNum)
 
 ----------------------------------------------------------------------
 -- ADDRESS SPACE
@@ -147,7 +147,7 @@ component ila
     port (
         control     : in  std_logic_vector(35 downto 0);
         clk         : in  std_logic;
-        data        : in  std_logic_vector(255 downto 0);
+        data        : in  std_logic_vector(63 downto 0);
         trig0       : in  std_logic_vector(7 downto 0)
      );
 end component;
@@ -226,5 +226,15 @@ begin
     end loop;
     return(transpose);
 end transpose_data;
+
+
+function tostd(inp : boolean) return std_logic is
+begin
+    if inp then
+        return('1');
+    else
+        return('0');
+    end if;
+end tostd;
 
 end fofb_cc_pkg;

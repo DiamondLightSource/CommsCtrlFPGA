@@ -33,7 +33,7 @@ entity fofb_cc_top_wrapper is
         fai_rio_tdp_o           : out std_logic_vector(LANE_COUNT-1 downto 0);
         fai_rio_tdn_o           : out std_logic_vector(LANE_COUNT-1 downto 0);
         -- PMC-SFP module interface
-        xy_buf_addr_i           : in  std_logic_vector(NodeNumIndexWidth downto 0);
+        xy_buf_addr_i           : in  std_logic_vector(NodeW downto 0);
         xy_buf_dat_o            : out std_logic_vector(63 downto 0);
         timeframe_end_o         : out std_logic;
         -- Higher-level integration interface (used for PMC)

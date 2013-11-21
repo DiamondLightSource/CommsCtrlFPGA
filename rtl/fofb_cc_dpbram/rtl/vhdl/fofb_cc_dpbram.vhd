@@ -21,7 +21,8 @@ use ieee.numeric_std.all;
 entity fofb_cc_dpbram is
     generic (
         AW          : integer := 11;
-        DW          : integer := 32
+        DW          : integer := 32;
+        INIT        : std_logic_vector(31 downto 0) := (others => '0')
     );
     port (
         addra       : in  std_logic_vector(AW-1 downto 0);
@@ -40,7 +41,7 @@ end fofb_cc_dpbram;
 architecture rtl OF fofb_cc_dpbram is
 
 type mem_type is array (2**AW-1 downto 0) of std_logic_vector (DW-1 downto 0);
-shared variable mem : mem_type := (others => (others => '0'));
+shared variable mem : mem_type := (others => INIT(DW-1 downto 0));
 
 begin
 

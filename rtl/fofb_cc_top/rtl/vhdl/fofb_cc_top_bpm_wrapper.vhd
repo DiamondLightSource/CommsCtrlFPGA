@@ -27,6 +27,12 @@ entity fofb_cc_top_wrapper is
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
         fai_psel_val_i          : in  std_logic_vector(31 downto 0);
+        toa_rstb_i              : in  std_logic;
+        toa_rden_i              : in  std_logic;
+        toa_dat_o               : out std_logic_vector(31 downto 0);
+        rcb_rstb_i              : in  std_logic;
+        rcb_rden_i              : in  std_logic;
+        rcb_dat_o               : out std_logic_vector(31 downto 0);
         fai_rxfifo_clear        : in  std_logic;
         fai_txfifo_clear        : in  std_logic;
        -- serial I/Os for eight RocketIOs on the Libera
@@ -58,6 +64,12 @@ i_fofb_cc_top : entity work.fofb_cc_top
         fai_cfg_clk_o           => fai_cfg_clk_o,
         fai_cfg_val_i           => fai_cfg_val_i,
         fai_psel_val_i          => fai_psel_val_i,
+        toa_rstb_i              => toa_rstb_i,
+        toa_rden_i              => toa_rden_i,
+        toa_dat_o               => toa_dat_o,
+        rcb_rstb_i              => rcb_rstb_i,
+        rcb_rden_i              => rcb_rden_i,
+        rcb_dat_o               => rcb_dat_o,
         fai_rxfifo_clear        => fai_rxfifo_clear,
         fai_txfifo_clear        => fai_txfifo_clear,
         fai_rio_rdp_i           => fai_rio_rdp_i,
@@ -71,6 +83,7 @@ i_fofb_cc_top : entity work.fofb_cc_top
         coeff_y_dat_o           => open,
         xy_buf_addr_i           => (others => '0'),
         xy_buf_dat_o            => open,
+        xy_buf_rstb_i           => '0',
         timeframe_start_o       => open,
         timeframe_end_o         => open,
         fofb_watchdog_i         => (others => '0'),

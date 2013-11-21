@@ -15,14 +15,14 @@ end fofb_cc_p2p;
 
 architecture syn of fofb_cc_p2p is
 
-signal out_set          : std_logic;
-signal out_set_prev     : std_logic;
-signal out_set_prev2    : std_logic;
-signal in_set           : std_logic;
-signal outreset         : std_logic;
-signal in_reset         : std_logic;
-signal in_reset_prev    : std_logic;
-signal in_reset_prev2   : std_logic;
+signal out_set          : std_logic := '0';
+signal out_set_prev     : std_logic := '0';
+signal out_set_prev2    : std_logic := '0';
+signal in_set           : std_logic := '0';
+signal outreset         : std_logic := '0';
+signal in_reset         : std_logic := '0';
+signal in_reset_prev    : std_logic := '0';
+signal in_reset_prev2   : std_logic := '0';
 
 begin
 

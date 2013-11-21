@@ -63,9 +63,9 @@ entity fofb_cc_gt_if is
 
         -- status information
         linksup_o               : out std_logic_vector(7 downto 0);
-        frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0); 
-        softerror_cnt_o         : inout std_logic_2d_16(3 downto 0); 
-        harderror_cnt_o         : inout std_logic_2d_16(3 downto 0); 
+        frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0);
+        softerror_cnt_o         : inout std_logic_2d_16(3 downto 0);
+        harderror_cnt_o         : inout std_logic_2d_16(3 downto 0);
         txpck_cnt_o             : out std_logic_2d_16(3 downto 0);
         rxpck_cnt_o             : out std_logic_2d_16(3 downto 0);
         fofb_err_clear          : in  std_logic;
@@ -112,13 +112,40 @@ signal rxcrcerr             : std_logic_vector(LaneCount-1 downto 0);
 signal refclksel            : std_logic;
 signal txpolarity           : std_logic;
 signal userclk              : std_logic;
+signal linksup              : std_logic_vector(7 downto 0);
+signal frameerror_cnt       : std_logic_2d_16(3 downto 0);
+signal softerror_cnt        : std_logic_2d_16(3 downto 0);
+signal harderror_cnt        : std_logic_2d_16(3 downto 0);
+signal txpck_cnt            : std_logic_2d_16(3 downto 0);
+signal rxpck_cnt            : std_logic_2d_16(3 downto 0);
+signal tfs_bit              : std_logic_vector(3 downto 0);
+signal link_partner         : std_logic_2d_10(3 downto 0);
+signal pmc_timeframe_val    : std_logic_2d_16(3 downto 0);
+signal pmc_timestamp_val    : std_logic_2d_32(3 downto 0);
 
 begin
+
+-- Unused outputs
+txoutclk_o <= '0';
+plllkdet_o <= '0';
 
 -- 0=BREFCLK, 1=BREFCLK2
 refclksel <= '1' when (DEVICE = PMCSFPEVR) else '0';
 
 txpolarity <= '1' when (DEVICE = PMCEVR) else '0';
+
+-- Internal signal assignments
+linksup_o <= linksup;
+frameerror_cnt_o<= frameerror_cnt;
+softerror_cnt_o <= softerror_cnt;
+harderror_cnt_o <= harderror_cnt;
+txpck_cnt_o <= txpck_cnt;
+rxpck_cnt_o <= rxpck_cnt;
+tfs_bit_o <= tfs_bit;
+link_partner_o <= link_partner;
+pmc_timeframe_val_o <= pmc_timeframe_val;
+pmc_timestamp_val_o <= pmc_timestamp_val;
+
 
 MGT_IF_GEN: for N in 0 to (LaneCount-1) generate
 
@@ -140,18 +167,18 @@ MGT_LANES: entity work.fofb_cc_mgt_lane
         timeframe_cntr_i        => timeframe_cntr_i,
         bpmid_i                 => bpmid_i,
 
-        linksup_o               => linksup_o(2*N+1 downto 2*N),
-        frameerror_cnt_o        => frameerror_cnt_o(N),
-        softerror_cnt_o         => softerror_cnt_o(N),
-        harderror_cnt_o         => harderror_cnt_o(N),
-        txpck_cnt_o             => txpck_cnt_o(N),
-        rxpck_cnt_o             => rxpck_cnt_o(N),
+        linksup_o               => linksup(2*N+1 downto 2*N),
+        frameerror_cnt_o        => frameerror_cnt(N),
+        softerror_cnt_o         => softerror_cnt(N),
+        harderror_cnt_o         => harderror_cnt(N),
+        txpck_cnt_o             => txpck_cnt(N),
+        rxpck_cnt_o             => rxpck_cnt(N),
         fofb_err_clear          => fofb_err_clear,
 
-        tfs_bit_o               => tfs_bit_o(N),
-        link_partner_o          => link_partner_o(N),
-        pmc_timeframe_val_o     => pmc_timeframe_val_o(N),
-        timestamp_val_o         => pmc_timestamp_val_o(N),
+        tfs_bit_o               => tfs_bit(N),
+        link_partner_o          => link_partner(N),
+        pmc_timeframe_val_o     => pmc_timeframe_val(N),
+        timestamp_val_o         => pmc_timestamp_val(N),
 
         tx_sm_busy_o            => tx_sm_busy_o(N),
         rx_sm_busy_o            => rx_sm_busy_o(N),

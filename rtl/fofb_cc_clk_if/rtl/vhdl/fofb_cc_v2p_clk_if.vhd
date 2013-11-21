@@ -63,7 +63,6 @@ architecture rtl of fofb_cc_clk_if is
 signal refclk               : std_logic;
 signal userclk              : std_logic;
 signal tied_to_ground       : std_logic;
-signal init_clk             : std_logic;
 signal mgtreset             : std_logic;
 
 begin
@@ -103,7 +102,8 @@ process(gtreset_i, userclk)
 begin
     if (gtreset_i = '1') then
         mgtreset <= '1';
-    elsif rising_edge(refclk) then
+--    elsif rising_edge(refclk) then
+    elsif rising_edge(userclk) then
         if (cnt(4) = '1') then
             mgtreset <= '0';
         else

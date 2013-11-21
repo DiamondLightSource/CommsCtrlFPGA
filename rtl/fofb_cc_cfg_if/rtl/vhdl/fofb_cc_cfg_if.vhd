@@ -197,7 +197,7 @@ begin
 
                 if (cfg_addr_prev(9 downto 8) = "00") then
                     if (cfg_addr_prev(7 downto 0) = cc_cmd_bpm_id) then
-                        bpmid(NodeNumIndexWidth-1 downto 0) <= fai_cfg_di_i(NodeNumIndexWidth-1 downto 0);
+                        bpmid(NodeW-1 downto 0) <= fai_cfg_di_i(NodeW-1 downto 0);
                     end if; 
 
                     if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_len) then
