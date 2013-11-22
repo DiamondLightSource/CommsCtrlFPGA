@@ -740,7 +740,7 @@ toamem_wea <= (toa_max_wr or toa_min_wr) and not toa_rden;
 -- minmax values via SBC interface
 toamem_addrb <= posmem_addra(NodeW-1 downto 0) when (toa_rden = '0') else
                 std_logic_vector(toa_addr);
-toamem_dinb <= X"0000_1FFF";
+toamem_dinb <= X"0000_FFFF";
 toamem_web <= toa_rstb_i and toa_rden;
 
 toa_dat_o <= toamem_doutb;
@@ -750,7 +750,7 @@ toa_mem : entity work.fofb_cc_dpbram
     generic map (
         AW          => NodeW,
         DW          => 32,
-        INIT        => X"0000_1FFF"
+        INIT        => X"0000_FFFF"
     )
     port map (
         addra       => toamem_addra,
