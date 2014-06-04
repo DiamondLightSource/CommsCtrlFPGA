@@ -101,14 +101,7 @@ entity fofb_cc_top is
         fofb_bpm_count_o        : out std_logic_vector(7 downto 0);
         fofb_dma_ok_i           : in  std_logic;
         fofb_node_mask_o        : out std_logic_vector(NodeNum-1 downto 0);
-        fofb_rxlink_up_o        : out std_logic_vector(LANE_COUNT-1 downto 0);
-        fofb_rxlink_partner_o   : out std_logic_2d_10(LANE_COUNT-1 downto 0);
-        fofb_timestamp_val_o    : out std_logic_vector(31 downto 0);
-        harderror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-        softerror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-        frameerror_cnt_o        : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-        bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
-        timeframe_length_i      : in  std_logic_vector(15 downto 0)
+        fofb_timestamp_val_o    : out std_logic_vector(31 downto 0)
 );
 end fofb_cc_top;
 
@@ -135,7 +128,6 @@ signal rxf_full             : std_logic_vector(LANE_COUNT-1 downto 0);
 -- frame status 
 signal timeframe_count      : std_logic_vector(31 downto 0) := (others=>'0');
 signal link_partners        : std_logic_2d_10(3 downto 0);
-signal timeframe_len        : std_logic_vector(15 downto 0);
 signal timeframe_dly        : std_logic_vector(15 downto 0);
 -- channel status signals
 signal linkup               : std_logic_vector(7 downto 0);
@@ -148,7 +140,6 @@ signal tx_fifo_rst          : std_logic_vector(LANE_COUNT-1 downto 0);
 signal arbmux_dout          : std_logic_vector((32*PacketSize-1) downto 0);
 signal arbmux_dout_rdy      : std_logic;
 -- configuration signals
-signal bpm_id               : std_logic_vector(NodeW-1 downto 0);
 signal mgt_powerdown        : std_logic_vector(3 downto 0);
 signal mgt_loopback         : std_logic_vector(7 downto 0);
 -- time frame start signals
@@ -202,20 +193,14 @@ signal rxpolarity           : std_logic_vector(3 downto 0);
 signal fai_psel_val         : std_logic_vector(31 downto 0);
 signal fofb_pos_datsel      : std_logic_vector(3 downto 0);
 
-
 begin
 
 ----------------------------------------------
 -- Link status information to higher-level
 ----------------------------------------------
-fofb_rxlink_up_o      <= rx_linkup(LANE_COUNT-1 downto 0);
-fofb_rxlink_partner_o <= link_partners(LANE_COUNT-1 downto 0);
 fofb_process_time_o   <= fodprocess_time;
 fofb_bpm_count_o      <= bpm_count;
 fofb_timestamp_val_o  <= timestamp_val;
-harderror_cnt_o  <= harderror_cnt(LANE_COUNT-1 downto 0);
-softerror_cnt_o  <= softerror_cnt(LANE_COUNT-1 downto 0);
-frameerror_cnt_o <= frameerror_cnt(LANE_COUNT-1 downto 0);
 
 fai_cfg_clk_o <= userclk;
 
@@ -251,7 +236,7 @@ adcreset <= adcreset_i;
 ----------------------------------------------------------------------
 -- MGT reference clocks, user clocks and reset interface
 ----------------------------------------------------------------------
-initreset <= not fofb_cc_enable when (DEVICE = SNIFFER) else not sysreset_n_i;
+initreset <= not sysreset_n_i;
 
 fofb_cc_clk_if : entity work.fofb_cc_clk_if
 port map (
@@ -307,7 +292,7 @@ port map (
     timeframe_start_i       => timeframe_start,
     timeframe_valid_i       => timeframe_valid,
     timeframe_cntr_i        => timeframe_count(15 downto 0),
-    bpmid_i                 => bpm_id,
+    bpmid_i                 => bpmid,
 
     powerdown_i             => mgt_powerdown,
     loopback_i              => mgt_loopback,
@@ -435,7 +420,7 @@ port map (
     rcb_rden_i              => rcb_rden_i,
     rcb_dat_o               => rcb_dat_o,
     txf_full_i              => txf_full,
-    bpmid_i                 => bpm_id,
+    bpmid_i                 => bpmid,
     xy_buf_dout_o           => xy_buf_dat_o,
     xy_buf_addr_i           => xy_buf_addr_i,
     xy_buf_rstb_i           => xy_buf_rstb_i,
@@ -518,11 +503,6 @@ port map(
     fai_cfg_val_i           => fai_cfg_val_i
 );
 
--- SNIFFER configuration comes from outside (application dependent)
--- This should be modified accordingly.
-bpm_id <= bpmid_i when (DEVICE = SNIFFER) else bpmid;
-timeframe_len <= timeframe_length_i when (DEVICE = SNIFFER) else timeframelen;
-
 ----------------------------------------------
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------
@@ -560,7 +540,7 @@ port map(
     tfs_bpm_i               => int_timeframe_start,
     tfs_pmc_i               => ext_timeframe_start,
     tfs_override_i          => fofb_tfs_override,
-    timeframe_len_i         => timeframe_len,
+    timeframe_len_i         => timeframelen,
     timeframe_valid_o       => timeframe_valid,
     timeframe_start_o       => timeframe_start,
     timeframe_end_o         => timeframe_end,
