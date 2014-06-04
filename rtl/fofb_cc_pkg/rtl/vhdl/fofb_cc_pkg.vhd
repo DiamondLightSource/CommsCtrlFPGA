@@ -168,7 +168,7 @@ component ila_t8_d64_s16384
     port (
         control     : in  std_logic_vector(35 downto 0);
         clk         : in  std_logic;
-        data        : in  std_logic_vector(255 downto 0);
+        data        : in  std_logic_vector(63 downto 0);
         trig0       : in  std_logic_vector(7 downto 0)
      );
 end component;

@@ -21,6 +21,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library work;
+use work.fofb_cc_pkg.all;
+
 -----------------------------------------------
 --  Entity declaration
 -----------------------------------------------
@@ -38,7 +41,7 @@ entity fofb_cc_gtpa_tx_ll is
         -- time frame sync
         timeframe_start_i       : in  std_logic;
         timeframe_valid_i       : in  std_logic;
-        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
         -- status information
         tx_link_up_o            : out std_logic; 
         txpck_cnt_o             : out std_logic_vector(15 downto 0);
@@ -270,8 +273,8 @@ begin
                                   bpmid_i(7 downto 0);
                     elsif (send_id_prev = '1') then
                         tx_d_o <= SENDID_H &
-                                  "000000" &
-                                  bpmid_i(9 downto 8);
+                                  (7 downto (NodeW-8) => '0') &
+                                  bpmid_i(NodeW-1 downto 8);
                     else
                         tx_d_o <= IDLE;
                     end if;

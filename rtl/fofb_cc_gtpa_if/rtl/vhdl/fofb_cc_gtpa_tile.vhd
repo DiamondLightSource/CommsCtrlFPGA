@@ -30,9 +30,15 @@ port
     RXPOWERDOWN1_IN                         : in   std_logic_vector(1 downto 0);
     TXPOWERDOWN0_IN                         : in   std_logic_vector(1 downto 0);
     TXPOWERDOWN1_IN                         : in   std_logic_vector(1 downto 0);
+    POLARITY0                               : in   std_logic;
+    POLARITY1                               : in   std_logic;
     --------------------------------- PLL Ports --------------------------------
     CLK00_IN                                : in   std_logic;
     CLK01_IN                                : in   std_logic;
+    GCLK00_IN                               : in   std_logic;
+    GCLK01_IN                               : in   std_logic;
+    GCLK10_IN                               : in   std_logic;
+    GCLK11_IN                               : in   std_logic; 
     GTPRESET0_IN                            : in   std_logic;
     GTPRESET1_IN                            : in   std_logic;
     PLLLKDET0_OUT                           : out  std_logic;
@@ -106,30 +112,33 @@ end FOFB_CC_GTPA_TILE;
 architecture RTL of FOFB_CC_GTPA_TILE is
 
 -- ground and vcc signals
-signal  tied_to_ground_i                :   std_logic;
-signal  tied_to_ground_vec_i            :   std_logic_vector(63 downto 0);
-signal  tied_to_vcc_i                   :   std_logic;
+signal  tied_to_ground_i                : std_logic;
+signal  tied_to_ground_vec_i            : std_logic_vector(63 downto 0);
+signal  tied_to_vcc_i                   : std_logic;
 
 --RX Datapath signals
-signal rxdata0_i                        :   std_logic_vector(31 downto 0);
+signal rxdata0_i                        : std_logic_vector(31 downto 0);
 
-signal rxchariscomma0_float_i           :   std_logic_vector(1 downto 0);
-signal rxcharisk0_float_i               :   std_logic_vector(1 downto 0);
-signal rxdisperr0_float_i               :   std_logic_vector(1 downto 0);
-signal rxnotintable0_float_i            :   std_logic_vector(1 downto 0);
+signal rxchariscomma0_float_i           : std_logic_vector(1 downto 0);
+signal rxcharisk0_float_i               : std_logic_vector(1 downto 0);
+signal rxdisperr0_float_i               : std_logic_vector(1 downto 0);
+signal rxnotintable0_float_i            : std_logic_vector(1 downto 0);
 --TX Datapath signals
-signal txdata0_i                        :   std_logic_vector(31 downto 0);
+signal txdata0_i                        : std_logic_vector(31 downto 0);
 
 -- RX Datapath signals
-signal rxdata1_i                        :   std_logic_vector(31 downto 0);  
+signal rxdata1_i                        : std_logic_vector(31 downto 0);  
 
-signal rxchariscomma1_float_i           :   std_logic_vector(1 downto 0);
-signal rxcharisk1_float_i               :   std_logic_vector(1 downto 0);
-signal rxdisperr1_float_i               :   std_logic_vector(1 downto 0);
-signal rxnotintable1_float_i            :   std_logic_vector(1 downto 0);
+signal rxchariscomma1_float_i           : std_logic_vector(1 downto 0);
+signal rxcharisk1_float_i               : std_logic_vector(1 downto 0);
+signal rxdisperr1_float_i               : std_logic_vector(1 downto 0);
+signal rxnotintable1_float_i            : std_logic_vector(1 downto 0);
 
 -- TX Datapath signals
-signal txdata1_i                        :   std_logic_vector(31 downto 0);
+signal txdata1_i                        : std_logic_vector(31 downto 0);
+
+signal TXKERR0                          : std_logic_vector(3 downto 0);
+signal TXKERR1                          : std_logic_vector(3 downto 0);
 
 begin
 
@@ -145,6 +154,9 @@ RXDATA1_OUT    <=   rxdata1_i(15 downto 0);
 -- The GTP transmits little endian data (TXDATA(7 downto 0) transmitted first)
 txdata0_i    <=   (tied_to_ground_vec_i(15 downto 0) & TXDATA0_IN);
 txdata1_i    <=   (tied_to_ground_vec_i(15 downto 0) & TXDATA1_IN);
+
+TXKERR0_OUT <= TXKERR0(1 downto 0);
+TXKERR1_OUT <= TXKERR1(1 downto 0);
 
 ----------------------------- GTPA1_DUAL Instance  --------------------------
 
@@ -430,10 +442,10 @@ port map
     CLKINEAST1                      =>      tied_to_ground_i,
     CLKINWEST0                      =>      tied_to_ground_i,
     CLKINWEST1                      =>      tied_to_ground_i,
-    GCLK00                          =>      tied_to_ground_i,
-    GCLK01                          =>      tied_to_ground_i,
-    GCLK10                          =>      tied_to_ground_i,
-    GCLK11                          =>      tied_to_ground_i,
+    GCLK00                          =>      GCLK00_IN,
+    GCLK01                          =>      GCLK01_IN,
+    GCLK10                          =>      GCLK10_IN,
+    GCLK11                          =>      GCLK11_IN,
     GTPRESET0                       =>      GTPRESET0_IN,
     GTPRESET1                       =>      GTPRESET1_IN,
     GTPTEST0                        =>      "00010000",
@@ -456,8 +468,8 @@ port map
     REFCLKPLL1                      =>      open,
     REFCLKPWRDNB0                   =>      tied_to_vcc_i,
     REFCLKPWRDNB1                   =>      tied_to_vcc_i,
-    REFSELDYPLL0                    =>      "000",
-    REFSELDYPLL1                    =>      "000",
+    REFSELDYPLL0                    =>      "001",
+    REFSELDYPLL1                    =>      "001",
     RESETDONE0                      =>      RESETDONE0_OUT,
     RESETDONE1                      =>      RESETDONE1_OUT,
     TSTCLK0                         =>      tied_to_ground_i,
@@ -581,8 +593,8 @@ port map
     RXVALID0                        =>      open,
     RXVALID1                        =>      open,
     -------------------- Receive Ports - RX Polarity Control -------------------
-    RXPOLARITY0                     =>      '0',
-    RXPOLARITY1                     =>      '0',
+    RXPOLARITY0                     =>      POLARITY0,
+    RXPOLARITY1                     =>      POLARITY1,
     ------------- Shared Ports - Dynamic Reconfiguration Port (DRP) ------------
     DADDR                           =>      X"00",
     DCLK                            =>      '0',
@@ -613,10 +625,8 @@ port map
     TXCHARISK1(1 downto 0)          =>      TXCHARISK1_IN,
     TXENC8B10BUSE0                  =>      tied_to_vcc_i,
     TXENC8B10BUSE1                  =>      tied_to_vcc_i,
-    TXKERR0(3 downto 2)             =>      open,
-    TXKERR0(1 downto 0)             =>      TXKERR0_OUT,
-    TXKERR1(3 downto 2)             =>      open,
-    TXKERR1(1 downto 0)             =>      TXKERR1_OUT,
+    TXKERR0                         =>      TXKERR0,
+    TXKERR1                         =>      TXKERR1,
     TXRUNDISP0                      =>      open,
     TXRUNDISP1                      =>      open,
     --------------- Transmit Ports - TX Buffer and Phase Alignment -------------
@@ -658,8 +668,8 @@ port map
     TXPRBSFORCEERR0                 =>      tied_to_ground_i,
     TXPRBSFORCEERR1                 =>      tied_to_ground_i,
     -------------------- Transmit Ports - TX Polarity Control ------------------
-    TXPOLARITY0                     =>      tied_to_ground_i,
-    TXPOLARITY1                     =>      tied_to_ground_i,
+    TXPOLARITY0                     =>      POLARITY0,
+    TXPOLARITY1                     =>      POLARITY1,
     ----------------- Transmit Ports - TX Ports for PCI Express ----------------
     TXDETECTRX0                     =>      tied_to_ground_i,
     TXDETECTRX1                     =>      tied_to_ground_i,

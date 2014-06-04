@@ -1,18 +1,20 @@
 ----------------------------------------------------------------------
 --  Project      : Diamond FOFB Communication Controller
 --  Filename     :
---  Purpose      : Virtex5 GTP interface
+--  Purpose      : Spartan6 GTPA interface
 --  Responsible  : Isa S. Uzun
 ----------------------------------------------------------------------
 --  Copyright (c) 2007 Diamond Light Source Ltd.
 --  All rights reserved.
 ----------------------------------------------------------------------
 --  Description: This is the top-level interface module that instantiates
---  GTP Tile and user logic to interface CC.
---  This module implement only one GTP_DUAL which provides 2 RocketIO 
+--  GTPA Tile and user logic to interface CC.
+--  This module implement one GTP_DUAL which provides 2 RocketIO
 --  channels to CC.
 ----------------------------------------------------------------------
---  Limitations & Assumptions:
+--  Limitations & Assumptions: This design modules uses GCLK inputs
+--  to the GTPA tile. This is hardware specific for SPEC FMC Carrier
+--  board.
 ----------------------------------------------------------------------
 --  Known Errors: Please send any bug reports to isa.uzun@diamond.ac.uk
 ----------------------------------------------------------------------
@@ -25,13 +27,16 @@ use work.fofb_cc_pkg.all;
 
 entity fofb_cc_gt_if is
 generic (
+    DEVICE                  : device_t := BPM;
     -- CC Design selection parameters
-    LaneCount               : integer := 2;
-    TX_IDLE_NUM             : natural := 16;    --32767 cc
-    RX_IDLE_NUM             : natural := 13;    --4095 cc
-    SEND_ID_NUM             : natural := 14;    --8191 cc
+    LaneCount               : integer := 1;
+    TX_IDLE_NUM             : integer := 16;    --32767 cc
+    RX_IDLE_NUM             : integer := 13;    --4095 cc
+    SEND_ID_NUM             : integer := 14;    --8191 cc
     -- Simulation parameters
-    SIM_GTPRESET_SPEEDUP    : integer   := 0
+    SIM_GTPRESET_SPEEDUP    : integer := 0;
+    -- Custom FPGA Device parameters
+    REF_GTPA                : integer := 1
 );
 port (
     -- Main clocks and resets
@@ -45,6 +50,7 @@ port (
     userclk_2x_i            : in  std_logic;
     txoutclk_o              : out std_logic;
     plllkdet_o              : out std_logic;
+    rxpolarity_i            : in  std_logic_vector(LaneCount-1 downto 0);
 
     -- RocketIO
     rxn_i                   : in  std_logic_vector(LaneCount-1 downto 0);
@@ -56,7 +62,7 @@ port (
     timeframe_start_i       : in  std_logic;
     timeframe_valid_i       : in  std_logic;
     timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
-    bpmid_i                 : in  std_logic_vector(9 downto 0);
+    bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
 
     -- mgt configuration
     powerdown_i             : in  std_logic_vector(3 downto 0);
@@ -94,7 +100,7 @@ port (
 );
 end fofb_cc_gt_if;
 
-architecture rtl of fofb_cc_gt_if is 
+architecture rtl of fofb_cc_gt_if is
 
 -- GTP_DUAL 0 & 1
 signal rxusrclk0            : std_logic := '0';
@@ -107,13 +113,12 @@ signal txusrclk1            : std_logic := '0';
 signal txusrclk20           : std_logic := '0';
 signal txusrclk21           : std_logic := '0';
 signal plllkdet             : std_logic_vector(1 downto 0);
-signal gtpclkout            : std_logic_vector(1 downto 0);
+signal gtpclkout            : std_logic_2d_2(1 downto 0);
 signal open_rxbufstatus0    : std_logic_vector(1 downto 0);
 signal open_rxbufstatus1    : std_logic_vector(1 downto 0);
 signal open_txbufstatus0    : std_logic;
 signal open_txbufstatus1    : std_logic;
 
---
 signal loopback             : std_logic_2d_3(3 downto 0);
 signal powerdown            : std_logic_2d_2(3 downto 0);
 signal txdata               : std_logic_2d_16(3 downto 0);
@@ -139,6 +144,7 @@ signal txp                  : std_logic_vector(3 downto 0);
 
 signal rx_dat_buffer        : std_logic_2d_16(LaneCount-1 downto 0);
 signal linksup_buffer       : std_logic_vector(7 downto 0);
+signal link_partner_buffer  : std_logic_2d_10(3 downto 0);
 
 signal control              : std_logic_vector(35 downto 0);
 signal data                 : std_logic_vector(63 downto 0);
@@ -146,22 +152,19 @@ signal trig0                : std_logic_vector(7 downto 0);
 
 begin
 
--- connect the txoutclk of lane 0 to txoutclk
-txoutclk_o <= gtpclkout(0);
+-- Connect the txoutclk to REF GTPA's gtpclkout port
+txoutclk_o <= gtpclkout(REF_GTPA)(0);
 
 -- assign outputs
 rx_dat_o <= rx_dat_buffer;
 linksup_o(3 downto 0) <= linksup_buffer(3 downto 0);
+link_partner_o <= link_partner_buffer;
 
 -- connect tx_lock to tx_lock_i from lane 0
---plllkdet_o <= plllkdet(0) and plllkdet(1);
-plllkdet_o <= plllkdet(0);
+plllkdet_o <= plllkdet(REF_GTPA);
 
 userclk <= userclk_i;
 
---
---
---
 GTPA_LANE : for N in 0 to LaneCount-1 generate
 
 -- Back compatibility with V2Pro loopback. Supports
@@ -212,7 +215,7 @@ GTPA_LANE_GEN: for N in 0 to (LaneCount-1) generate
             rxpck_cnt_o             => rxpck_cnt_o(N),
 
             tfs_bit_o               => tfs_bit_o(N),
-            link_partner_o          => link_partner_o(N),
+            link_partner_o          => link_partner_buffer(N),
             pmc_timeframe_val_o     => pmc_timeframe_val_o(N),
             timestamp_val_o         => pmc_timestamp_val_o(N),
 
@@ -258,6 +261,8 @@ GTPA_TILE : entity work.fofb_cc_gtpa_tile
         rxpowerdown1_in             => powerdown(1),
         txpowerdown0_in             => powerdown(0),
         txpowerdown1_in             => powerdown(1),
+        polarity0                   => rxpolarity_i(0),
+        polarity1                   => rxpolarity_i(1),
         -- Receive Ports - 8b10b Decoder
         rxcharisk0_out              => rxcharisk(0),
         rxcharisk1_out              => rxcharisk(1),
@@ -296,8 +301,12 @@ GTPA_TILE : entity work.fofb_cc_gtpa_tile
         txbufstatus1_out(1)         => txbuferr(1),
         txbufstatus1_out(0)         => open_txbufstatus1,
         -- Shared Ports - Tile and PLL Ports
-        clk00_in                    => refclk_i,
-        clk01_in                    => refclk_i,
+        clk00_in                    => '0',
+        clk01_in                    => '0',
+        gclk00_in                   => refclk_i,
+        gclk01_in                   => refclk_i,
+        gclk10_in                   => '0',
+        gclk11_in                   => '0',
         gtpreset0_in                => gtreset_i,
         gtpreset1_in                => gtreset_i,
         plllkdet0_out               => plllkdet(0),
@@ -310,8 +319,8 @@ GTPA_TILE : entity work.fofb_cc_gtpa_tile
         -- Transmit Ports - TX Data Path interface
         txdata0_in                  => txdata(0),
         txdata1_in                  => txdata(1),
-        gtpclkout0_out              => gtpclkout,
-        gtpclkout1_out              => open,
+        gtpclkout0_out              => gtpclkout(0),
+        gtpclkout1_out              => gtpclkout(1),
         txreset0_in                 => txreset(0),
         txreset1_in                 => txreset(1),
         txusrclk0_in                => userclk_2x_i,
@@ -346,22 +355,16 @@ ila_inst : ila_t8_d64_s16384
         trig0           => trig0
      );
 
-trig0(0)           <= rxbuferr(0);
-trig0(1)           <= rxrealign(0);
+trig0(0)           <= rxbuferr(1);
+trig0(1)           <= rxrealign(1);
 trig0(7 downto 2)  <= (others => '0');
 
-data(15 downto  0) <= rxdata(0);
-data(16)           <= rxreset(0);
-data(17)           <= plllkdet(0);
-data(18)           <= '0';
-data(20 downto 19) <= rxnotintable(0);
-data(22 downto 21) <= rxdisperr(0);
-data(24 downto 23) <= rxcharisk(0);
-data(25)           <= rxbuferr(0);
-data(26)           <= rxrealign(0);
-data(29 downto 27) <= rxbuferr(0) & open_rxbufstatus0(1 downto 0);
-data(45 downto 30) <= txdata(0);
-data(63 downto 46) <= (others => '0');
+data(15 downto 0)  <= rxdata(0);
+data(31 downto 16) <= rxdata(1);
+data(33 downto 32) <= plllkdet;
+data(43 downto 34) <= link_partner_buffer(0);
+data(53 downto 44) <= link_partner_buffer(1);
+data(63 downto 54) <= (others => '0');
 
 end generate;
 

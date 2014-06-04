@@ -310,7 +310,6 @@ port map (
     pmc_timeframe_val_o     => ext_timeframe_val,
     pmc_timestamp_val_o     => ext_timestamp_val,
 
-
     txpck_cnt_o             => txpck_count,
     rxpck_cnt_o             => rxpck_count,
 

@@ -18,6 +18,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library work;
 use work.fofb_cc_pkg.all;
@@ -54,29 +55,56 @@ signal refclk           : std_logic;
 signal userclk          : std_logic;
 signal userclk_bufio    : std_logic;
 signal init_clk         : std_logic;
-signal init_reset       : std_logic;
 signal clkfb_w          : std_logic;
 signal clkout0          : std_logic;
 signal clkout1          : std_logic;
-signal clkout2          : std_logic;
-signal clkout3          : std_logic;
 signal pll_locked       : std_logic;
 signal txoutclk         : std_logic;
+signal plllkdet_n       : std_logic;
 
 begin
+
+-- Direct reference clock to GTP
+refclk_o     <= refclk;
 
 -----------------------------------------
 -- Spartan6 Clock Interface
 -----------------------------------------
 refclk_ibufds : IBUFDS
+generic map (
+    DIFF_TERM       => TRUE,
+    IBUF_LOW_PWR    => TRUE,
+    IOSTANDARD      => "DEFAULT"
+)
 port map (
-    I                   => refclk_p_i,
-    IB                  => refclk_n_i,
-    O                   => refclk
+    I               => refclk_p_i,
+    IB              => refclk_n_i,
+    O               => refclk
 );
 
--- Direct reference clock to GTP
-refclk_o     <= refclk;
+-- Initial clock from GTP reference clocks via BUFG
+refclk_bufg : BUFG
+port map (
+    I               => refclk,
+    O               => init_clk
+);
+
+-- Initial reset to GTP (gtreset_i) is tied to fofb_cc_enable
+-- to let the clock settle
+process(gtreset_i, init_clk)
+    variable cnt    : unsigned(4 downto 0) := "00000";
+begin
+    if (gtreset_i = '1') then
+        gtreset_o <= '1';
+    elsif rising_edge(init_clk) then
+        if (cnt(4) = '1') then
+            gtreset_o <= '0';
+        else
+            cnt := cnt + 1;
+            gtreset_o <= '1';
+        end if;
+    end if;
+end process;
 
 -- Output GT clock as init_clk via BUFG
 userclk_bufio2: BUFIO2
@@ -92,53 +120,55 @@ port map (
 );
 
 -- Instantiate a PLL module to divide the reference clock.
+plllkdet_n <= not plllkdet_i;
 
 pll_adv_i  : PLL_ADV
 generic map (
-     CLKFBOUT_MULT    =>  8,
-     DIVCLK_DIVIDE    =>  1,
-     CLKFBOUT_PHASE   =>  0.0,
-     CLKIN1_PERIOD    =>  9.412,
-     CLKIN2_PERIOD    =>  10.0,          -- Not used
-     CLKOUT0_DIVIDE   =>  8,
-     CLKOUT0_PHASE    =>  0.0,
-     CLKOUT1_DIVIDE   =>  4,
-     CLKOUT1_PHASE    =>  0.0,
-     CLKOUT2_DIVIDE   =>  8,
-     CLKOUT2_PHASE    =>  0.0,
-     CLKOUT3_DIVIDE   =>  4,
-     CLKOUT3_PHASE    =>  0.0
+     CLKFBOUT_MULT      =>  8,
+     DIVCLK_DIVIDE      =>  1,
+     CLKFBOUT_PHASE     =>  0.0,
+     CLKIN1_PERIOD      =>  9.412,
+     CLKIN2_PERIOD      =>  10.0,          -- Not used
+     CLKOUT0_DIVIDE     =>  8,
+     CLKOUT0_PHASE      =>  0.0,
+     CLKOUT1_DIVIDE     =>  4,
+     CLKOUT1_PHASE      =>  0.0,
+     CLKOUT2_DIVIDE     =>  8,
+     CLKOUT2_PHASE      =>  0.0,
+     CLKOUT3_DIVIDE     =>  4,
+     CLKOUT3_PHASE      =>  0.0,
+     SIM_DEVICE         =>  "SPARTAN6"
 )
 port map (
-     CLKIN1            => txoutclk,
-     CLKIN2            => '0',
-     CLKINSEL          => '1',
-     CLKFBIN           => clkfb_w,
-     CLKOUT0           => clkout0,
-     CLKOUT1           => clkout1,
-     CLKOUT2           => clkout2,
-     CLKOUT3           => clkout3,
-     CLKOUT4           => open,
-     CLKOUT5           => open,
-     CLKFBOUT          => clkfb_w,
-     CLKFBDCM          => open,
-     CLKOUTDCM0        => open,
-     CLKOUTDCM1        => open,
-     CLKOUTDCM2        => open,
-     CLKOUTDCM3        => open,
-     CLKOUTDCM4        => open,
-     CLKOUTDCM5        => open,
-     DO                => open,
-     DRDY              => open,
-     DADDR             => "00000",
-     DCLK              => '0',
-     DEN               => '0',
-     DI                => X"0000",
-     DWE               => '0',
-     REL               => '0',
-     LOCKED            => pll_locked,
-     RST               => not plllkdet_i
-  );
+     CLKIN1             => txoutclk,
+     CLKIN2             => '0',
+     CLKINSEL           => '1',
+     CLKFBIN            => clkfb_w,
+     CLKOUT0            => clkout0,
+     CLKOUT1            => clkout1,
+     CLKOUT2            => open,
+     CLKOUT3            => open,
+     CLKOUT4            => open,
+     CLKOUT5            => open,
+     CLKFBOUT           => clkfb_w,
+     CLKFBDCM           => open,
+     CLKOUTDCM0         => open,
+     CLKOUTDCM1         => open,
+     CLKOUTDCM2         => open,
+     CLKOUTDCM3         => open,
+     CLKOUTDCM4         => open,
+     CLKOUTDCM5         => open,
+     DO                 => open,
+     DRDY               => open,
+     DADDR              => "00000",
+     DCLK               => '0',
+     DEN                => '0',
+     DI                 => X"0000",
+     DWE                => '0',
+     REL                => '0',
+     LOCKED             => pll_locked,
+     RST                => plllkdet_n
+);
 
 sync_clk_net_i : BUFG
 port map (
@@ -152,34 +182,10 @@ port map (
     O => userclk
 );
 
---
--- SPARTAN-6 architecture does not allow to do this
---
----- Initial clock from GTP reference clocks via BUFG
---refclk_bufg : BUFG
---port map (
---    I=>      refclk,
---    O=>      init_clk
---);
---
----- Initial reset to GTP using init_clk
---SRL16_dcmreset : SRL16
---port map    (
---    Q   => init_reset,
---    A0  => '1',
---    A1  => '1',
---    A2  => '1',
---    A3  => '1',
---    CLK => init_clk,
---    D   => '1'
---);
-
-init_reset <= '1';
 
 -- Output assignments
-gtreset_o    <= not init_reset;
 mgtreset_o   <= not pll_locked;
 userclk_o    <= userclk; -- 106.25MHz
-initclk_o <= '0';        -- Not required for Spartan-6 GTP
+initclk_o    <= init_clk;
 
 end rtl;
