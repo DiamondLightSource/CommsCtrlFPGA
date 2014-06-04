@@ -105,7 +105,7 @@ signal rx_crc_d                 : std_logic_vector(15 downto 0);
 signal rx_payload_cnt           : unsigned(2 downto 0);
 signal error_detect_ena         : std_logic;
 signal rx_crcerror              : std_logic;
-signal counter4bit              : unsigned(4 downto 0);
+signal counter4bit              : unsigned(3 downto 0);
 signal rxpck_cnt                : unsigned(15 downto 0);
 signal rx_harderror             : std_logic;
 signal rx_softerror             : std_logic;
@@ -147,14 +147,14 @@ if (mgtclk_i'event and mgtclk_i = '1') then
         comma_align_o       <= '0';
         error_detect_ena    <= '0';
         rxreset_o           <= '0';
-        counter4bit         <= "00000";
+        counter4bit         <= "0000";
     else
         case (rx_state) is
 
             -- RocketIO RX reset for 7 clock cycles
             when rx_rst =>
                 rxreset_o <= '1';
-                if (counter4bit(4) = '1') then
+                if (counter4bit(3) = '1') then
                     rx_state <= rx_wait_resetdone;
                     rxreset_o <= '0';
                 end if;
@@ -168,7 +168,7 @@ if (mgtclk_i'event and mgtclk_i = '1') then
             -- Wait to receive certain number of IDLE characters
             when rx_idle    =>
 
-                comma_align_o         <= '1';
+                comma_align_o <= '1';
 
                 if (counter_idle_rx(RX_IDLE_NUM-1) = '1') then
                     rx_state <= rx_synced;

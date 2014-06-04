@@ -43,7 +43,12 @@ entity fofb_cc_top is
         LANE_COUNT              : integer := 4;
         TX_IDLE_NUM             : integer := 16;
         RX_IDLE_NUM             : integer := 8;
-        SEND_ID_NUM             : integer := 14
+        SEND_ID_NUM             : integer := 14;
+        -- BPM Data Interface Parameters
+        BPMS                    : integer := 1;
+        FAI_DW                  : integer := 16;
+        DMUX                    : integer := 2
+
     );
     port (
         -- differential MGT/GTP clock inputs
@@ -57,7 +62,7 @@ entity fofb_cc_top is
         -- fast acquisition data interface
         fai_fa_block_start_i    : in std_logic;
         fai_fa_data_valid_i     : in std_logic;
-        fai_fa_d_i              : in std_logic_vector(15 downto 0);
+        fai_fa_d_i              : in std_logic_vector(FAI_DW-1 downto 0);
         -- FOFB communication controller configuration interface
         fai_cfg_a_o             : out std_logic_vector(10 downto 0);
         fai_cfg_d_o             : out std_logic_vector(31 downto 0);
@@ -65,7 +70,6 @@ entity fofb_cc_top is
         fai_cfg_we_o            : out std_logic;
         fai_cfg_clk_o           : out std_logic;
         fai_cfg_val_i           : in  std_logic_vector(31 downto 0);
-        fai_psel_val_i          : in  std_logic_vector(31 downto 0);
         toa_rstb_i              : in  std_logic;
         toa_rden_i              : in  std_logic;
         toa_dat_o               : out std_logic_vector(31 downto 0);
@@ -104,12 +108,7 @@ entity fofb_cc_top is
         softerror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         frameerror_cnt_o        : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         bpmid_i                 : in  std_logic_vector(9 downto 0);
-        timeframe_length_i      : in  std_logic_vector(15 downto 0);
-        -- PBPM position data interface
-        pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
-        pbpm_xpos_1_i           : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_1_i           : in  std_logic_vector(31 downto 0)
+        timeframe_length_i      : in  std_logic_vector(15 downto 0)
 );
 end fofb_cc_top;
 
@@ -153,14 +152,14 @@ signal bpm_id               : std_logic_vector(9 downto 0);
 signal mgt_powerdown        : std_logic_vector(3 downto 0);
 signal mgt_loopback         : std_logic_vector(7 downto 0);
 -- time frame start signals
-signal bpm_timeframe_start  : std_logic := '0';
-signal pmc_timeframe_start  : std_logic_vector(3 downto 0);
+signal int_timeframe_start  : std_logic := '0';
+signal ext_timeframe_start  : std_logic_vector(3 downto 0);
 signal timeframe_start      : std_logic := '0';
 signal timeframe_end        : std_logic;
 signal timeframe_valid      : std_logic;
 -- own bpm position
-signal bpm_own_xpos         : std_logic_vector(31 downto 0);
-signal bpm_own_ypos         : std_logic_vector(31 downto 0);
+signal bpm_cc_xpos          : std_logic_2d_32(BPMS-1 downto 0);
+signal bpm_cc_ypos          : std_logic_2d_32(BPMS-1 downto 0);
 -- status info
 signal rx_max_data_count    : std_logic_2d_8(3 downto 0);
 signal tx_max_data_count    : std_logic_2d_8(3 downto 0);
@@ -176,8 +175,8 @@ signal fodprocess_time      : std_logic_vector(15 downto 0);
 signal link_up_i            : std_logic_vector(7 downto 0);
 signal golden_orb_x         : std_logic_vector(31 downto 0);
 signal golden_orb_y         : std_logic_vector(31 downto 0);
-signal pmc_timeframe_val    : std_logic_2d_16(3 downto 0);
-signal pmc_timestamp_val    : std_logic_2d_32(3 downto 0);
+signal ext_timeframe_val    : std_logic_2d_16(3 downto 0);
+signal ext_timestamp_val    : std_logic_2d_32(3 downto 0);
 signal timestamp_val        : std_logic_vector(31 downto 0);
 signal bpmid                : std_logic_vector(9 downto 0);
 signal timeframelen         : std_logic_vector(15 downto 0);
@@ -192,13 +191,17 @@ signal userclk_2x           : std_logic;
 signal mgtreset             : std_logic;
 signal gtreset              : std_logic;
 
+signal fofb_tfs_override    : std_logic;
 signal fai_cfg_act_part     : std_logic;
-signal fofb_pos_datsel      : std_logic;
 signal fofb_cc_enable       : std_logic;
 signal fofb_err_clear       : std_logic;
 
 signal initclk              : std_logic;
 signal initreset            : std_logic;
+signal rxpolarity           : std_logic_vector(3 downto 0);
+signal fai_psel_val         : std_logic_vector(31 downto 0);
+signal fofb_pos_datsel      : std_logic_vector(3 downto 0);
+
 
 begin
 
@@ -237,9 +240,9 @@ timeframe_end_o <= timeframe_end;
 ----------------------------------------------------------------------
 -- reset signals: fai_cfg_val(3) from user is used as user reset
 ----------------------------------------------------------------------
+fofb_tfs_override <= fai_cfg_val_i(4);
 fofb_cc_enable <= fai_cfg_val_i(3);
 fofb_err_clear <= fai_cfg_val_i(2);
-fofb_pos_datsel <= fai_cfg_val_i(1);
 fai_cfg_act_part <= fai_cfg_val_i(0);
 
 sysreset <= mgtreset or not fofb_cc_enable;
@@ -294,6 +297,7 @@ port map (
     plllkdet_o              => plllkdet,
     userclk_i               => userclk,
     userclk_2x_i            => userclk_2x,
+    rxpolarity_i            => rxpolarity(LANE_COUNT-1 downto 0),
 
     rxn_i                   => fai_rio_rdn_i,
     rxp_i                   => fai_rio_rdp_i,
@@ -316,10 +320,10 @@ port map (
     tx_sm_busy_o            => tx_fsm_busy,
     rx_sm_busy_o            => rx_fsm_busy,
 
-    tfs_bit_o               => pmc_timeframe_start,
+    tfs_bit_o               => ext_timeframe_start,
     link_partner_o          => link_partners,
-    pmc_timeframe_val_o     => pmc_timeframe_val,
-    pmc_timestamp_val_o     => pmc_timestamp_val,
+    pmc_timeframe_val_o     => ext_timeframe_val,
+    pmc_timestamp_val_o     => ext_timestamp_val,
 
 
     txpck_cnt_o             => txpck_count,
@@ -402,6 +406,7 @@ rxf_empty_n <= not rxf_empty;
 -------------------------------------------------
 fofb_cc_fod : entity work.fofb_cc_fod
 generic map (
+    BPMS                    => BPMS,
     DEVICE                  => DEVICE,
     LaneCount               => LANE_COUNT
 )
@@ -419,10 +424,10 @@ port map (
     fod_dat_o               => txf_din,
     fod_dat_val_o           => txf_wr_en,
     timeframe_cntr_i        => timeframe_count,
-    bpm_x_pos_i             => bpm_own_xpos,
-    bpm_y_pos_i             => bpm_own_ypos,
+    bpm_x_pos_i             => bpm_cc_xpos,
+    bpm_y_pos_i             => bpm_cc_ypos,
     timestamp_val_i         => timestamp_val,
-    pos_datsel_i            => fofb_pos_datsel,
+    pos_datsel_i            => fofb_pos_datsel(BPMS-1 downto 0),
     toa_rstb_i              => toa_rstb_i,
     toa_rden_i              => toa_rden_i,
     toa_dat_o               => toa_dat_o,
@@ -441,11 +446,7 @@ port map (
     fofb_watchdog_i         => fofb_watchdog_i,
     fofb_event_i            => fofb_event_i,
     fofb_dma_ok_i           => fofb_dma_ok_i,
-    fofb_node_mask_o        => fofb_node_mask_o,
-    pbpm_xpos_0_i           => pbpm_xpos_0_i,
-    pbpm_ypos_0_i           => pbpm_ypos_0_i,
-    pbpm_xpos_1_i           => pbpm_xpos_1_i,
-    pbpm_ypos_1_i           => pbpm_ypos_1_i
+    fofb_node_mask_o        => fofb_node_mask_o
 );
 
 -------------------------------------------------
@@ -491,6 +492,9 @@ port map(
     powerdown_o             => mgt_powerdown,
     loopback_o              => mgt_loopback,
     timeframe_dly_o         => timeframe_dly,
+    rxpolarity_o            => rxpolarity,
+    fai_psel_val_o          => fai_psel_val,
+    fofb_dat_sel_o          => fofb_pos_datsel,
     pmc_heart_beat_i        => X"00000000",
     link_partners_i         => link_partners,
     link_up_i               => link_up_i,
@@ -513,7 +517,7 @@ port map(
     fai_cfg_val_i           => fai_cfg_val_i
 );
 
--- Sniffer configuration comes from direct register space
+-- SNIFFER configuration comes from outside (application dependent)
 -- This should be modified accordingly.
 bpm_id <= bpmid_i when (DEVICE = SNIFFER) else bpmid;
 timeframe_len <= timeframe_length_i when (DEVICE = SNIFFER) else timeframelen;
@@ -522,6 +526,11 @@ timeframe_len <= timeframe_length_i when (DEVICE = SNIFFER) else timeframelen;
 -- fa interface module, removed by synthesizer for PMC
 ----------------------------------------------
 fofb_cc_fa_if : entity work.fofb_cc_fa_if
+generic map (
+    BLK_DW                  => FAI_DW,
+    BPMS                    => BPMS,
+    DMUX                    => DMUX
+)
 port map(
     mgtclk_i                => userclk,
     adcclk_i                => adcclk_i,
@@ -530,11 +539,10 @@ port map(
     fa_block_start_i        => fai_fa_block_start_i,
     fa_data_valid_i         => fai_fa_data_valid_i,
     fa_dat_i                => fai_fa_d_i,
-    fa_x_psel_i             => fai_psel_val_i(3 downto 0),
-    fa_y_psel_i             => fai_psel_val_i(7 downto 4),
-    timeframe_start_o       => bpm_timeframe_start,
-    bpm_cc_xpos_o           => bpm_own_xpos,
-    bpm_cc_ypos_o           => bpm_own_ypos
+    fa_psel_i               => fai_psel_val,
+    timeframe_start_o       => int_timeframe_start,
+    bpm_cc_xpos_o           => bpm_cc_xpos,
+    bpm_cc_ypos_o           => bpm_cc_ypos
 );
 
 ----------------------------------------------
@@ -548,17 +556,34 @@ generic map (
 port map(
     mgtclk_i                => userclk,
     mgtreset_i              => sysreset,
-    tfs_bpm_i               => bpm_timeframe_start,
-    tfs_pmc_i               => pmc_timeframe_start,
+    tfs_bpm_i               => int_timeframe_start,
+    tfs_pmc_i               => ext_timeframe_start,
+    tfs_override_i          => fofb_tfs_override,
     timeframe_len_i         => timeframe_len,
     timeframe_valid_o       => timeframe_valid,
     timeframe_start_o       => timeframe_start,
     timeframe_end_o         => timeframe_end,
-    pmc_timeframe_cntr_i    => pmc_timeframe_val,
-    pmc_timestamp_val_i     => pmc_timestamp_val,
+    pmc_timeframe_cntr_i    => ext_timeframe_val,
+    pmc_timestamp_val_i     => ext_timestamp_val,
     timeframe_cntr_o        => timeframe_count,
     timestamp_value_o       => timestamp_val
 );
 
+--trig0(0) <= pulse2;
+--
+--data(31 downto 0) <= std_logic_vector(counter2);
+--
+--ila_inst : ila
+--port map (
+--    control         => control,
+--    clk             => fai_cfg_clk,
+--    data            => data,
+--    trig0           => trig0
+--);
+--
+--icon_inst : icon
+--port map (
+--    control0        => control
+--);
 
 end structural;

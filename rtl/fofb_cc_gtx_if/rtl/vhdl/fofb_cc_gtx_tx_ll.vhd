@@ -213,7 +213,7 @@ begin
             counter_idle_tx     <= (others => '0');
             send_id_cnt         <=  (others => '0');
             tx_sm_busy_o        <= '0';
-            txreset_o           <= '1';
+            txreset_o           <= '0';
             error_detect_ena    <= '0';
             counter4bit         <= "0000";
         else
@@ -222,7 +222,7 @@ begin
                 -- RocketIO TX reset for 7 clock cycles
                 when tx_rst  =>
                     txreset_o <= '1';
-                    if (counter4bit(3) = '1') then  
+                    if (counter4bit(3) = '1') then
                         tx_state <= tx_wait_resetdone;
                         txreset_o <= '0';
                     end if;

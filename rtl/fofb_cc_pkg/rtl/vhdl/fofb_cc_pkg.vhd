@@ -91,6 +91,9 @@ constant cc_cmd_time_frame_dly      : unsigned(7 downto 0)  := X"04";
 constant cc_cmd_golden_orb_x        : unsigned(7 downto 0)  := X"05";
 constant cc_cmd_golden_orb_y        : unsigned(7 downto 0)  := X"06";
 constant cc_cmd_cust_feature        : unsigned(7 downto 0)  := X"07";
+constant cc_cmd_rxpolarity          : unsigned(7 downto 0)  := X"08";
+constant cc_cmd_payloadsel          : unsigned(7 downto 0)  := X"09";
+constant cc_cmd_fofbdatasel         : unsigned(7 downto 0)  := X"0A";
 
 ----------------------------------------------------------------------
 -- CC Status Registers
@@ -165,7 +168,7 @@ component ila_t8_d64_s16384
     port (
         control     : in  std_logic_vector(35 downto 0);
         clk         : in  std_logic;
-        data        : in  std_logic_vector(63 downto 0);
+        data        : in  std_logic_vector(255 downto 0);
         trig0       : in  std_logic_vector(7 downto 0)
      );
 end component;

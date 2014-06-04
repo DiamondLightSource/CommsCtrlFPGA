@@ -49,13 +49,15 @@ port (
     RXN_IN                                  : in   std_logic;
     RXP_IN                                  : in   std_logic;
     -------- Receive Ports - RX Elastic Buffer and Phase Alignment Ports -------
-    RXBUFSTATUS_OUT                         : out  std_logic_vector(2 downto 0);
+    RXBUFSTATUS_OUT                         : out  std_logic;
     ------------------------ Receive Ports - RX PLL Ports ----------------------
     GTXRXRESET_IN                           : in   std_logic;
     MGTREFCLKRX_IN                          : in   std_logic_vector(1 downto 0);
     PLLRXRESET_IN                           : in   std_logic;
     RXPLLLKDET_OUT                          : out  std_logic;
     RXRESETDONE_OUT                         : out  std_logic;
+    ----------------- Receive Ports - RX Polarity Control Ports --------------···--
+    RXPOLARITY_IN                           : in   std_logic;
     ---------------- Transmit Ports - 8b10b Encoder Control Ports --------------
     TXCHARISK_IN                            : in   std_logic_vector(1 downto 0);
     TXKERR_OUT                              : out  std_logic_vector(1 downto 0);
@@ -68,7 +70,7 @@ port (
     TXN_OUT                                 : out  std_logic;
     TXP_OUT                                 : out  std_logic;
     ----------- Transmit Ports - TX Elastic Buffer and Phase Alignment ---------
-    TXBUFSTATUS_OUT                         : out  std_logic_vector(1 downto 0);
+    TXBUFSTATUS_OUT                         : out  std_logic;
     ----------------------- Transmit Ports - TX PLL Ports ----------------------
     GTXTXRESET_IN                           : in   std_logic;
     MGTREFCLKTX_IN                          : in   std_logic_vector(1 downto 0);
@@ -107,6 +109,9 @@ signal RXPLLLKDET_BUF                   : std_logic;
 signal count_for_reset                  : std_logic_vector(10 downto 0);
 signal gtx_test1                        : std_logic;
 signal gtxtest_w                        : std_logic_vector(12 downto 0);
+
+signal RXBUFSTATUS                      : std_logic_vector(2 downto 0);
+signal TXBUFSTATUS                      : std_logic_vector(1 downto 0);
 
 begin
 
@@ -166,13 +171,15 @@ port map (
     RXN_IN                      => RXN_IN,
     RXP_IN                      => RXP_IN,
 
-    RXBUFSTATUS_OUT             => RXBUFSTATUS_OUT,
+    RXBUFSTATUS_OUT             => RXBUFSTATUS,
 
     GTXRXRESET_IN               => GTXRXRESET_IN,
     MGTREFCLKRX_IN              => MGTREFCLKRX_IN,
     PLLRXRESET_IN               => PLLRXRESET_IN,
     RXPLLLKDET_OUT              => RXPLLLKDET_BUF,
     RXRESETDONE_OUT             => RXRESETDONE_OUT,
+
+    RXPOLARITY_IN               => RXPOLARITY_IN,
 
     TXCHARISK_IN                => TXCHARISK_IN,
     TXKERR_OUT                  => TXKERR_OUT,
@@ -185,7 +192,7 @@ port map (
     TXN_OUT                     => TXN_OUT,
     TXP_OUT                     => TXP_OUT,
 
-    TXBUFSTATUS_OUT             => TXBUFSTATUS_OUT,
+    TXBUFSTATUS_OUT             => TXBUFSTATUS,
 
     GTXTXRESET_IN               => GTXTXRESET_IN,
     MGTREFCLKTX_IN              => MGTREFCLKTX_IN,
@@ -194,6 +201,8 @@ port map (
     TXRESETDONE_OUT             => TXRESETDONE_OUT
 );
 
+TXBUFSTATUS_OUT <= TXBUFSTATUS(1);
+RXBUFSTATUS_OUT <= RXBUFSTATUS(2);
 
 end RTL;
 

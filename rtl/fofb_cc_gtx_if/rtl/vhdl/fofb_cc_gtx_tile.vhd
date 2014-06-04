@@ -29,7 +29,7 @@ generic (
     -- Share RX PLL parameter
     GTX_TX_CLK_SOURCE           : string     := "TXPLL";
     -- Save power parameter
-    GTX_POWER_SAVE              : bit_vector := "0000000000"
+    GTX_POWER_SAVE              : bit_vector := "0000110100"
 );
 port (
     ------------------------ Loopback and Powerdown Ports ----------------------
@@ -59,6 +59,8 @@ port (
     PLLRXRESET_IN                           : in   std_logic;
     RXPLLLKDET_OUT                          : out  std_logic;
     RXRESETDONE_OUT                         : out  std_logic;
+    ----------------- Receive Ports - RX Polarity Control Ports --------------···--
+    RXPOLARITY_IN                           : in   std_logic;
     ---------------- Transmit Ports - 8b10b Encoder Control Ports --------------
     TXCHARISK_IN                            : in   std_logic_vector(1 downto 0);
     TXKERR_OUT                              : out  std_logic_vector(1 downto 0);
@@ -306,8 +308,8 @@ generic map
     CLK_COR_DET_LEN                         =>     (2),
     CLK_COR_INSERT_IDLE_FLAG                =>     (FALSE),
     CLK_COR_KEEP_IDLE                       =>     (FALSE),
-    CLK_COR_MAX_LAT                         =>     (18),
-    CLK_COR_MIN_LAT                         =>     (16),
+    CLK_COR_MAX_LAT                         =>     (32), --isa (18),
+    CLK_COR_MIN_LAT                         =>     (28), --isa (16),
     CLK_COR_PRECEDENCE                      =>     (TRUE),
     CLK_COR_REPEAT_WAIT                     =>     (0),
     CLK_COR_SEQ_1_1                         =>     ("0110111100"), -- K28.5 = BC
@@ -474,7 +476,7 @@ generic map
     PHYSTATUS                       =>      open,
     RXVALID                         =>      open,
     ----------------- Receive Ports - RX Polarity Control Ports ----------------
-    RXPOLARITY                      =>      tied_to_ground_i,
+    RXPOLARITY                      =>      RXPOLARITY_IN,
     --------------------- Receive Ports - RX Ports for SATA --------------------
     COMINITDET                      =>      open,
     COMSASDET                       =>      open,

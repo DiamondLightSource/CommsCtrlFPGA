@@ -27,6 +27,7 @@ use work.fofb_cc_pkg.all;           -- Diamond FOFB package
 entity fofb_cc_fod is
     generic (
         -- Design Configuration Options
+        BPMS                    : integer  := 1;
         DEVICE                  : device_t := BPM;
         LaneCount               : integer  := 4
     );
@@ -51,10 +52,10 @@ entity fofb_cc_fod is
         timeframe_cntr_i        : in  std_logic_vector(31 downto 0);
         timestamp_val_i         : in  std_logic_vector(31 downto 0);
         -- Packet information coming from Libera interface
-        bpm_x_pos_i             : in  std_logic_vector(31 downto 0);
-        bpm_y_pos_i             : in  std_logic_vector(31 downto 0);
+        bpm_x_pos_i             : in  std_logic_2d_32(BPMS-1 downto 0);
+        bpm_y_pos_i             : in  std_logic_2d_32(BPMS-1 downto 0);
         -- Dummy/Real position data select
-        pos_datsel_i            : in  std_logic;
+        pos_datsel_i            : in  std_logic_vector(BPMS-1 downto 0);
         -- TX FIFO full status
         txf_full_i              : in  std_logic_vector(LaneCount-1 downto 0);
         -- CC Configuration registers
@@ -76,11 +77,6 @@ entity fofb_cc_fod is
         fofb_dma_ok_i           : in std_logic;
         -- Received node mask (Not used in BPMs)
         fofb_node_mask_o        : out  std_logic_vector(NodeNum-1 downto 0);
-        -- 2x PBPM position data interface
-        pbpm_xpos_0_i           : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_0_i           : in  std_logic_vector(31 downto 0);
-        pbpm_xpos_1_i           : in  std_logic_vector(31 downto 0);
-        pbpm_ypos_1_i           : in  std_logic_vector(31 downto 0);
         -- Time of arrival buffer read interface
         toa_rstb_i              : in  std_logic;
         toa_rden_i              : in  std_logic;
@@ -102,8 +98,9 @@ architecture rtl of fofb_cc_fod is
 -------------------------------------------------------------------
 signal pload_header                 : std_logic_vector(31 downto 0);
 signal bpm_cnt                      : unsigned(7 downto 0);
-signal timeframe_start_d1           : std_logic;
-signal timeframe_start_d2           : std_logic;
+signal timeframe_start              : std_logic_vector(BPMS-1 downto 0) := (others
+=> '0');
+signal timeframe_valid              : std_logic;
 signal bpm_xpos_val                 : std_logic_vector(31 downto 0);
 signal bpm_ypos_val                 : std_logic_vector(31 downto 0);
 signal pmc_xpos_val                 : std_logic_vector(31 downto 0);
@@ -127,9 +124,6 @@ signal ypos_to_read                 : std_logic_vector(31 downto 0);
 signal own_packet_to_inject         : std_logic_vector(127 downto 0);
 signal own_xpos_to_store            : std_logic_vector(31 downto 0);
 signal own_ypos_to_store            : std_logic_vector(31 downto 0);
-signal own_packet_to_inject_1       : std_logic_vector(127 downto 0):= (others =>'0');
-signal own_xpos_to_store_1          : std_logic_vector(31 downto 0):= (others => '0');
-signal own_ypos_to_store_1          : std_logic_vector(31 downto 0):= (others => '0');
 signal xpos_to_store                : std_logic_vector(31 downto 0);
 signal ypos_to_store                : std_logic_vector(31 downto 0);
 signal xy_buf_addr                  : std_logic_vector(NodeW downto 0);
@@ -140,12 +134,7 @@ signal fofb_nodemask_sys            : std_logic_vector(NodeNum-1 downto 0):= (ot
 signal posmem_wea                   : std_logic;
 signal posmem_addra                 : std_logic_vector(NodeW downto 0);
 signal posmem_addrb                 : std_logic_vector(NodeW downto 0);
-signal pbpm_xpos_0                  : std_logic_vector(31 downto 0);
-signal pbpm_ypos_0                  : std_logic_vector(31 downto 0);
-signal pbpm_xpos_1                  : std_logic_vector(31 downto 0);
-signal pbpm_ypos_1                  : std_logic_vector(31 downto 0);
-signal bpmid                        : std_logic_vector(9 downto 0);
-signal bpmid_1                      : std_logic_vector(9 downto 0);
+signal bpmid                        : unsigned(9 downto 0);
 signal fod_id                       : std_logic_vector(NodeW-1 downto 0);
 signal fod_xpos                     : std_logic_vector(31 downto 0);
 signal fod_ypos                     : std_logic_vector(31 downto 0);
@@ -214,6 +203,7 @@ process(mgtclk_i)
 begin
     if rising_edge(mgtclk_i) then
         fod_dat_o <= fod_odat;
+        -- If Sniffer, disable data out valid
         if (DEVICE = SNIFFER) then
             fod_dat_val_o <= (others => '0');
         else
@@ -236,33 +226,43 @@ fod_id <= fod_idat(NodeW+95 downto 96);
 fod_xpos <= fod_idat(95 downto 64);
 fod_ypos <= fod_idat(63 downto 32);
 
---
--- Position data select
---
+-- Create a BPMS-bit shift register. This is used to shift timeframe_inject
+-- pulse in order to keep track of payload data injected on the the network.
 process(mgtclk_i)
 begin
     if (mgtclk_i'event and mgtclk_i='1') then
-        if (pos_datsel_i = '0') then
-            bpm_xpos_val <=  std_logic_vector(signed(bpm_x_pos_i) - signed(golden_orb_x_i));
-            bpm_ypos_val <=  std_logic_vector(signed(bpm_y_pos_i) - signed(golden_orb_y_i));
-            pbpm_xpos_0 <= pbpm_xpos_0_i;
-            pbpm_ypos_0 <= pbpm_ypos_0_i;
-            pbpm_xpos_1 <= pbpm_xpos_1_i;
-            pbpm_ypos_1 <= pbpm_ypos_1_i;
-            pmc_xpos_val <= fofb_watchdog_i;
-            pmc_ypos_val <= fofb_event_i;
-        else
-            -- Inject synth. pos data for debugging
-            bpm_xpos_val <= timeframe_cntr_i;
-            bpm_ypos_val <= timeframe_cntr_i;
-            pmc_xpos_val <= timeframe_cntr_i;
-            pmc_ypos_val <= timeframe_cntr_i;
-            pbpm_xpos_0 <= timeframe_cntr_i;
-            pbpm_ypos_0 <= timeframe_cntr_i;
-            pbpm_xpos_1 <= timeframe_cntr_i;
-            pbpm_ypos_1 <= timeframe_cntr_i;
-        end if;
+        for I in 0 to BPMS-1 loop
+            if (I=0) then
+                timeframe_start(0) <= timeframe_inject;
+            else
+                timeframe_start <= timeframe_start(BPMS-2 downto 0) & timeframe_inject;
+            end if;
+        end loop;
     end if;
+end process;
+
+--
+-- Position data to be injected can be synthetic or real data
+--
+process(pos_datsel_i, bpm_x_pos_i, bpm_y_pos_i, timeframe_start,
+            fofb_watchdog_i, fofb_event_i)
+begin
+    -- BPM data is muxed for the # of BPMS being served
+    for I in 0 to BPMS-1 loop
+        if (timeframe_start(I) = '1') then
+            if (pos_datsel_i(I) = '0') then
+                bpm_xpos_val <= std_logic_vector(signed(bpm_x_pos_i(I)) - signed(golden_orb_x_i));
+                bpm_ypos_val <= std_logic_vector(signed(bpm_y_pos_i(I)) - signed(golden_orb_y_i));
+            else
+                bpm_xpos_val <= timeframe_cntr_i;
+                bpm_ypos_val <= timeframe_cntr_i;
+            end if;
+        end if;
+    end loop;
+
+    -- Data for PMC module
+    pmc_xpos_val <= fofb_watchdog_i;
+    pmc_ypos_val <= fofb_event_i;
 end process;
 
 --
@@ -270,10 +270,29 @@ end process;
 -- When DEVICE=BPM, a time frame start bit is placed onto
 -- payload header bit15
 --
-bpmid <= bpmid_i;
-bpmid_1 <= std_logic_vector(unsigned(bpmid_i) + 1);
+process(timeframe_start)
+    variable result       : std_logic;
+begin
+    result := '0';
+    for i in timeframe_start'range loop
+        result := result or timeframe_start(i);
+    end loop;
 
-pload_header(9 downto 0) <= bpmid when (timeframe_start_d1 = '1') else bpmid_1;
+    timeframe_valid <= result;
+end process;
+
+process(mgtclk_i)
+begin
+    if (mgtclk_i'event and mgtclk_i='1') then
+        if (timeframe_inject = '1') then
+            bpmid <= unsigned(bpmid_i);
+        elsif (timeframe_valid = '1') then
+            bpmid <= bpmid + 1;
+        end if;
+    end if;
+end process;
+
+pload_header(9 downto 0) <= std_logic_vector(bpmid);
 pload_header(14 downto 10) <= "00000";
 pload_header(15) <= '1' when (DEVICE = BPM) else '0';
 pload_header(31 downto 16) <= timeframe_cntr_i(15 downto 0);
@@ -283,10 +302,10 @@ pload_header(31 downto 16) <= timeframe_cntr_i(15 downto 0);
 --  1/ own data packet (4 x 32-bit words)
 --  2/ positions to store for processing
 --
-process(timeframe_cntr_i, bpm_ypos_val, bpm_xpos_val, pload_header, pmc_xpos_val, pmc_ypos_val,timestamp_val_i, pbpm_xpos_0, pbpm_ypos_0, pbpm_xpos_1, pbpm_ypos_1)
+process(timeframe_cntr_i, bpm_ypos_val, bpm_xpos_val, pload_header, pmc_xpos_val, pmc_ypos_val,timestamp_val_i)
 begin
     case DEVICE is
-        when BPM =>
+        when BPM => -- and PBPM
             own_packet_to_inject <= pload_header & bpm_xpos_val & bpm_ypos_val & timeframe_cntr_i;
             own_xpos_to_store   <= bpm_xpos_val;
             own_ypos_to_store   <= bpm_ypos_val;
@@ -306,14 +325,6 @@ begin
             own_packet_to_inject <= pload_header & X"00000000" & X"00000000" & timeframe_cntr_i;
             own_xpos_to_store   <= timestamp_val_i;
             own_ypos_to_store   <= timestamp_val_i;
-        when PBPM =>
-            own_packet_to_inject <= pload_header & pbpm_xpos_0 & pbpm_ypos_0 & timeframe_cntr_i;
-            own_xpos_to_store   <= pbpm_xpos_0;
-            own_ypos_to_store   <= pbpm_ypos_0;
-
-            own_packet_to_inject_1 <= pload_header & pbpm_xpos_1 & pbpm_ypos_1 & timeframe_cntr_i;
-            own_xpos_to_store_1   <= pbpm_xpos_1;
-            own_ypos_to_store_1   <= pbpm_ypos_1;
         when others =>
     end case;
 end process;
@@ -392,7 +403,7 @@ maskmemB_addrb <= fod_dat_i(NodeW+95 downto 96);
 -- Check if data from a node has been received
 fod_ok_n <= maskmemA_doutb(0) when (maskmem_sw = '0') else maskmemB_doutb(0);
 
--- Time delayed time start pulse
+-- Time delayed timeframe_start pulse
 timeframe_inject <= '1' when (timeframe_cnt = unsigned(timeframe_dly_i) and
                     timeframe_valid_i = '1') else '0';
 
@@ -404,14 +415,9 @@ if (mgtclk_i'event and mgtclk_i = '1') then
         maskmem_sw <= '0';
         timeframe_cnt <= (others=> '0');
         fofb_nodemask <= (others => '0');
-        timeframe_start_d1 <= '0';
-        timeframe_start_d2 <= '0';
         posmem_wea_prev <= '0';
         posmem_addra_prev <= (others => '0');
     else
-        timeframe_start_d1 <= timeframe_inject;
-        timeframe_start_d2 <= timeframe_start_d1 and tostd(DEVICE = PBPM);
-
         -- Double-buffering switch for received mask memory
         if (timeframe_end_i = '1') then
             maskmem_sw <= not maskmem_sw;
@@ -428,11 +434,8 @@ if (mgtclk_i'event and mgtclk_i = '1') then
         if (timeframe_start_i = '1') then
             bpm_cnt <= (others => '0');
             fofb_nodemask <= (others => '0');
-        elsif (timeframe_start_d1 = '1') then
+        elsif (timeframe_valid = '1') then
             fofb_nodemask(to_integer(unsigned(bpmid(NodeW-1 downto 0)))) <= '1';
-            bpm_cnt <= bpm_cnt + 1;
-        elsif (timeframe_start_d2 = '1') then
-            fofb_nodemask(to_integer(unsigned(bpmid_1(NodeW-1 downto 0)))) <= '1';
             bpm_cnt <= bpm_cnt + 1;
         elsif (fod_idat_val = '1') then
             -- Forward only once
@@ -451,36 +454,23 @@ end if;
 end process;
 
 -- Forwarded data along with strobe
-fod_odat_val <= timeframe_start_d1 or timeframe_start_d2 or
-              (fod_idat_val and not fod_ok_n);
+fod_odat_val <= timeframe_valid or (fod_idat_val and not fod_ok_n);
 
-fod_odat <= own_packet_to_inject
-            when (timeframe_start_d1 = '1') else
-            own_packet_to_inject_1
-            when (timeframe_start_d2 = '1') else
+fod_odat <= own_packet_to_inject when (timeframe_valid = '1') else
             fod_idat(127 downto 112) & '0' & fod_idat(110 downto 0);
 
 -- X and Y position data to be stored from received nodes
-posmem_addra <= buffer_write_sw & bpmid(NodeW-1 downto 0) 
-                when (timeframe_start_d1 = '1') else 
-                buffer_write_sw & bpmid_1(NodeW-1 downto 0)
-                when (timeframe_start_d2 = '1') else
-                buffer_write_sw & fod_id;
+posmem_addra <= buffer_write_sw & std_logic_vector(bpmid(NodeW-1 downto 0))
+                when (timeframe_valid = '1') 
+                else buffer_write_sw & fod_id;
 
-posmem_wea <= timeframe_start_d1 or timeframe_start_d2 or
-              (fod_idat_val and not fod_ok_n);
+posmem_wea <= timeframe_valid or (fod_idat_val and not fod_ok_n);
 
-xpos_to_store <= own_xpos_to_store
-                 when (timeframe_start_d1 = '1') else
-                 own_xpos_to_store_1
-                 when (timeframe_start_d2 = '1') else
-                 fod_xpos;
+xpos_to_store <= own_xpos_to_store when (timeframe_valid = '1')
+                 else fod_xpos;
 
-ypos_to_store <= own_ypos_to_store
-                 when (timeframe_start_d1 = '1') else
-                 own_ypos_to_store_1
-                 when (timeframe_start_d2 = '1') else
-                 fod_ypos;
+ypos_to_store <= own_ypos_to_store when (timeframe_valid = '1')
+                 else fod_ypos;
 
 -------------------------------------------------------------------
 -- SYS Clock Domain:

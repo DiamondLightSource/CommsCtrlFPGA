@@ -57,10 +57,10 @@ entity fofb_cc_gt_if is
         timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
         bpmid_i                 : in  std_logic_vector(9 downto 0);
 
-        -- mgt configuration 
+        -- mgt configuration
         powerdown_i             : in  std_logic_vector(3 downto 0);
         loopback_i              : in  std_logic_vector(7 downto 0);
-
+        rxpolarity_i            : in  std_logic_vector(LaneCount-1 downto 0);
         -- status information
         linksup_o               : out std_logic_vector(7 downto 0);
         frameerror_cnt_o        : inout std_logic_2d_16(3 downto 0);

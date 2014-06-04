@@ -40,6 +40,9 @@ entity fofb_cc_cfg_if is
         powerdown_o             : out std_logic_vector(3 downto 0);
         loopback_o              : out std_logic_vector(7 downto 0);
         timeframe_dly_o         : out std_logic_vector(15 downto 0);
+        rxpolarity_o            : out std_logic_vector(3 downto 0);
+        fai_psel_val_o          : out std_logic_vector(31 downto 0);
+        fofb_dat_sel_o          : out std_logic_vector(3 downto 0);
         -- Configuration data written to config bram
         pmc_heart_beat_i        : in  std_logic_vector(31 downto 0);
         link_partners_i         : in std_logic_2d_10(3 downto 0);
@@ -88,14 +91,6 @@ signal cfg_ack_prev                 : std_logic;
 signal cfg_ack_rise                 : std_logic;
 signal cfg_addr                     : unsigned(9 downto 0);
 signal cfg_addr_prev                : unsigned(9 downto 0);
-signal bpmid                        : std_logic_vector(9 downto 0);
-signal timeframe_len                : std_logic_vector(15 downto 0);
-signal powerdown                    : std_logic_vector(3 downto 0);
-signal loopback                     : std_logic_vector(7 downto 0);
-signal timeframe_dly                : std_logic_vector(15 downto 0);
-signal golden_x_orb                 : std_logic_vector(31 downto 0);
-signal golden_y_orb                 : std_logic_vector(31 downto 0);
-signal cust_feature_val             : std_logic_vector(31 downto 0);
 -- Following signals are related to mode of operation where feedback algorithm runs
 -- on the FPGA
 signal coef_x_wr                    : std_logic;
@@ -167,91 +162,93 @@ begin
     end if;
 end process;
 
-bpmid_o         <= bpmid;
-timeframe_len_o <= timeframe_len;
-powerdown_o     <= powerdown;
-loopback_o      <= loopback;
-golden_x_orb_o  <= golden_x_orb;
-golden_y_orb_o  <= golden_y_orb;
-timeframe_dly_o <= timeframe_dly;
-
 ----------------------------------------------------------
 -- Read CC configuration parameters from addr space 0-255
 ----------------------------------------------------------
 process(mgtclk_i)
 begin
-    if (mgtclk_i'event and mgtclk_i='1') then
-        if (mgtreset_i = '1') then
-            bpmid           <= std_logic_vector(to_unsigned(ID,10));
-            timeframe_dly   <= def_TimeFrameDelay;
-            timeframe_len   <= def_TimeFrameLength;
-            powerdown       <= (others => '0');
-            loopback        <= (others => '0');
-            coef_x_wr       <= '0';
-            coef_y_wr       <= '0';
-            golden_x_orb    <= (others => '0');
-            golden_y_orb    <= (others => '0');
-            cust_feature_val<= (others => '0');
-        else
-            if (state = st2_read) then
+if (mgtclk_i'event and mgtclk_i='1') then
+    if (mgtreset_i = '1') then
+        bpmid_o         <= std_logic_vector(to_unsigned(ID,10));
+        timeframe_dly_o <= def_TimeFrameDelay;
+        timeframe_len_o <= def_TimeFrameLength;
+        powerdown_o     <= (others => '0');
+        loopback_o      <= (others => '0');
+        coef_x_wr       <= '0';
+        coef_y_wr       <= '0';
+        golden_x_orb_o  <= (others => '0');
+        golden_y_orb_o  <= (others => '0');
+        rxpolarity_o    <= "0000";
+        fai_psel_val_o  <= X"FEFEFEFE";
+        fofb_dat_sel_o  <= "0000";
+    else
+        if (state = st2_read) then
 
-                if (cfg_addr_prev(9 downto 8) = "00") then
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_bpm_id) then
-                        bpmid(NodeW-1 downto 0) <= fai_cfg_di_i(NodeW-1 downto 0);
-                    end if; 
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_len) then
-                        timeframe_len <=  fai_cfg_di_i(15 downto 0);
-                    end if; 
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_mgt_powerdown) then
-                        powerdown <= fai_cfg_di_i(3 downto 0);
-                    end if; 
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_mgt_loopback) then
-                        loopback <= fai_cfg_di_i(7 downto 0);
-                    end if;
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_dly) then
-                        timeframe_dly <=  fai_cfg_di_i(15 downto 0);
-                    end if;
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_golden_orb_x) then
-                        golden_x_orb <= fai_cfg_di_i;
-                    end if; 
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_golden_orb_y) then
-                        golden_y_orb <= fai_cfg_di_i;
-                    end if;
-
-                    if (cfg_addr_prev(7 downto 0) = cc_cmd_cust_feature) then
-                        cust_feature_val <= fai_cfg_di_i;
-                    end if;
-
+            if (cfg_addr_prev(9 downto 8) = "00") then
+                -- Node ID
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_bpm_id) then
+                    bpmid_o(NodeW-1 downto 0) <= fai_cfg_di_i(NodeW-1 downto 0);
+                end if; 
+                -- Time frame lenght in terms of clocks
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_len) then
+                    timeframe_len_o <=  fai_cfg_di_i(15 downto 0);
+                end if; 
+                -- MGT Powerdown
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_mgt_powerdown) then
+                    powerdown_o <= fai_cfg_di_i(3 downto 0);
+                end if; 
+                -- MGT Loopback
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_mgt_loopback) then
+                    loopback_o <= fai_cfg_di_i(7 downto 0);
+                end if;
+                -- Timeframe start delay in terms of clocks
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_dly) then
+                    timeframe_dly_o <=  fai_cfg_di_i(15 downto 0);
+                end if;
+                -- Golden orbit -x
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_golden_orb_x) then
+                    golden_x_orb_o <= fai_cfg_di_i;
+                end if; 
+                -- Golden orbit -y
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_golden_orb_y) then
+                    golden_y_orb_o <= fai_cfg_di_i;
+                end if;
+                -- MGT RX Polarity
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_rxpolarity) then
+                    rxpolarity_o <= fai_cfg_di_i(3 downto 0);
+                end if;
+                -- FAI data stream payload selection
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_payloadsel) then
+                    fai_psel_val_o <= fai_cfg_di_i;
+                end if;
+                -- FOFB data injection select
+                if (cfg_addr_prev(7 downto 0) = cc_cmd_fofbdatasel) then
+                    fofb_dat_sel_o <= fai_cfg_di_i(3 downto 0);
                 end if;
             end if;
+        end if;
 
-            -- Read response matrix coefficients if required
-            if (EXTENDED_CONF_BUF) then
+        -- Read response matrix coefficients if required
+        if (EXTENDED_CONF_BUF) then
 
-                case cfg_addr(9 downto 8) is
-                    when "00" =>
-                        coef_x_wr <= '0';
-                        coef_y_wr <= '0';
-                    when "01" =>
-                        coef_x_wr <= '1';
-                        coef_y_wr <= '0';
-                    when "10" =>
-                        coef_x_wr <= '0';
-                        coef_y_wr <= '1';
-                    when "11" =>
-                        coef_x_wr <= '0';
-                        coef_y_wr <= '0';
-                    when others =>
-                end case;
-            end if;
+            case cfg_addr(9 downto 8) is
+                when "00" =>
+                    coef_x_wr <= '0';
+                    coef_y_wr <= '0';
+                when "01" =>
+                    coef_x_wr <= '1';
+                    coef_y_wr <= '0';
+                when "10" =>
+                    coef_x_wr <= '0';
+                    coef_y_wr <= '1';
+                when "11" =>
+                    coef_x_wr <= '0';
+                    coef_y_wr <= '0';
+                when others =>
+            end case;
         end if;
     end if;
+end if;
 end process;
 
 --------------------------------------------------------
@@ -356,24 +353,6 @@ begin
                         fai_cfg_we_o <= '1';
                     when cc_cmd_bpm_count           =>
                         fai_cfg_do_o <= zeros(24) & bpmcount_i;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_bpm_id_rdback     =>
-                        fai_cfg_do_o <= zeros(22) & bpmid;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_tf_length_rdback  =>
-                        fai_cfg_do_o <= zeros(16) & timeframe_len;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_powerdown_rdback  =>
-                        fai_cfg_do_o <= zeros(28) & powerdown;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_loopback_rdback   =>
-                        fai_cfg_do_o <= zeros(24) & loopback;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_faival_rdback   =>
-                        fai_cfg_do_o <= fai_cfg_val_i;
-                        fai_cfg_we_o <= '1';
-                    when cc_cmd_feature_rdback  =>
-                        fai_cfg_do_o <= cust_feature_val;
                         fai_cfg_we_o <= '1';
                     when cc_cmd_rx_maxcount =>
                         fai_cfg_do_o <= rx_max_data_count_i(3)&
