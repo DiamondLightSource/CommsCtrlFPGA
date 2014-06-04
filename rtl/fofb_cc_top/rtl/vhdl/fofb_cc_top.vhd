@@ -107,7 +107,7 @@ entity fofb_cc_top is
         harderror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         softerror_cnt_o         : out std_logic_2d_16(LANE_COUNT-1 downto 0);
         frameerror_cnt_o        : out std_logic_2d_16(LANE_COUNT-1 downto 0);
-        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
         timeframe_length_i      : in  std_logic_vector(15 downto 0)
 );
 end fofb_cc_top;
@@ -148,7 +148,7 @@ signal tx_fifo_rst          : std_logic_vector(LANE_COUNT-1 downto 0);
 signal arbmux_dout          : std_logic_vector((32*PacketSize-1) downto 0);
 signal arbmux_dout_rdy      : std_logic;
 -- configuration signals
-signal bpm_id               : std_logic_vector(9 downto 0);
+signal bpm_id               : std_logic_vector(NodeW-1 downto 0);
 signal mgt_powerdown        : std_logic_vector(3 downto 0);
 signal mgt_loopback         : std_logic_vector(7 downto 0);
 -- time frame start signals
@@ -178,7 +178,7 @@ signal golden_orb_y         : std_logic_vector(31 downto 0);
 signal ext_timeframe_val    : std_logic_2d_16(3 downto 0);
 signal ext_timestamp_val    : std_logic_2d_32(3 downto 0);
 signal timestamp_val        : std_logic_vector(31 downto 0);
-signal bpmid                : std_logic_vector(9 downto 0);
+signal bpmid                : std_logic_vector(NodeW-1 downto 0);
 signal timeframelen         : std_logic_vector(15 downto 0);
 
 signal refclk               : std_logic;
@@ -439,6 +439,7 @@ port map (
     xy_buf_dout_o           => xy_buf_dat_o,
     xy_buf_addr_i           => xy_buf_addr_i,
     xy_buf_rstb_i           => xy_buf_rstb_i,
+    xy_buf_long_en_i        => '0',
     fodprocess_time_o       => fodprocess_time,
     bpm_count_o             => bpm_count,
     golden_orb_x_i          => golden_orb_x,

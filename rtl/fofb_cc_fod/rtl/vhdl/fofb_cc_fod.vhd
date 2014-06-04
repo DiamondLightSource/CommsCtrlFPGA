@@ -59,11 +59,12 @@ entity fofb_cc_fod is
         -- TX FIFO full status
         txf_full_i              : in  std_logic_vector(LaneCount-1 downto 0);
         -- CC Configuration registers
-        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
         -- X and Y pos out to CEP and PMC Interface
         xy_buf_dout_o           : out std_logic_vector(63 downto 0);
         xy_buf_addr_i           : in  std_logic_vector(NodeW downto 0);
         xy_buf_rstb_i           : in  std_logic;
+        xy_buf_long_en_i        : in  std_logic;
         -- status info
         fodprocess_time_o       : out std_logic_vector(15 downto 0);
         bpm_count_o             : out std_logic_vector(7 downto 0);
@@ -126,15 +127,13 @@ signal own_xpos_to_store            : std_logic_vector(31 downto 0);
 signal own_ypos_to_store            : std_logic_vector(31 downto 0);
 signal xpos_to_store                : std_logic_vector(31 downto 0);
 signal ypos_to_store                : std_logic_vector(31 downto 0);
-signal xy_buf_addr                  : std_logic_vector(NodeW downto 0);
-signal xy_buf_addr_prev             : std_logic_vector(NodeW downto 0);
-signal xy_buf_dout                  : std_logic_vector(63 downto 0);
+signal xy_buf_addr                  : std_logic_vector(NodeW-1 downto 0);
 signal fofb_nodemask                : std_logic_vector(NodeNum-1 downto 0):= (others => '0');
 signal fofb_nodemask_sys            : std_logic_vector(NodeNum-1 downto 0):= (others => '0');
 signal posmem_wea                   : std_logic;
 signal posmem_addra                 : std_logic_vector(NodeW downto 0);
 signal posmem_addrb                 : std_logic_vector(NodeW downto 0);
-signal bpmid                        : unsigned(9 downto 0);
+signal bpmid                        : unsigned(NodeW-1 downto 0);
 signal fod_id                       : std_logic_vector(NodeW-1 downto 0);
 signal fod_xpos                     : std_logic_vector(31 downto 0);
 signal fod_ypos                     : std_logic_vector(31 downto 0);
@@ -193,6 +192,9 @@ signal rcb_rden                     : std_logic;
 signal rcb_rden_prev                : std_logic;
 signal rcb_rden_rise                : std_logic;
 signal rcb_addr                     : unsigned(NodeW-1 downto 0);
+
+signal xy_buf_rd_sw                 : std_logic;
+signal xy_buf_rd_sw_prev            : std_logic;
 
 begin
 
@@ -267,8 +269,6 @@ end process;
 
 --
 -- BPM/PMC Header Data (32 bits)
--- When DEVICE=BPM, a time frame start bit is placed onto
--- payload header bit15
 --
 process(timeframe_start)
     variable result       : std_logic;
@@ -292,8 +292,10 @@ begin
     end if;
 end process;
 
-pload_header(9 downto 0) <= std_logic_vector(bpmid);
-pload_header(14 downto 10) <= "00000";
+-- When DEVICE=BPM, a time frame start bit is placed onto
+-- payload header bit15
+pload_header(NodeW-1 downto 0) <= std_logic_vector(bpmid);
+pload_header(14 downto NodeW) <= (others=>'0');
 pload_header(15) <= '1' when (DEVICE = BPM) else '0';
 pload_header(31 downto 16) <= timeframe_cntr_i(15 downto 0);
 
@@ -435,13 +437,13 @@ if (mgtclk_i'event and mgtclk_i = '1') then
             bpm_cnt <= (others => '0');
             fofb_nodemask <= (others => '0');
         elsif (timeframe_valid = '1') then
-            fofb_nodemask(to_integer(unsigned(bpmid(NodeW-1 downto 0)))) <= '1';
+            fofb_nodemask(to_integer(bpmid)) <= '1';
             bpm_cnt <= bpm_cnt + 1;
         elsif (fod_idat_val = '1') then
             -- Forward only once
             if (fod_ok_n = '0') then
                 bpm_cnt <= bpm_cnt + 1;
-                fofb_nodemask(to_integer(unsigned(fod_id(NodeW-1 downto 0)))) <= '1';
+                fofb_nodemask(to_integer(unsigned(fod_id))) <= '1';
             end if;
         end if;
 
@@ -460,7 +462,7 @@ fod_odat <= own_packet_to_inject when (timeframe_valid = '1') else
             fod_idat(127 downto 112) & '0' & fod_idat(110 downto 0);
 
 -- X and Y position data to be stored from received nodes
-posmem_addra <= buffer_write_sw & std_logic_vector(bpmid(NodeW-1 downto 0))
+posmem_addra <= buffer_write_sw & std_logic_vector(bpmid)
                 when (timeframe_valid = '1') 
                 else buffer_write_sw & fod_id;
 
@@ -491,6 +493,11 @@ port map (
     pulseout            => timeframe_end_sys
 );
 
+-------------------------------------------------
+-- Double Buffering for FoD control
+-- buffer_write_sw = '0'    => Lower is used
+-- buffer_write_sw = '1'    => Upper is used
+-------------------------------------------------
 process(sysclk_i)
 begin
     if (sysclk_i'event and sysclk_i = '1') then
@@ -503,18 +510,15 @@ begin
         if (timeframe_end_sys = '1' and fofb_dma_ok_i = '1') then
             fofb_nodemask_sys <= fofb_nodemask;
         end if;
+
+        xy_buf_rd_sw_prev <= xy_buf_rd_sw;
     end if;
 end process;
 
--------------------------------------------------
--- Double Buffering for FoD control
--- buffer_write_sw = '0'    => Lower is used
--- buffer_write_sw = '1'    => Upper is used
--------------------------------------------------
-posmem_addrb <= buffer_read_sw & xy_buf_addr(NodeW-1 downto 0);
-posmem_xweb <= xy_buf_rstb_i when (xy_buf_addr_i(NodeW-1) = '0') else '0';
-posmem_yweb <= xy_buf_rstb_i when (xy_buf_addr_i(NodeW-1) = '1') else '0';
-
+--
+-- Each X/Y Position Data Store Buffer implements a double buffer
+-- by switching between lower and upper part of the memory
+--
 XPosMem : entity work.fofb_cc_dpbram
     generic map (
         AW          => (NodeW+1),
@@ -554,57 +558,30 @@ YPosMem : entity work.fofb_cc_dpbram
 ---------------------------------------------------------------------
 -- Following Generate statements handle Parallel or Serial
 -- x&y position data read to PMC or PCI-E.
+-- PMC module Readback runs in 256 or 512-nodes mode depending on
+-- long flag.
 ---------------------------------------------------------------------
-process(sysclk_i)
-begin
-    if (sysclk_i'event and sysclk_i = '1') then
-        xy_buf_addr_prev <= xy_buf_addr;
-    end if;
-end process; 
+--Determine address bit number to be used for muxing between X and Y
+--based on 256/512-node operation
+xy_buf_rd_sw <= xy_buf_addr_i(NodeW) when (xy_buf_long_en_i = '1')
+                else xy_buf_addr_i(NodeW-1);
 
--- PMC DMA engine has 32-bit data interface
--- PMC transfers only frist 256-node's data
--- This requires following address mapping
--- sys_addr[8:7]---buf_addr[8:7]
---    00        -->   00
---    01        -->   10
---
-GEN_POS_DAQ_SERIAL : if (DEVICE /= SNIFFER) generate
-    dma_access: process(xy_buf_addr_i, xpos_to_read, ypos_to_read, xy_buf_addr_prev)
-        variable  xy_buf_read_ptr : integer range 0 to NodeNum-1;
-    begin
+xy_buf_addr <= xy_buf_addr_i(Nodew-1 downto 0) when (xy_buf_long_en_i = '1')
+               else '0' & xy_buf_addr_i(NodeW-2 downto 0);
 
-        -- Read only first 256-nodes
-        xy_buf_addr <= "00" & xy_buf_addr_i(7 downto 0);
+posmem_addrb <= buffer_read_sw & xy_buf_addr;
 
-        xy_buf_read_ptr := to_integer(unsigned(xy_buf_addr_prev(NodeW-1 downto 0)));
+-- Clear memory on readback
+posmem_xweb <= xy_buf_rstb_i when (xy_buf_rd_sw = '0') else '0';
+posmem_yweb <= xy_buf_rstb_i when (xy_buf_rd_sw = '1') else '0';
 
-        if (xy_buf_addr_i(NodeW-1) = '0') then
-            xy_buf_dout <= X"00000000" & xpos_to_read;
-        else
-            xy_buf_dout <= X"00000000" & ypos_to_read;
-        end if;
 
-        xy_buf_dout_o <= xy_buf_dout;
-
-    end process;
-
-end generate;
-
--- PCI-E DMA engine has 64-bit data interface.
-GEN_POS_DAQ_PARALLEL : if (DEVICE = SNIFFER) generate
-    dma_access: process(xpos_to_read, ypos_to_read, xy_buf_addr_prev)
-        variable xy_buf_read_ptr : integer range 0 to NodeNum-1;
-    begin
-
-        xy_buf_addr <= xy_buf_addr_i;
-
-        xy_buf_read_ptr := to_integer(unsigned(xy_buf_addr_prev(NodeW-1 downto 0)));
-
-        xy_buf_dout_o <= ypos_to_read & xpos_to_read;
-    end process;
-
-end generate;
+-- PMC has 32-bit, PCI-E has 64-bit data interface.
+-- PMC X/Y pos is multiplexed on delayed sw flag due to 1 clock
+-- latency of BRAM.
+xy_buf_dout_o <= ypos_to_read & xpos_to_read when (DEVICE = SNIFFER) else
+                 X"00000000" & xpos_to_read when (xy_buf_rd_sw_prev = '0')
+                 else X"00000000" & ypos_to_read;
 
 ---------------------------------------------------------------------
 --  Time Stamp Counter

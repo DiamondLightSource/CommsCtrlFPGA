@@ -56,7 +56,7 @@ entity fofb_cc_gt_if is
         timeframe_start_i       : in  std_logic;
         timeframe_valid_i       : in  std_logic;
         timeframe_cntr_i        : in  std_logic_vector(15 downto 0);
-        bpmid_i                 : in  std_logic_vector(9 downto 0);
+        bpmid_i                 : in  std_logic_vector(NodeW-1 downto 0);
 
         -- mgt configuration
         powerdown_i             : in  std_logic_vector(3 downto 0);

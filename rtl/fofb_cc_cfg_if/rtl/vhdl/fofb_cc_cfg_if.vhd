@@ -35,7 +35,7 @@ entity fofb_cc_cfg_if is
         fai_cfg_di_i            : in  std_logic_vector(31 downto 0);
         fai_cfg_we_o            : out std_logic;
         -- Configuration data read from config bram
-        bpmid_o                 : out std_logic_vector(9 downto 0);
+        bpmid_o                 : out std_logic_vector(NodeW-1 downto 0);
         timeframe_len_o         : out std_logic_vector(15 downto 0);
         powerdown_o             : out std_logic_vector(3 downto 0);
         loopback_o              : out std_logic_vector(7 downto 0);
@@ -169,7 +169,7 @@ process(mgtclk_i)
 begin
 if (mgtclk_i'event and mgtclk_i='1') then
     if (mgtreset_i = '1') then
-        bpmid_o         <= std_logic_vector(to_unsigned(ID,10));
+        bpmid_o         <= std_logic_vector(to_unsigned(ID,NodeW));
         timeframe_dly_o <= def_TimeFrameDelay;
         timeframe_len_o <= def_TimeFrameLength;
         powerdown_o     <= (others => '0');
@@ -187,7 +187,7 @@ if (mgtclk_i'event and mgtclk_i='1') then
             if (cfg_addr_prev(9 downto 8) = "00") then
                 -- Node ID
                 if (cfg_addr_prev(7 downto 0) = cc_cmd_bpm_id) then
-                    bpmid_o(NodeW-1 downto 0) <= fai_cfg_di_i(NodeW-1 downto 0);
+                    bpmid_o <= fai_cfg_di_i(NodeW-1 downto 0);
                 end if; 
                 -- Time frame lenght in terms of clocks
                 if (cfg_addr_prev(7 downto 0) = cc_cmd_time_frame_len) then
