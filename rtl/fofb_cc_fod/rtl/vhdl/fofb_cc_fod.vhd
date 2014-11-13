@@ -29,6 +29,7 @@ entity fofb_cc_fod is
         -- Design Configuration Options
         BPMS                    : integer  := 1;
         DEVICE                  : device_t := BPM;
+        INTERLEAVED             : boolean  :=false;
         LaneCount               : integer  := 4
     );
     port (
@@ -128,6 +129,7 @@ signal own_ypos_to_store            : std_logic_vector(31 downto 0);
 signal xpos_to_store                : std_logic_vector(31 downto 0);
 signal ypos_to_store                : std_logic_vector(31 downto 0);
 signal xy_buf_addr                  : std_logic_vector(NodeW-1 downto 0);
+signal xy_buf_addr_intrlvd          : std_logic_vector(NodeW-1 downto 0);
 signal fofb_nodemask                : std_logic_vector(NodeNum-1 downto 0):= (others => '0');
 signal fofb_nodemask_sys            : std_logic_vector(NodeNum-1 downto 0):= (others => '0');
 signal posmem_wea                   : std_logic;
@@ -137,6 +139,8 @@ signal bpmid                        : unsigned(NodeW-1 downto 0);
 signal fod_id                       : std_logic_vector(NodeW-1 downto 0);
 signal fod_xpos                     : std_logic_vector(31 downto 0);
 signal fod_ypos                     : std_logic_vector(31 downto 0);
+signal xy_buf_dout                  : std_logic_vector(63 downto 0);
+signal xy_buf_dout_intrlvd          : std_logic_vector(63 downto 0);
 
 signal bpm_count_prev               : unsigned(7 downto 0);
 
@@ -556,9 +560,15 @@ YPosMem : entity work.fofb_cc_dpbram
     );
 
 ---------------------------------------------------------------------
--- Following Generate statements handle Parallel or Serial
--- x&y position data read to PMC or PCI-E.
--- PMC module Readback runs in 256 or 512-nodes mode depending on
+-- Following handles X/Y Position Data readout:
+-- Data Read Out:
+--    Regular: x0,x1,...xn-1,y0,y1,.....yn-1, or
+--    Interleaved: x0,y0,x1,y1,........xn-1,yn-1
+-- Data Bus:
+--    PMC module has 32-bit regular readout
+--    V5 Sniffer has 64-bit interleaved readout
+--    SPEC has 32-bit interleaved readout
+-- Readback runs in 256 or 512-nodes mode depending on
 -- long flag.
 ---------------------------------------------------------------------
 --Determine address bit number to be used for muxing between X and Y
@@ -569,19 +579,27 @@ xy_buf_rd_sw <= xy_buf_addr_i(NodeW) when (xy_buf_long_en_i = '1')
 xy_buf_addr <= xy_buf_addr_i(Nodew-1 downto 0) when (xy_buf_long_en_i = '1')
                else '0' & xy_buf_addr_i(NodeW-2 downto 0);
 
-posmem_addrb <= buffer_read_sw & xy_buf_addr;
+xy_buf_addr_intrlvd <= xy_buf_addr_i(Nodew downto 1);
+
+posmem_addrb <= buffer_read_sw & xy_buf_addr when (INTERLEAVED = false)
+                else buffer_read_sw & xy_buf_addr_intrlvd;
+
+-- X/Y pos is multiplexed on delayed sw flag due to 1 clock
+-- latency of BRAM.
+xy_buf_dout <= X"00000000" & xpos_to_read when (xy_buf_rd_sw_prev = '0')
+               else X"00000000" & ypos_to_read;
+xy_buf_dout_intrlvd <= X"00000000" & xpos_to_read when (xy_buf_addr(0) = '1')
+                       else X"00000000" & ypos_to_read;
+
+xy_buf_dout_o <= xy_buf_dout_intrlvd when (INTERLEAVED = true) else
+                 ypos_to_read & xpos_to_read when (DEVICE = SNIFFER) else
+                 xy_buf_dout;
 
 -- Clear memory on readback
-posmem_xweb <= xy_buf_rstb_i when (xy_buf_rd_sw = '0') else '0';
-posmem_yweb <= xy_buf_rstb_i when (xy_buf_rd_sw = '1') else '0';
-
-
--- PMC has 32-bit, PCI-E has 64-bit data interface.
--- PMC X/Y pos is multiplexed on delayed sw flag due to 1 clock
--- latency of BRAM.
-xy_buf_dout_o <= ypos_to_read & xpos_to_read when (DEVICE = SNIFFER) else
-                 X"00000000" & xpos_to_read when (xy_buf_rd_sw_prev = '0')
-                 else X"00000000" & ypos_to_read;
+posmem_xweb <= xy_buf_rstb_i and not xy_buf_rd_sw when (INTERLEAVED = false)
+               else xy_buf_rstb_i and not xy_buf_addr(0);
+posmem_yweb <= xy_buf_rstb_i and xy_buf_rd_sw when (INTERLEAVED = false)
+               else xy_buf_rstb_i and xy_buf_addr(0);
 
 ---------------------------------------------------------------------
 --  Time Stamp Counter

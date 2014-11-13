@@ -35,6 +35,7 @@ entity fofb_cc_top is
         DEVICE                  : device_t := BPM;
         USE_DCM                 : boolean := true;
         SIM_GTPRESET_SPEEDUP    : integer := 0;
+        INTERLEAVED             : boolean := false;
         -- Extended FAI interface for FOFB
         EXTENDED_CONF_BUF       : boolean := false;
         -- Absolute or Difference position data
@@ -101,7 +102,8 @@ entity fofb_cc_top is
         fofb_bpm_count_o        : out std_logic_vector(7 downto 0);
         fofb_dma_ok_i           : in  std_logic;
         fofb_node_mask_o        : out std_logic_vector(NodeNum-1 downto 0);
-        fofb_timestamp_val_o    : out std_logic_vector(31 downto 0)
+        fofb_timestamp_val_o    : out std_logic_vector(31 downto 0);
+        fofb_link_status_o      : out std_logic_vector(31 downto 0)
 );
 end fofb_cc_top;
 
@@ -109,7 +111,11 @@ architecture structural of fofb_cc_top is
 
 -----------------------------------------
 -- Signal declarations
------------------------------------------
+
+-- chipscope
+signal control              : std_logic_vector(35 downto 0);
+signal data                 : std_logic_vector(127 downto 0);
+signal trig0                : std_logic_vector(7 downto 0);
 --  tx fifo
 signal txf_din              : std_logic_vector((32*PacketSize-1) downto 0);
 signal txf_wr_en            : std_logic_vector(LANE_COUNT-1 downto 0);
@@ -201,6 +207,7 @@ begin
 fofb_process_time_o   <= fodprocess_time;
 fofb_bpm_count_o      <= bpm_count;
 fofb_timestamp_val_o  <= timestamp_val;
+fofb_link_status_o <= X"00" & "000000"& link_partners(1) & "0000000" & rx_linkup(1);
 
 fai_cfg_clk_o <= userclk;
 
@@ -392,6 +399,7 @@ fofb_cc_fod : entity work.fofb_cc_fod
 generic map (
     BPMS                    => BPMS,
     DEVICE                  => DEVICE,
+    INTERLEAVED             => INTERLEAVED,
     LaneCount               => LANE_COUNT
 )
 port map (
@@ -549,14 +557,16 @@ port map(
     timestamp_value_o       => timestamp_val
 );
 
---trig0(0) <= pulse2;
+--trig0(0) <= fofb_cc_enable;
+--trig0(7 downto 1) <= (others => '0');
 --
---data(31 downto 0) <= std_logic_vector(counter2);
+--data(3 downto 0) <= fai_cfg_val_i(3 downto 0);
+--data(127 downto 4) <= (others => '0');
 --
 --ila_inst : ila
 --port map (
 --    control         => control,
---    clk             => fai_cfg_clk,
+--    clk             => userclk,
 --    data            => data,
 --    trig0           => trig0
 --);
