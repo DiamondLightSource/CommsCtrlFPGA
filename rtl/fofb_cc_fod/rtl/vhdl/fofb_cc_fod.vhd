@@ -65,7 +65,7 @@ entity fofb_cc_fod is
         xy_buf_rstb_i           : in  std_logic;
         -- status info
         fodprocess_time_o       : out std_logic_vector(15 downto 0);
-        bpm_count_o             : out std_logic_vector(7 downto 0);
+        bpm_count_o             : out std_logic_vector(NodeW-1 downto 0);
         -- golden orbit
         golden_orb_x_i          : in  std_logic_vector(31 downto 0);
         golden_orb_y_i          : in  std_logic_vector(31 downto 0);
@@ -101,7 +101,6 @@ architecture rtl of fofb_cc_fod is
 --  Signal declarations
 -------------------------------------------------------------------
 signal pload_header                 : std_logic_vector(31 downto 0);
-signal bpm_cnt                      : unsigned(7 downto 0);
 signal timeframe_start_d1           : std_logic;
 signal timeframe_start_d2           : std_logic;
 signal bpm_xpos_val                 : std_logic_vector(31 downto 0);
@@ -150,7 +149,8 @@ signal fod_id                       : std_logic_vector(NodeW-1 downto 0);
 signal fod_xpos                     : std_logic_vector(31 downto 0);
 signal fod_ypos                     : std_logic_vector(31 downto 0);
 
-signal bpm_count_prev               : unsigned(7 downto 0);
+signal bpm_cnt                      : unsigned(NodeW-1 downto 0);
+signal bpm_count_prev               : unsigned(NodeW-1 downto 0);
 
 signal maskmem_sw                   : std_logic;
 signal maskmemA_addra               : std_logic_vector(NodeW-1 downto 0);
@@ -644,7 +644,7 @@ begin
     if (mgtclk_i'event and mgtclk_i = '1') then
         if (mgtreset_i = '1') then
             fodprocess_time_o <= (others => '0');
-            bpm_count_prev <= X"01";
+            bpm_count_prev <= "000000001";
             fod_completed <= '0';
             fod_completed_prev <= '0';
         else

@@ -94,7 +94,7 @@ entity fofb_cc_top is
         fofb_watchdog_i         : in  std_logic_vector(31 downto 0);
         fofb_event_i            : in  std_logic_vector(31 downto 0);
         fofb_process_time_o     : out std_logic_vector(15 downto 0);
-        fofb_bpm_count_o        : out std_logic_vector(7 downto 0);
+        fofb_bpm_count_o        : out std_logic_vector(NodeW-1 downto 0);
         fofb_dma_ok_i           : in  std_logic;
         fofb_node_mask_o        : out std_logic_vector(NodeNum-1 downto 0);
         fofb_rxlink_up_o        : out std_logic_vector(LANE_COUNT-1 downto 0);
@@ -171,7 +171,7 @@ signal softerror_cnt        : std_logic_2d_16(3 downto 0);
 signal frameerror_cnt       : std_logic_2d_16(3 downto 0);
 signal rxpck_count          : std_logic_2d_16(3 downto 0);
 signal txpck_count          : std_logic_2d_16(3 downto 0);
-signal bpm_count            : std_logic_vector(7 downto 0);
+signal bpm_count            : std_logic_vector(NodeW-1 downto 0);
 signal fodprocess_time      : std_logic_vector(15 downto 0);
 signal link_up_i            : std_logic_vector(7 downto 0);
 signal golden_orb_x         : std_logic_vector(31 downto 0);
