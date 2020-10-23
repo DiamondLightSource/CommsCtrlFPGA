@@ -1,0 +1,1700 @@
+# //  Questa Sim
+# //  Version 10.2c linux Jul 18 2013
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+cd /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x
+# reading /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+cd vhdl
+cd ../VME64x-vhdl
+vcom -work work *.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# ** Error: (vcom-19) Failed to access library 'work' at "work".
+# No such file or directory. (errno = ENOENT)
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+vlib work
+cd vhdl
+# couldn't change working directory to "vhdl": no such file or directory
+vcom -work work *.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# ** Error: (vcom-11) Could not find work.local_bus_pkg.
+# ** Error: VME64x_CR_CSR.vhd(30): (vcom-1195) Cannot find expanded name "work.local_bus_pkg".
+# ** Error: VME64x_CR_CSR.vhd(30): Unknown expanded name.
+# -- Loading package VCOMPONENTS
+# ** Error: VME64x_CR_CSR.vhd(34): VHDL Compiler exiting
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+vcom -work work local_bus_pkg.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+vcom -work work *.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+pwd
+# /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/VME64x-vhdl
+cd ../vhdl
+vcom */vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# ** Error: (vcom-7) Failed to open design unit file "*/vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+vcom *.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+vsim -t ns -novopt timer_top_tb_timer_vhd_tb
+# vsim -t ns -novopt timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# ** Failure: (vsim-3817) Port "CLK33" of entity "timer_top" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut File: TIMER_top.vhd Line: 29
+# ** Error: (vsim-3732) tb_timer.vhd(555): No default binding for component instance 'uut'.
+#    The following component port is not on the entity:
+#           CLK16
+#         Region: /timer_top_tb_timer_vhd_tb/uut
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# ** Warning: (vsim-3479) Time unit 'ps' is less than the simulator resolution (1ns).
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+pwd
+# /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl
+vlib work
+# ** Warning: (vlib-34) Library already exists at "work".
+vcom -work work local_bus_pkg.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# ** Error: (vcom-7) Failed to open design unit file "local_bus_pkg.vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+vcom -work work ../VME64x-vhdl/local_bus_pkg.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+vcom -work work ../VME64x-vhdl/*.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+vcom *.vhd
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+vsim -t ns -novopt timer_top_tb_timer_vhd_tb
+# vsim -t ns -novopt timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# ** Failure: (vsim-3817) Port "CLK33" of entity "timer_top" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut File: TIMER_top.vhd Line: 29
+# ** Error: (vsim-3732) tb_timer.vhd(555): No default binding for component instance 'uut'.
+#    The following component port is not on the entity:
+#           CLK16
+#         Region: /timer_top_tb_timer_vhd_tb/uut
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# ** Warning: (vsim-3479) Time unit 'ps' is less than the simulator resolution (1ns).
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# vsim -L unisims_ver -t ns -novopt work.ddr_output_tb 
+# ** Error: (vsim-3170) Could not find '/home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output_tb'.
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# vsim -L unisims_ver -t ns -novopt work.ddr_output_tb_ddr_output_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output_tb_ddr_output_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.ddr_output_tb_ddr_output_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading unisim.vcomponents
+# Loading work.ddr_output(structure)
+# ** Failure: (vsim-3817) Port "low" of entity "ddr_output" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /ddr_output_tb_ddr_output_vhd_tb/uut File: ddr_output.vhd Line: 35
+# ** Failure: (vsim-3817) Port "lowd" of entity "ddr_output" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /ddr_output_tb_ddr_output_vhd_tb/uut File: ddr_output.vhd Line: 36
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Fatal error in file ddr_output.vhd
+#  while elaborating region: /ddr_output_tb_ddr_output_vhd_tb/uut
+# Fatal error in file tb_ddr_output.vhd
+#  while elaborating region: /ddr_output_tb_ddr_output_vhd_tb
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# ** Error: tb_timer.vhd(380): (vcom-1484) Unknown formal identifier "CLK16".
+# ** Error: tb_timer.vhd(684): VHDL Compiler exiting
+# ** Error: /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+# Error in macro ./sim.do line 10
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+#     while executing
+# "vcom -work work *.vhd"
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# ** Error: tb_timer.vhd(557): Illegal target for signal assignment.
+# ** Error: tb_timer.vhd(557): (vcom-1136) Unknown identifier "clk16".
+# ** Error: tb_timer.vhd(557): (vcom-1136) Unknown identifier "clk16".
+# ** Error: tb_timer.vhd(684): VHDL Compiler exiting
+# ** Error: /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+# Error in macro ./sim.do line 10
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+#     while executing
+# "vcom -work work *.vhd"
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ns -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# ** Warning: (vsim-3479) Time unit 'ps' is less than the simulator resolution (1ns).
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+
+
+
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ps -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+vsim -t ns -novopt timer_top_tb_timer_vhd_tb
+# vsim -t ns -novopt timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Loading work.ddr_diff_input_inv(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Loading work.vme64x_cr_csr(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ps -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ps -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+vsim -t ns -novopt timer_top_tb_timer_vhd_tb
+# vsim -t ns -novopt timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# ** Error: (vsim-3733) rf_dcm.vhd(147): No default binding for component instance 'DCM_INST'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_rfdcm/DCM_INST
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Loading work.ddr_diff_input_inv(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ns  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Loading work.vme64x_cr_csr(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ps -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# ** Error: (vsim-3733) local_clock.vhd(163): No default binding for component instance 'DCM_local'.
+#    The following component generics are not on the entity:
+#           SIM_CLKIN_PERIOD_JITTER
+#           SIM_CLKIN_CYCLE_JITTER
+#           MAXPERPSCLK
+#           MAXPERCLKIN
+#         Region: /timer_top_tb_timer_vhd_tb/uut/i_lclk/DCM_local
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Compiling entity config_ROM
+# -- Compiling architecture rtl of config_ROM
+# -- Compiling entity ddr_diff_input
+# -- Compiling architecture structure of ddr_diff_input
+# -- Compiling entity ddr_diff_input_inv
+# -- Compiling architecture structure of ddr_diff_input_inv
+# -- Compiling entity ddr_input
+# -- Compiling architecture structure of ddr_input
+# -- Compiling entity ddr_output
+# -- Compiling architecture structure of ddr_output
+# -- Loading package STD_LOGIC_UNSIGNED
+# -- Compiling entity delay_block
+# -- Compiling architecture structure of delay_block
+# -- Compiling entity delay_channel
+# -- Compiling architecture rtl of delay_channel
+# -- Loading package local_bus_pkg
+# -- Compiling entity local_clock
+# -- Compiling architecture rtl of local_clock
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity pulse_delay33
+# -- Compiling architecture rtl of pulse_delay33
+# -- Compiling entity rf_dcm
+# -- Compiling architecture STRUCT of rf_dcm
+# -- Compiling entity ev64x_tb_Ubicom_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_Ubicom_vhd_tb
+# -- Compiling entity ev64x_tb_VME1_vhd_tb
+# -- Compiling architecture behavior of ev64x_tb_VME1_vhd_tb
+# -- Compiling entity ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling architecture behavior of ddr_output_tb_ddr_output_vhd_tb
+# -- Compiling entity ddr_diff_input_tb
+# -- Compiling architecture behavior of ddr_diff_input_tb
+# -- Compiling entity guntx_top_tb
+# -- Compiling architecture behavior of guntx_top_tb
+# -- Compiling entity pulse_delay33_tb
+# -- Compiling architecture behavior of pulse_delay33_tb
+# -- Compiling entity timer_top_tb_timer_vhd_tb
+# -- Compiling architecture behavior of timer_top_tb_timer_vhd_tb
+# vsim -L unisims_ver -t ps -novopt work.timer_top_tb_timer_vhd_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top_tb_timer_vhd_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bus_pkg
+# Loading ieee.std_logic_arith(body)
+# Loading work.local_bus_pkg
+# Loading work.timer_top_tb_timer_vhd_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.timer_top(rtl)
+# Loading unisim.vcomponents
+# Loading work.timer_top(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.rf_dcm(struct)
+# Loading work.rf_dcm(struct)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.dcm(dcm_v)
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.bufg(bufg_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input(structure)
+# Loading work.ddr_diff_input(structure)
+# Loading unisim.ibufds(ibufds_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_diff_input_inv(structure)
+# Loading work.ddr_diff_input_inv(structure)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_input(structure)
+# Loading work.ddr_input(structure)
+# Loading unisim.ifddrcpe(ifddrcpe_v)
+# Loading unisim.ibuf(ibuf_v)
+# Loading unisim.fdcpe(fdcpe_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.ddr_output(structure)
+# Loading work.ddr_output(structure)
+# Loading unisim.ofddrcpe(ofddrcpe_v)
+# Loading unisim.fddrcpe(fddrcpe_v)
+# Loading unisim.obuf(obuf_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_clock(rtl)
+# Loading work.local_clock(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.daisy_chain_control(rtl)
+# Loading work.daisy_chain_control(rtl)
+# Loading unisim.fdcp(fdcp_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.local_bridge(rtl)
+# Loading work.local_bridge(rtl)
+# ** Failure: (vsim-3817) Port "nvmeIACKIN" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 63
+# ** Failure: (vsim-3817) Port "ip_irq_out" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 155
+# ** Failure: (vsim-3817) Port "ip_irq_vector" of entity "local_bridge" is not in the component being instantiated.
+#    Time: 0 ps  Iteration: 0  Instance: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge File: ../VME64x-vhdl/local_bridge.vhd Line: 156
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.vme64x_cr_csr(rtl)
+# Loading work.vme64x_cr_csr(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/TimingFPGA/TIMER64x/vhdl/work.config_rom(rtl)
+# Loading work.config_rom(rtl)
+# Loading unisim.ramb16_s9_s9(ramb16_s9_s9_v)
+# Fatal error in file ../VME64x-vhdl/local_bridge.vhd
+#  while elaborating region: /timer_top_tb_timer_vhd_tb/uut/i_local_bridge
+# Load interrupted
+# Error loading design
+# Error: Error loading design 
+#        Pausing macro execution 
+# MACRO ./sim.do PAUSED at line 12
+do sim.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Modifying /dls_sw/FPGA/Questa/10.2/questasim/linux/../modelsim.ini
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package NUMERIC_STD
+# -- Loading package local_bus_pkg
+# -- Loading package VCOMPONENTS
+# -- Compiling entity VME64x_CR_CSR
+# -- Compiling architecture rtl of VME64x_CR_CSR
+# -- Compiling entity daisy_chain_control
+# -- Compiling architecture rtl of daisy_chain_control
+# -- Compiling entity local_bridge
+# -- Compiling architecture rtl of local_bridge
+# -- Compiling package local_bus_pkg
+# QuestaSim vcom 10.2c Compiler 2013.07 Jul 18 2013
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package VCOMPONENTS
+# -- Compiling entity GUNTX_top
+# -- Compiling architecture rtl of GUNTX_top
+# -- Compiling entity TIMER_top
+# -- Compiling architecture rtl of TIMER_top
+# -- Loading package std_logic_arith
+# -- Loading package local_bus_pkg
+# -- Loading entity local_bridge
+# ** Error: TIMER_top.vhd(1004): (vcom-1035) Formal port "nvmeIACKIN" has OPEN or no actual associated with it.
+# ** Error: TIMER_top.vhd(1004): (vcom-1035) Formal port "ip_irq_out" has OPEN or no actual associated with it.
+# ** Error: TIMER_top.vhd(1004): (vcom-1035) Formal port "ip_irq_vector" has OPEN or no actual associated with it.
+# ** Error: TIMER_top.vhd(1283): VHDL Compiler exiting
+# ** Error: /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+# Error in macro ./sim.do line 10
+# /dls_sw/FPGA/Questa/10.2/questasim/linux/vcom failed.
+#     while executing
+# "vcom -work work *.vhd"

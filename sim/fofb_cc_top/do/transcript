@@ -1,0 +1,138 @@
+# A problem occurred trying to load one of the language plugins for the Source window:
+# Unable to load plugin '/mtitcl/HTE/custom_plugins/PCF.dpp'.
+# Possible namespace problem - try restart HTE//  Questa Sim
+# //  Version 10.2c linux Jul 18 2013
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# vsim -L work -L secureip -L unisims_ver -do vsim.do -t 1ps -novopt work.fofb_cc_top_tb 
+# Loading std.standard
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_top_tb(behavior)
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading modelsim_lib.util(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_pkg(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_version
+# Loading work.fofb_cc_version
+# Loading work.fofb_cc_pkg(body)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.test_interface(body)
+# Loading ieee.std_logic_textio(body)
+# Loading ieee.math_real(body)
+# Loading work.test_interface(body)
+# Loading unisim.vcomponents
+# Loading work.fofb_cc_top_tb(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_top(structural)
+# Loading work.fofb_cc_top(structural)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_clk_if(rtl)
+# Loading work.fofb_cc_clk_if(rtl)
+# Loading unisim.ibufds(ibufds_v)
+# Loading unisim.bufg(bufg_v)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading ieee.vital_timing(body)
+# Loading ieee.vital_primitives(body)
+# Loading unisim.vpkg(body)
+# Loading unisim.bufio2(bufio2_v)
+# Loading unisim.pll_adv(pll_adv_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gt_if(rtl)
+# Loading work.fofb_cc_gt_if(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_lane(rtl)
+# Loading work.fofb_cc_gtpa_lane(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_tx_ll(rtl)
+# Loading work.fofb_cc_gtpa_tx_ll(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_txcrc(rtl)
+# Loading work.fofb_cc_gtpa_txcrc(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_crc32(rtl)
+# Loading work.fofb_cc_gtpa_crc32(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_rx_ll(rtl)
+# Loading work.fofb_cc_gtpa_rx_ll(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_rxcrc(rtl)
+# Loading work.fofb_cc_gtpa_rxcrc(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtpa_tile(rtl)
+# Loading work.fofb_cc_gtpa_tile(rtl)
+# Loading unisim.gtpa1_dual(gtpa1_dual_v)
+# Loading secureip.GTPA1_DUAL_WRAP
+# Loading secureip.B_GTPA1_DUAL
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_fifo_rst(rtl)
+# Loading work.fofb_cc_fifo_rst(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_rx_buffer(rtl)
+# Loading work.fofb_cc_rx_buffer(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_rx_fifo(fofb_cc_rx_fifo_a)
+# Loading work.fofb_cc_rx_fifo(fofb_cc_rx_fifo_a)
+# Loading xilinxcorelib.fifo_generator_v9_1(behavioral)
+# Loading xilinxcorelib.fifo_generator_v9_1_conv(behavioral)
+# Loading xilinxcorelib.fifo_generator_v9_1_bhv_as(behavioral)
+# Loading xilinxcorelib.fifo_generator_v9_1_bhv_preload0(behavioral)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_arbmux(rtl)
+# Loading work.fofb_cc_arbmux(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_fod(rtl)
+# Loading work.fofb_cc_fod(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_sdpbram(rtl)
+# Loading work.fofb_cc_sdpbram(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_p2p(syn)
+# Loading work.fofb_cc_p2p(syn)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_dpbram(rtl)
+# Loading work.fofb_cc_dpbram(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_tx_buffer(rtl)
+# Loading work.fofb_cc_tx_buffer(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_tx_fifo(fofb_cc_tx_fifo_a)
+# Loading work.fofb_cc_tx_fifo(fofb_cc_tx_fifo_a)
+# Loading xilinxcorelib.fifo_generator_v8_4(behavioral)
+# Loading xilinxcorelib.fifo_generator_v8_4_conv(behavioral)
+# Loading xilinxcorelib.fifo_generator_v8_4_bhv_as(behavioral)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_cfg_if(rtl)
+# Loading work.fofb_cc_cfg_if(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_fa_if(rtl)
+# Loading work.fofb_cc_fa_if(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_fa_if_bram(rtl)
+# Loading work.fofb_cc_fa_if_bram(rtl)
+# Loading unisim.ramb16_s36_s36(ramb16_s36_s36_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_syncff(rtl)
+# Loading work.fofb_cc_syncff(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_frame_cntrl(rtl)
+# Loading work.fofb_cc_frame_cntrl(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_top_tester(behavior)
+# Loading work.fofb_cc_top_tester(behavior)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_if(rtl)
+# Loading work.fofb_cc_gtp_if(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_lane(rtl)
+# Loading work.fofb_cc_gtp_lane(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_tx_ll(rtl)
+# Loading work.fofb_cc_gtp_tx_ll(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_txcrc(rtl)
+# Loading work.fofb_cc_gtp_txcrc(rtl)
+# Loading ieee.std_logic_signed(body)
+# Loading unisim.crc32(crc32_v)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_rx_ll(rtl)
+# Loading work.fofb_cc_gtp_rx_ll(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_rxcrc(rtl)
+# Loading work.fofb_cc_gtp_rxcrc(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_gtp_tile(rtl)
+# Loading work.fofb_cc_gtp_tile(rtl)
+# Loading unisim.gtp_dual(gtp_dual_v)
+# Loading secureip.GTP_DUAL_FAST
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_usrapp_tx(rtl)
+# Loading work.fofb_cc_usrapp_tx(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_usrapp_checker(rtl)
+# Loading work.fofb_cc_usrapp_checker(rtl)
+# Refreshing /home/iu42/hardware/trunk/FPGA/CommsCtrlFPGA/sim/fofb_cc_top/do/work.fofb_cc_v5_clk_if(rtl)
+# Loading work.fofb_cc_v5_clk_if(rtl)
+# Loading unisim.ibufgds(ibufgds_v)
+# Loading unisim.srl16(srl16_v)
+# Loading unisim.dcm(dcm_v)
+# Loading unisim.dcm_clock_divide_by_2(dcm_clock_divide_by_2_v)
+# Loading unisim.dcm_maximum_period_check(dcm_maximum_period_check_v)
+# Loading unisim.dcm_clock_lost(dcm_clock_lost_v)
+# ** Fatal: (vsim-3421) Value 1 is out of range 0 to 0.
+#    Time: 0 ps  Iteration: 0  Instance: /fofb_cc_top_tb/i_fofb_cc_top/GT_IF/GTPA_TILE File: ../../../rtl/fofb_cc_gtpa_if/rtl/vhdl/fofb_cc_gt_if.vhd Line: 304
+# FATAL ERROR while loading design
+# Error loading design
+# Break key hit 
+# Break key hit 
+# Break key hit 
