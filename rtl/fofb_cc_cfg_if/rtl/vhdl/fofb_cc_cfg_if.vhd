@@ -53,7 +53,7 @@ entity fofb_cc_cfg_if is
         frameerror_cnt_i        : in std_logic_2d_16(3 downto 0);
         rxpck_cnt_i             : in std_logic_2d_16(3 downto 0);
         txpck_cnt_i             : in std_logic_2d_16(3 downto 0);
-        bpmcount_i              : in std_logic_vector(7 downto 0);
+        bpmcount_i              : in std_logic_vector(NodeW-1 downto 0);
         fodprocess_time_i       : in std_logic_vector(15 downto 0);
         rx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
         tx_max_data_count_i     : in std_logic_2d_8(3 downto 0);
@@ -352,7 +352,7 @@ begin
                         fai_cfg_do_o <= zeros(16) & fodprocess_time_i;
                         fai_cfg_we_o <= '1';
                     when cc_cmd_bpm_count           =>
-                        fai_cfg_do_o <= zeros(24) & bpmcount_i;
+                        fai_cfg_do_o <= zeros(23) & bpmcount_i;
                         fai_cfg_we_o <= '1';
                     when cc_cmd_rx_maxcount =>
                         fai_cfg_do_o <= rx_max_data_count_i(3)&
