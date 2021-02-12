@@ -431,7 +431,7 @@ port map (
     xy_buf_dout_o           => xy_buf_dat_o,
     xy_buf_addr_i           => xy_buf_addr_i,
     xy_buf_rstb_i           => xy_buf_rstb_i,
-    xy_buf_long_en_i        => '0',
+    xy_buf_long_en_i        => '1',
     fodprocess_time_o       => fodprocess_time,
     bpm_count_o             => bpm_count,
     golden_orb_x_i          => golden_orb_x,
